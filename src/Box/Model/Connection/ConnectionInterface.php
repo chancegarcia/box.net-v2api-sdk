@@ -11,4 +11,5 @@ namespace Box\Model\Connection;
 interface ConnectionInterface
 {
 
+    public function connect();
 }
