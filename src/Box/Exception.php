@@ -11,4 +11,8 @@ class Exception
     extends \Exception
 {
 
+    const INVALID_CLASS_TYPE = "Invalid Class Type";
+    const UNKNOWN_CLASS = "Unknown Class";
+    const INVALID_CLASS = "Invalid Class";
+    const INVALID_INPUT = "Invalid Input";
 }

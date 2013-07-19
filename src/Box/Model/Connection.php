@@ -6,10 +6,10 @@
  * @copyright   (C)Copyright 2013 chancegarcia.com
  */
 
-namespace Box\Model;
+namespace Box\Model\Connection;
 use Box\Exception;
 
-class Connection
+class Connection implements ConnectionInterface
 {
 
     CONST AUTH_URL = "https://www.box.com/api/oauth2/authorize";
