@@ -16,12 +16,13 @@ class Connection
 
     protected $_responseType = "code";
     protected $_clientId;
+    protected $_clientSecret;
     protected $_redirectUri;
     protected $_state;
     protected $_requestType = "POST";
+
     protected $_response;
-    protected $_responseError;
-    protected $_responseErrorDescription;
+
 
 
 }

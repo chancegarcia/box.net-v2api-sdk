@@ -7,6 +7,7 @@
  */
 
 namespace Box\Model\Connection\Token;
+use Box\Model\Connection\Response;
 
 class Token
 {
@@ -17,14 +18,12 @@ class Token
     protected $_clientId;
     protected $_clientSecret;
     protected $_redirectUri;
+    protected $_refreshToken;
+    protected $_deviceId;
+    protected $_deviceName;
 
     // json response
-    protected $_accessToken;
-    protected $_expiresIn;
-    protected $_tokenType;
-    protected $_refreshToken;
-    protected $_error;
-    protected $_errorDescription;
+    protected $_response;
 
     // all parameters must be url encoded
 
