@@ -51,4 +51,10 @@ class Model
         return true;
     }
 
+    public function buildQuery($params,$numericPrefix=null)
+    {
+        $query = http_build_query($params,$numericPrefix,'&', PHP_QUERY_RFC3986);
+        return $query;
+    }
+
 }

@@ -8,8 +8,12 @@
 
 namespace Box\Model\Connection;
 
+use Box\Model\Connection\Token\TokenInterface;
+
 interface ConnectionInterface
 {
 
     public function connect();
+    public function query($uri);
+    public function post($uri,array $params = array());
 }
