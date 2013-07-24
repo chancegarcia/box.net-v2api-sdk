@@ -166,9 +166,10 @@ class Client extends Model
         return $folder->getItems();
     }
 
-    public function createNewFolder($name,$parent=array('id'=>0))
+    public function createNewBoxFolder($name,$parent=array('id'=>0))
     {
-
+        // stubbing this for now too
+        return null;
     }
 
     public function getAccessToken()
