@@ -13,68 +13,68 @@ use Box\Model;
 class Token extends Model implements TokenInterface
 {
 
-    protected $_accessToken;
-    protected $_refreshToken;
-    protected $_grantType = "authorization_code";
-    protected $_expiresIn;
-    protected $_tokenType;
+    protected $accessToken;
+    protected $refreshToken;
+    protected $grantType = "authorization_code";
+    protected $expiresIn;
+    protected $tokenType;
 
     public function setExpiresIn($expiresIn = null)
     {
-        $this->_expiresIn = $expiresIn;
+        $this->expiresIn = $expiresIn;
         return $this;
     }
 
     public function getExpiresIn()
     {
-        return $this->_expiresIn;
+        return $this->expiresIn;
     }
 
     public function setTokenType($tokenType = null)
     {
-        $this->_tokenType = $tokenType;
+        $this->tokenType = $tokenType;
         return $this;
     }
 
     public function getTokenType()
     {
-        return $this->_tokenType;
+        return $this->tokenType;
     }
 
 
 
     public function setAccessToken($accessToken = null)
     {
-        $this->_accessToken = $accessToken;
+        $this->accessToken = $accessToken;
         return $this;
     }
 
     public function getAccessToken()
     {
-        return $this->_accessToken;
+        return $this->accessToken;
     }
 
 
     public function setGrantType($grantType = null)
     {
-        $this->_grantType = $grantType;
+        $this->grantType = $grantType;
         return $this;
     }
 
     public function getGrantType()
     {
-        return $this->_grantType;
+        return $this->grantType;
     }
 
     public function setRefreshToken($refreshToken = null)
     {
-        $this->_refreshToken = $refreshToken;
+        $this->refreshToken = $refreshToken;
         return $this;
     }
 
     public function getRefreshToken()
     {
-        return $this->_refreshToken;
+        return $this->refreshToken;
     }
 
     // all parameters must be url encoded

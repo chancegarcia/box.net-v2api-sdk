@@ -12,7 +12,7 @@ use Box\Client\Client;
 
 class BoxClientTest extends \PHPUnit_Framework_TestCase {
 
-    protected $_client;
+    protected $client;
 
     protected function setUp()
     {
@@ -21,17 +21,17 @@ class BoxClientTest extends \PHPUnit_Framework_TestCase {
 
     protected function  setClient($client)
     {
-        $this->_client = $client;
+        $this->client = $client;
     }
 
     protected function getClient($reset=false)
     {
-        if (null === $this->_client || true === $reset)
+        if (null === $this->client || true === $reset)
         {
             $this->setClient(new Client());
         }
 
-        return $this->_client;
+        return $this->client;
     }
 
     public function testClient()

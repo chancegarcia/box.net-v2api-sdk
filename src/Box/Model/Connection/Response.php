@@ -10,12 +10,12 @@ namespace Box\Model\Connection\Response;
 
 class Response
 {
-    protected $_responseType;
-    protected $_accessToken;
-    protected $_expiresIn;
-    protected $_tokenType;
-    protected $_refreshToken;
-    protected $_error;
-    protected $_errorDescription;
+    protected $responseType;
+    protected $accessToken;
+    protected $expiresIn;
+    protected $tokenType;
+    protected $refreshToken;
+    protected $error;
+    protected $errorDescription;
 
 }

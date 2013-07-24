@@ -16,26 +16,26 @@ use Box\Model\Connection\Token\TokenInterface;
 class Connection extends Model implements ConnectionInterface
 {
 
-    protected $_responseType = "code";
-    protected $_clientId;
-    protected $_clientSecret;
-    protected $_redirectUri;
-    protected $_state;
-    protected $_requestType = "GET";
+    protected $responseType = "code";
+    protected $clientId;
+    protected $clientSecret;
+    protected $redirectUri;
+    protected $state;
+    protected $requestType = "GET";
 
-    protected $_response;
-    protected $_responseClass;
+    protected $response;
+    protected $responseClass;
 
     public function setResponseClass($responseClass = null)
     {
         $this->validateClass($responseClass,'ResponseInterface');
-        $this->_responseClass = $responseClass;
+        $this->responseClass = $responseClass;
         return $this;
     }
 
     public function getResponseClass()
     {
-        return $this->_responseClass;
+        return $this->responseClass;
     }
 
 
@@ -92,79 +92,79 @@ class Connection extends Model implements ConnectionInterface
 
     public function setClientId($clientId = null)
     {
-        $this->_clientId = $clientId;
+        $this->clientId = $clientId;
         return $this;
     }
 
     public function getClientId()
     {
-        return $this->_clientId;
+        return $this->clientId;
     }
 
     public function setClientSecret($clientSecret = null)
     {
-        $this->_clientSecret = $clientSecret;
+        $this->clientSecret = $clientSecret;
         return $this;
     }
 
     public function getClientSecret()
     {
-        return $this->_clientSecret;
+        return $this->clientSecret;
     }
 
     public function setRedirectUri($redirectUri = null)
     {
-        $this->_redirectUri = $redirectUri;
+        $this->redirectUri = $redirectUri;
         return $this;
     }
 
     public function getRedirectUri()
     {
-        return $this->_redirectUri;
+        return $this->redirectUri;
     }
 
     public function setRequestType($requestType = null)
     {
-        $this->_requestType = $requestType;
+        $this->requestType = $requestType;
         return $this;
     }
 
     public function getRequestType()
     {
-        return $this->_requestType;
+        return $this->requestType;
     }
 
     public function setResponse($response = null)
     {
-        $this->_response = $response;
+        $this->response = $response;
         return $this;
     }
 
     public function getResponse()
     {
-        return $this->_response;
+        return $this->response;
     }
 
     public function setResponseType($responseType = null)
     {
-        $this->_responseType = $responseType;
+        $this->responseType = $responseType;
         return $this;
     }
 
     public function getResponseType()
     {
-        return $this->_responseType;
+        return $this->responseType;
     }
 
     public function setState($state = null)
     {
-        $this->_state = $state;
+        $this->state = $state;
         return $this;
     }
 
     public function getState()
     {
-        return $this->_state;
+        return $this->state;
     }
 
 }

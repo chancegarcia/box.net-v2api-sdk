@@ -12,12 +12,12 @@ use Box\Model;
 class Folder
     extends Model implements FolderInterface
 {
-    protected $_type = "folder";
-    protected $_id;
-    protected $_sequenceId;
-    protected $_etag;
-    protected $_name;
-    protected $_createdAt;
+    protected $type = "folder";
+    protected $id;
+    protected $sequenceId;
+    protected $etag;
+    protected $name;
+    protected $createdAt;
     protected $modifiedAt;
     protected $description;
     protected $size;

@@ -21,36 +21,36 @@ class Client extends Model
     CONST TOKEN_URI = "https://www.box.com/api/oauth2/token";
     CONST REVOKE_URI = "https://www.box.com/api/oauth2/revoke";
 
-    protected $_state;
+    protected $state;
 
     /**
      * @var ConnectionInterface
      */
-    protected $_connection;
-    protected $_folders;
-    protected $_files;
+    protected $connection;
+    protected $folders;
+    protected $files;
 
     /**
      * @var TokenInterface
      */
-    protected $_token;
+    protected $token;
 
-    protected $_authorizationCode;
-    protected $_clientId;
-    protected $_clientSecret;
-    protected $_redirectUri;
+    protected $authorizationCode;
+    protected $clientId;
+    protected $clientSecret;
+    protected $redirectUri;
 
-    protected $_deviceId;
-    protected $_deviceName;
+    protected $deviceId;
+    protected $deviceName;
 
 
     /**
      * allow for class injection by using an interface for these classes
      */
-    protected $_folderClass;
-    protected $_fileClass;
-    protected $_connectionClass;
-    protected $_tokenClass;
+    protected $folderClass;
+    protected $fileClass;
+    protected $connectionClass;
+    protected $tokenClass;
 
     public function getAccessToken()
     {
@@ -215,90 +215,90 @@ class Client extends Model
 
     public function setClientId($clientId = null)
     {
-        $this->_clientId = $clientId;
+        $this->clientId = $clientId;
         return $this;
     }
 
     public function getClientId()
     {
-        return $this->_clientId;
+        return $this->clientId;
     }
 
     public function setClientSecret($clientSecret = null)
     {
-        $this->_clientSecret = $clientSecret;
+        $this->clientSecret = $clientSecret;
         return $this;
     }
 
     public function getClientSecret()
     {
-        return $this->_clientSecret;
+        return $this->clientSecret;
     }
 
     public function setRedirectUri($redirectUri = null)
     {
-        $this->_redirectUri = $redirectUri;
+        $this->redirectUri = $redirectUri;
         return $this;
     }
 
     public function getRedirectUri()
     {
-        return $this->_redirectUri;
+        return $this->redirectUri;
     }
 
 
     public function setAuthorizationCode($authorizationCode = null)
     {
-        $this->_authorizationCode = $authorizationCode;
+        $this->authorizationCode = $authorizationCode;
         return $this;
     }
 
     public function getAuthorizationCode()
     {
-        return $this->_authorizationCode;
+        return $this->authorizationCode;
     }
 
     public function setToken($token = null)
     {
-        $this->_token = $token;
+        $this->token = $token;
         return $this;
     }
 
     public function getToken()
     {
-        if (null === $this->_token)
+        if (null === $this->token)
         {
             $tokenClass = $this->getTokenClass();
             $token = new $tokenClass();
-            $this->_token = $token;
+            $this->token = $token;
         }
-        return $this->_token;
+        return $this->token;
     }
 
     public function setTokenClass($tokenClass = null)
     {
         $this->validateClass($tokenClass,'TokenInterface');
-        $this->_tokenClass = $tokenClass;
+        $this->tokenClass = $tokenClass;
         return $this;
     }
 
     public function getTokenClass()
     {
-        return $this->_tokenClass;
+        return $this->tokenClass;
     }
 
     public function setConnectionClass($connectionClass = null)
     {
         $this->validateClass($connectionClass,'ConnectionInterface');
 
-        $this->_connectionClass = $connectionClass;
+        $this->connectionClass = $connectionClass;
 
         return $this;
     }
 
     public function getConnectionClass()
     {
-        return $this->_connectionClass;
+        return $this->connectionClass;
     }
 
     public function setConnection($connection = null)
@@ -307,32 +307,32 @@ class Client extends Model
         {
             throw new Exception("Invalid Class",Exception::INVALID_CLASS);
         }
-        $this->_connection = $connection;
+        $this->connection = $connection;
         return $this;
     }
 
     public function getConnection()
     {
-        if (null === $this->_connection)
+        if (null === $this->connection)
         {
             $connectionClass = $this->getConnectionClass();
             $connection = new $connectionClass();
-            $this->_connection = $connection;
+            $this->connection = $connection;
         }
 
-        return $this->_connection;
+        return $this->connection;
     }
 
     public function setFileClass($fileClass = null)
     {
         $this->validateClass($fileClass,'FileInterface');
-        $this->_fileClass = $fileClass;
+        $this->fileClass = $fileClass;
         return $this;
     }
 
     public function getFileClass()
     {
-        return $this->_fileClass;
+        return $this->fileClass;
     }
 
     /**
@@ -342,36 +342,36 @@ class Client extends Model
      */
     public function setFiles($files = null)
     {
-        $this->_files = $files;
+        $this->files = $files;
         return $this;
     }
 
     public function getFiles()
     {
-        return $this->_files;
+        return $this->files;
     }
 
     public function setFolderClass($folderClass = null)
     {
         $this->validateClass($folderClass,'FolderInterface');
-        $this->_folderClass = $folderClass;
+        $this->folderClass = $folderClass;
         return $this;
     }
 
     public function getFolderClass()
     {
-        return $this->_folderClass;
+        return $this->folderClass;
     }
 
     public function setFolders($folders = null)
     {
-        $this->_folders = $folders;
+        $this->folders = $folders;
         return $this;
     }
 
     public function getFolders()
     {
-        return $this->_folders;
+        return $this->folders;
     }
 
 
@@ -386,35 +386,35 @@ class Client extends Model
 
     public function setDeviceId($deviceId = null)
     {
-        $this->_deviceId = $deviceId;
+        $this->deviceId = $deviceId;
         return $this;
     }
 
     public function getDeviceId()
     {
-        return $this->_deviceId;
+        return $this->deviceId;
     }
 
     public function setDeviceName($deviceName = null)
     {
-        $this->_deviceName = $deviceName;
+        $this->deviceName = $deviceName;
         return $this;
     }
 
     public function getDeviceName()
     {
-        return $this->_deviceName;
+        return $this->deviceName;
     }
 
     public function setState($state = null)
     {
-        $this->_state = $state;
+        $this->state = $state;
         return $this;
     }
 
     public function getState()
     {
-        return $this->_state;
+        return $this->state;
     }
 
 

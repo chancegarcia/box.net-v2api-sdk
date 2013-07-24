@@ -16,29 +16,29 @@ class Exception
     const INVALID_CLASS = "Invalid Class";
     const INVALID_INPUT = "Invalid Input";
 
-    protected $_error;
-    protected $_errorDescription;
+    protected $error;
+    protected $errorDescription;
 
     public function setError($error = null)
     {
-        $this->_error = $error;
+        $this->error = $error;
         return $this;
     }
 
     public function getError()
     {
-        return $this->_error;
+        return $this->error;
     }
 
     public function setErrorDescription($errorDescription = null)
     {
-        $this->_errorDescription = $errorDescription;
+        $this->errorDescription = $errorDescription;
         return $this;
     }
 
     public function getErrorDescription()
     {
-        return $this->_errorDescription;
+        return $this->errorDescription;
     }
 
 
