@@ -37,6 +37,11 @@ class Client extends Model
     protected $files;
 
     /**
+     * @var Folder
+     */
+    protected $root;
+
+    /**
      * @var TokenInterface
      */
     protected $token;
@@ -53,10 +58,10 @@ class Client extends Model
     /**
      * allow for class injection by using an interface for these classes
      */
-    protected $folderClass = "Box\\Model\\Folder";
-    protected $fileClass = "Box\\Model\\File";
-    protected $connectionClass = "Box\\Model\\Connection";
-    protected $tokenClass = "Box\\Model\\Connection\\Token";
+    protected $folderClass = 'Box\Model\Folder';
+    protected $fileClass = 'Box\Model\File';
+    protected $connectionClass = 'Box\Model\Connection';
+    protected $tokenClass = 'Box\Model\Connection\Token';
 
 
     /**
@@ -109,7 +114,16 @@ class Client extends Model
             return $this->folders;
         }
 
-        $root = $this->getFolderFromBox();
+        $root = $this->getRoot();
+        if (null === $root)
+        {
+            $root = $this->getFolderFromBox();
+            $this->setRoot($root);
+        }
+
+        // not sure if I should add recursive parsing of folder/items. stubbing out for now.
+        return null;
+
     }
 
     public function getFolderFromBox($id=0)
@@ -136,9 +150,6 @@ class Client extends Model
             $this->error($data);
         }
 
-        /**
-         * @var Folder|FolderInterface $folder
-         */
         $folder = $this->getNewFolder();
         $folder->mapBoxToClass($jsonData);
 
@@ -496,6 +507,23 @@ class Client extends Model
     public function getState()
     {
         return $this->state;
+    }
+
+    /**
+     * @param \Box\Model\Folder\Folder $root
+     */
+    public function setRoot($root = null)
+    {
+        $this->root = $root;
+        return $this;
+    }
+
+    /**
+     * @return \Box\Model\Folder\Folder
+     */
+    public function getRoot()
+    {
+        return $this->root;
     }
 
 
