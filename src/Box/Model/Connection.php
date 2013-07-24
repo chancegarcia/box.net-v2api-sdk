@@ -9,7 +9,7 @@
  */
 
 namespace Box\Model;
-use Box\Model;
+use Box\Model\Model;
 use Box\Exception;
 use Box\Model\Connection\Token\TokenInterface;
 use Box\Model\Connection\ConnectionInterface;

@@ -6,9 +6,9 @@
  * @copyright   (C)Copyright 2013 chancegarcia.com
  */
 
-namespace Box\Model;
+namespace Box\Model\Folder;
 
-use Box\Model;
+use Box\Model\Model;
 use Box\Model\Folder\FolderInterface;
 class Folder
     extends Model implements FolderInterface

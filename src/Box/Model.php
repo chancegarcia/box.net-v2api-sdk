@@ -6,7 +6,7 @@
  * @copyright   (C)Copyright 2013 chancegarcia.com
  */
 
-namespace Box;
+namespace Box\Model;
 
 use Box\Exception;
 use Box\Model\Connection;
@@ -16,6 +16,18 @@ use Box\Model\Connection\Response;
 
 class Model
 {
+    /**
+     * @param $data array containing error and error description
+     * @throws \Box\Exception
+     */
+    public function error($data)
+    {
+        $exception = new Exception($data['error']);
+        $exception->setError($data['error']);
+        $exception->setErrorDescription($data['error_description']);
+        throw $exception;
+    }
+
     /**
      * @param string $class
      * @param  string $classType
