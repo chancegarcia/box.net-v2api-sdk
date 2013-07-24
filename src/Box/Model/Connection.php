@@ -8,10 +8,11 @@
  * connection assumes a valid access token
  */
 
-namespace Box\Model\Connection;
+namespace Box\Model;
 use Box\Model;
 use Box\Exception;
 use Box\Model\Connection\Token\TokenInterface;
+use Box\Model\Connection\ConnectionInterface;
 
 class Connection extends Model implements ConnectionInterface
 {

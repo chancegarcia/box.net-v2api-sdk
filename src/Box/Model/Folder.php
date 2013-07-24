@@ -6,12 +6,15 @@
  * @copyright   (C)Copyright 2013 chancegarcia.com
  */
 
-namespace Box\Model\Folder;
+namespace Box\Model;
 
 use Box\Model;
+use Box\Model\Folder\FolderInterface;
 class Folder
     extends Model implements FolderInterface
 {
+    CONST URI =  'https://api.box.com/2.0/folders';
+
     protected $type = "folder";
     protected $id;
     protected $sequenceId;
@@ -33,9 +36,23 @@ class Folder
     protected $syncState;
     protected $hasCollaborations;
 
+    /**
+     * convenience function
+     * @return mixed
+     */
+    public function getItems()
+    {
+        return $this->getItemCollection();
+    }
+
     public function getId()
     {
-        // TODO: Implement getId() method.
+        if (null === $this->id)
+        {
+            $this->setId(0);
+        }
+
+        return $this->id;
     }
 
     public function setId($id = null)

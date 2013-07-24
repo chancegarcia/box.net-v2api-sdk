@@ -6,7 +6,7 @@
  * @copyright   (C)Copyright 2013 chancegarcia.com
  */
 
-namespace Box\Client;
+namespace Box\Model;
 
 use Box\Exception;
 use Box\Model\Connection\ConnectionInterface;
@@ -27,6 +27,9 @@ class Client extends Model
      * @var ConnectionInterface
      */
     protected $connection;
+    /**
+     * @var array of folder items indexed by the folder ID
+     */
     protected $folders;
     protected $files;
 
@@ -51,6 +54,50 @@ class Client extends Model
     protected $fileClass;
     protected $connectionClass;
     protected $tokenClass;
+
+
+    public function getNewFolder()
+    {
+        $sFolderClass = $this->getFolderClass();
+
+        $oFolder = new $sFolderClass();
+
+        return $oFolder;
+    }
+
+    /**
+     * @param int $id use 0 for returning all folders
+     * @return array|null|\Box\Model\Folder returns null if no such folder exists
+     */
+    public function getFolder($id=0)
+    {
+        if (0 == $id)
+        {
+            return $this->getFolders();
+        }
+
+        if (!array_key_exists($id,$this->getFolders()))
+        {
+            return null;
+        }
+
+        $folders = $this->getFolders();
+        $folder = $folders[$id];
+        return $folder;
+
+    }
+
+    public function getFolderItems($id=0)
+    {
+        $folder = $this->getFolder($id);
+
+        return $folder->getItems();
+    }
+
+    public function createNewFolder($name,$parent=array('id'=>0))
+    {
+
+    }
 
     public function getAccessToken()
     {
@@ -372,16 +419,6 @@ class Client extends Model
     public function getFolders()
     {
         return $this->folders;
-    }
-
-
-    public function getFolder()
-    {
-        $sFolderClass = $this->getFolderClass();
-
-        $oFolder = new $sFolderClass();
-
-        return $oFolder;
     }
 
     public function setDeviceId($deviceId = null)
