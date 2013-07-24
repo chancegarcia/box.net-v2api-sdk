@@ -75,4 +75,15 @@ class Model
         $boxVar = implode("_",$aTokens);
         return $boxVar;
     }
+
+    public function mapBoxToClass($aData)
+    {
+        foreach ($aData as $k=>$v)
+        {
+            $sClassProp = $this->toClassVar($k);
+            $this->{$sClassProp} = $v;
+        }
+
+        return $this;
+    }
 }
