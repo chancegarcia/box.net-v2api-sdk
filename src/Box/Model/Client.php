@@ -10,10 +10,13 @@ namespace Box\Model;
 
 use Box\Exception;
 use Box\Model\Connection\ConnectionInterface;
-use Box\Model\File;
-use Box\Model\Folder;
-use Box\Model;
+use Box\Model\File\FileInterface;
+use Box\Model\Folder\FolderInterface;
+use Box\Model\Connection;
+use Box\Model\Connection\Token\Token;
+use Box\Model\Model;
 use Box\Model\Connection\Token\TokenInterface;
+use Box\Model\Folder\Folder;
 
 class Client extends Model
 {
@@ -50,12 +53,15 @@ class Client extends Model
     /**
      * allow for class injection by using an interface for these classes
      */
-    protected $folderClass;
-    protected $fileClass;
-    protected $connectionClass;
-    protected $tokenClass;
+    protected $folderClass = "Box\\Model\\Folder";
+    protected $fileClass = "Box\\Model\\File";
+    protected $connectionClass = "Box\\Model\\Connection";
+    protected $tokenClass = "Box\\Model\\Connection\\Token";
 
 
+    /**
+     * @return Folder|FolderInterface
+     */
     public function getNewFolder()
     {
         $sFolderClass = $this->getFolderClass();
@@ -67,28 +73,83 @@ class Client extends Model
 
     /**
      * @param int $id use 0 for returning all folders
-     * @return array|null|\Box\Model\Folder returns null if no such folder exists
+     * @param bool $retrieve if no folder is found, attempt to retrieve from box
+     * @return array|null|Folder returns null if no such folder exists and retrieve is false
      */
-    public function getFolder($id=0)
+    public function getFolder($id=0, $retrieve=true)
     {
+        $folders = $this->getFolders($retrieve);
+
         if (0 == $id)
         {
-            return $this->getFolders();
+            return $folders;
         }
 
-        if (!array_key_exists($id,$this->getFolders()))
+        if (!array_key_exists($id,$folders))
         {
-            return null;
+            if (!$retrieve)
+            {
+                return null;
+            }
+            $folder = $this->getFolderFromBox($id);
+            array_push($folders,$folder);
+            $this->setFolders($folders);
         }
 
-        $folders = $this->getFolders();
+
         $folder = $folders[$id];
         return $folder;
 
     }
 
+    public function getFolders($retrieve=true)
+    {
+        if (!$retrieve)
+        {
+            return $this->folders;
+        }
+
+        $root = $this->getFolderFromBox();
+    }
+
+    public function getFolderFromBox($id=0)
+    {
+        $uri = Folder::URI . '/' . $id; // all class constant URIs do not end in a slash
+
+        $connection = $this->getConnection();
+
+        $data = $connection->query($uri);
+
+        $jsonData = json_decode($data);
+        /**
+         * API docs says error is thrown if folder doesn't exist or no access.
+         * no example of error to parse by. Have to assume success until can modify
+         */
+
+        /**
+         * error decoding json data
+         */
+        if (null === $jsonData)
+        {
+            $data['error'] = "unable to decode json data";
+            $data['error_description'] = $jsonData;
+            $this->error($data);
+        }
+
+        /**
+         * @var Folder|FolderInterface $folder
+         */
+        $folder = $this->getNewFolder();
+        $folder->mapBoxToClass($jsonData);
+
+        return $folder;
+    }
+
     public function getFolderItems($id=0)
     {
+        /**
+         * @var Folder|FolderInterface $folder
+         */
         $folder = $this->getFolder($id);
 
         return $folder->getItems();
@@ -207,18 +268,6 @@ class Client extends Model
         $data = $connection->post(self::REVOKE_URI,$params);
 
         return $data;
-    }
-
-    /**
-     * @param $data
-     * @throws \Box\Exception
-     */
-    public function error($data)
-    {
-        $exception = new Exception($data['error']);
-        $exception->setError($data['error']);
-        $exception->setErrorDescription($data['error_description']);
-        throw $exception;
     }
 
     public function auth()
@@ -414,11 +463,6 @@ class Client extends Model
     {
         $this->folders = $folders;
         return $this;
-    }
-
-    public function getFolders()
-    {
-        return $this->folders;
     }
 
     public function setDeviceId($deviceId = null)
