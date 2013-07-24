@@ -17,7 +17,7 @@ use Box\Model\Connection\Response;
 class Model
 {
     /**
-     * @param $data array containing error and error description
+     * @param $data array containing error and error_description keys
      * @throws \Box\Exception
      */
     public function error($data)

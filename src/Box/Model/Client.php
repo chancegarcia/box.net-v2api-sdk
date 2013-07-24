@@ -27,7 +27,7 @@ class Client extends Model
     protected $state;
 
     /**
-     * @var ConnectionInterface
+     * @var Connection|ConnectionInterface
      */
     protected $connection;
     /**
@@ -42,7 +42,7 @@ class Client extends Model
     protected $root;
 
     /**
-     * @var TokenInterface
+     * @var Token|TokenInterface
      */
     protected $token;
 
@@ -97,14 +97,22 @@ class Client extends Model
                 return null;
             }
             $folder = $this->getFolderFromBox($id);
-            array_push($folders,$folder);
-            $this->setFolders($folders);
+            $this->addFolder($folder);
         }
 
 
         $folder = $folders[$id];
         return $folder;
 
+    }
+
+    public function addFolder($folder)
+    {
+        $folders = $this->getFolders();
+        array_push($folders,$folder);
+        $this->setFolders($folders);
+
+        return $this;
     }
 
     public function getFolders($retrieve=true)
@@ -136,7 +144,7 @@ class Client extends Model
 
         $jsonData = json_decode($data);
         /**
-         * API docs says error is thrown if folder doesn't exist or no access.
+         * API docs says error is thrown if folder does not exist or no access.
          * no example of error to parse by. Have to assume success until can modify
          */
 
@@ -170,6 +178,63 @@ class Client extends Model
     {
         // stubbing this for now too
         return null;
+    }
+
+
+    /**
+     * @param Folder       $originalFolder
+     * @param Folder|array $parent
+     * @param string       $name
+     * @param bool         $addToFolders
+     * @return \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface
+     * @internal param $destinationId
+     * @throws Exception
+     */
+    public function copyBoxFolder($originalFolder, $parent, $name=null, $addToFolders=true)
+    {
+        if (!$originalFolder instanceof FolderInterface)
+        {
+            $this->error(array('error'=>'Folder or FolderInterface expected','error_description'=>$originalFolder));
+        }
+
+        $uri = Folder::URI . '/' . $originalFolder->getId() . '/copy';
+
+        if (is_array($parent))
+        {
+            $folder = $this->getNewFolder();
+            $folder->mapBoxToClass($parent);
+            $parent = $folder;
+        }
+
+        if (!$parent instanceof FolderInterface)
+        {
+            $this->error(array('error'=>'Folder or FolderInterface expected','error_description'=>$parent));
+        }
+
+        $params['parent'] = array('id'=>$parent->getId());
+        if (null !== $name)
+        {
+            $params['name'] = $name;
+        }
+
+        $connection = $this->getConnection();
+
+        $data = $connection->post($uri,$params);
+
+        if (array_key_exists('error',$data))
+        {
+            $this->error($data);
+        }
+
+        $copy = $this->getNewFolder();
+        $copy->mapBoxToClass($data);
+
+        if ($addToFolders)
+        {
+            $this->addFolder($copy);
+        }
+
+        return $copy;
     }
 
     public function getAccessToken()
