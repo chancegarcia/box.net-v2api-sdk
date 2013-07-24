@@ -48,17 +48,44 @@ class Connection extends Model implements ConnectionInterface
     }
 
     /**
+     * @return resource
+     */
+    public function initCurl()
+    {
+        $ch = curl_init();
+        $this->initCurlOpts($ch);
+        return $ch;
+    }
+
+    /**
+     * @param $ch
+     */
+    public function initCurlOpts($ch)
+    {
+        curl_setopt($ch , CURLOPT_RETURNTRANSFER , true);
+        curl_setopt($ch , CURLOPT_SSL_VERIFYPEER , false);
+    }
+
+    /**
+     * @param $ch
+     * @return mixed
+     */
+    public function getCurlData($ch)
+    {
+        $data = curl_exec($ch);
+        return $data;
+    }
+
+    /**
      * GET
      * @param $uri
      * @return mixed
      */
     public function query($uri)
     {
-        $ch = curl_init();
+        $ch = $this->initCurl();
         curl_setopt($ch, CURLOPT_URL, $uri);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        $data = curl_exec($ch);
+        $data = $this->getCurlData($ch);
         curl_close($ch);
 
         return $data;
@@ -68,6 +95,7 @@ class Connection extends Model implements ConnectionInterface
      * POST
      * @param       $uri
      * @param array $params
+     * @throws \Box\Exception
      * @return mixed
      */
     public function post($uri,array $params = array())
@@ -77,13 +105,11 @@ class Connection extends Model implements ConnectionInterface
             throw new Exception("params must be an array",Exception::INVALID_INPUT);
         }
 
-        $ch = curl_init();
+        $ch = $this->initCurl();
         curl_setopt($ch, CURLOPT_URL, $uri);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-        $data = curl_exec($ch);
+        $data = $this->getCurlData($ch);
         curl_close($ch);
 
         return $data;
