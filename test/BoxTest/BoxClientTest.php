@@ -8,7 +8,7 @@
  */
 
 namespace BoxTest;
-use Box\Client\Client;
+use Box\Model\Client\Client;
 
 class BoxClientTest extends \PHPUnit_Framework_TestCase {
 

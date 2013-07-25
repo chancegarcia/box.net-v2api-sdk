@@ -8,7 +8,7 @@
 
 namespace Box\Model\Connection\Token;
 use Box\Model\Connection\Response;
-use Box\Model;
+use Box\Model\Model;
 
 class Token extends Model implements TokenInterface
 {

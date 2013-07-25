@@ -9,10 +9,6 @@
 namespace Box\Model;
 
 use Box\Exception\Exception;
-use Box\Model\Connection;
-use Box\Model\File;
-use Box\Model\Folder;
-use Box\Model\Connection\Response;
 
 class Model
 {

@@ -7,8 +7,7 @@
 
 namespace Box\Exception;
 
-class Exception
-    extends \Exception
+class Exception extends \Exception
 {
 
     const INVALID_CLASS_TYPE = "Invalid Class Type";
