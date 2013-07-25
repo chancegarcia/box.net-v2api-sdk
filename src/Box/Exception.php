@@ -5,7 +5,7 @@
  * @copyright   (C)Copyright 2013 chancegarcia.com
  */
 
-namespace Box;
+namespace Box\Exception;
 
 class Exception
     extends \Exception

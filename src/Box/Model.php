@@ -8,7 +8,7 @@
 
 namespace Box\Model;
 
-use Box\Exception;
+use Box\Exception\Exception;
 use Box\Model\Connection;
 use Box\Model\File;
 use Box\Model\Folder;
@@ -18,7 +18,7 @@ class Model
 {
     /**
      * @param $data array containing error and error_description keys
-     * @throws \Box\Exception
+     * @throws \Box\Exception\Exception
      */
     public function error($data)
     {
@@ -31,7 +31,7 @@ class Model
     /**
      * @param string $class
      * @param  string $classType
-     * @throws \Box\Exception
+     * @throws \Box\Exception\Exception
      * @return bool returns true if validation passes. Throws exception if unable to validate or validation doesn't pass
      */
     public function validateClass($class,$classType)

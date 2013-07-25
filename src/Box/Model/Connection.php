@@ -8,9 +8,9 @@
  * connection assumes a valid access token
  */
 
-namespace Box\Model;
+namespace Box\Model\Connection;
 use Box\Model\Model;
-use Box\Exception;
+use Box\Exception\Exception;
 use Box\Model\Connection\Token\TokenInterface;
 use Box\Model\Connection\ConnectionInterface;
 use Box\Model\Connection\Response\ResponseInterface;
@@ -124,7 +124,7 @@ class Connection extends Model implements ConnectionInterface
      * POST
      * @param       $uri
      * @param array $params
-     * @throws \Box\Exception
+     * @throws \Box\Exception\Exception
      * @return mixed
      */
     public function post($uri, $params = array())

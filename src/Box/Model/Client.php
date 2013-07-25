@@ -6,13 +6,13 @@
  * @copyright   (C)Copyright 2013 chancegarcia.com
  */
 
-namespace Box\Model;
+namespace Box\Model\Client;
 
-use Box\Exception;
+use Box\Exception\Exception;
 use Box\Model\Connection\ConnectionInterface;
 use Box\Model\File\FileInterface;
 use Box\Model\Folder\FolderInterface;
-use Box\Model\Connection;
+use Box\Model\Connection\Connection;
 use Box\Model\Connection\Token\Token;
 use Box\Model\Model;
 use Box\Model\Connection\Token\TokenInterface;
