@@ -8,7 +8,10 @@
 
 namespace Box\Model\Connection\Response;
 
-class Response
+use Box\Model\Model;
+use Box\Model\Connection\Response\ResponseInterface;
+
+class Response extends Model implements ResponseInterface
 {
     protected $responseType;
     protected $accessToken;
