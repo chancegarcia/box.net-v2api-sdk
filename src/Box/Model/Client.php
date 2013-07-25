@@ -189,12 +189,13 @@ class Client extends Model
     /**
      * @param Folder|FolderInterface     $folder
      * @param bool $ifMatchHeader
+     * @return mixed
      */
     public function updateBoxFolder($folder,$ifMatchHeader=false)
     {
         $uri = Folder::URI . '/' . $folder->getId();
 
-        // make param array from folder object. stubbing for now
+        // @todo make param array from folder object. stubbing for now
         $params = array();
 
         // @todo implement If-Match header logic
