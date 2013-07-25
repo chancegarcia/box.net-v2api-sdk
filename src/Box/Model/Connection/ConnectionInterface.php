@@ -15,11 +15,12 @@ interface ConnectionInterface
 
     public function connect();
     public function query($uri);
-    public function post($uri,array $params = array());
+    public function post($uri, $params = array());
     public function initAdditionalCurlOpts($ch);
     public function setCurlOpts($curlOpts = null);
     public function getCurlOpts();
     public function initCurl();
     public function initCurlOpts($ch);
     public function getCurlData($ch);
+    public function put($uri, $params = array());
 }

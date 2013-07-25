@@ -105,6 +105,21 @@ class Connection extends Model implements ConnectionInterface
         return $data;
     }
 
+    public function put($uri, $params = array())
+    {
+        $ch = $this->initCurl();
+        $ch = $this->initCurlOpts($ch);
+        curl_setopt($ch, CURLOPT_URL, $uri);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+        $ch = $this->initAdditionalCurlOpts($ch);
+        $data = $this->getCurlData($ch);
+        curl_close($ch);
+
+        return $data;
+
+    }
+
     /**
      * POST
      * @param       $uri
@@ -112,7 +127,7 @@ class Connection extends Model implements ConnectionInterface
      * @throws \Box\Exception
      * @return mixed
      */
-    public function post($uri,array $params = array())
+    public function post($uri, $params = array())
     {
         if (!is_array($params))
         {
