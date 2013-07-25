@@ -186,6 +186,38 @@ class Client extends Model
         return null;
     }
 
+    /**
+     * @param Folder|FolderInterface     $folder
+     * @param bool $ifMatchHeader
+     */
+    public function updateBoxFolder($folder,$ifMatchHeader=false)
+    {
+        $uri = Folder::URI . '/' . $folder->getId();
+
+        // make param array from folder object. stubbing for now
+        $params = array();
+
+        // @todo implement If-Match header logic
+
+        $connection = $this->getConnection();
+        $connection = $this->setConnectionAuthHeader($connection);
+        $data = $connection->put($uri,$params);
+
+        $jsonData = json_decode($data);
+
+        /**
+         * error decoding json data
+         */
+        if (null === $jsonData)
+        {
+            $data['error'] = "unable to decode json data";
+            $data['error_description'] = $jsonData;
+            $this->error($data);
+        }
+
+        return $data; // inconsistent? figure out what return is needed, if any
+    }
+
 
     /**
      * @param Folder       $originalFolder
