@@ -13,7 +13,13 @@ use Box\Model\Model;
 use Box\Exception;
 use Box\Model\Connection\Token\TokenInterface;
 use Box\Model\Connection\ConnectionInterface;
+use Box\Model\Connection\Response\ResponseInterface;
+use Box\Model\Connection\Response\Response;
 
+/**
+ * Class Connection
+ * @package Box\Model
+ */
 class Connection extends Model implements ConnectionInterface
 {
 
@@ -25,20 +31,12 @@ class Connection extends Model implements ConnectionInterface
     protected $requestType = "GET";
 
     protected $response;
-    protected $responseClass;
+    protected $responseClass='Box\Model\Connection\Response';
 
-    public function setResponseClass($responseClass = null)
-    {
-        $this->validateClass($responseClass,'ResponseInterface');
-        $this->responseClass = $responseClass;
-        return $this;
-    }
-
-    public function getResponseClass()
-    {
-        return $this->responseClass;
-    }
-
+    /**
+     * @var array array of options with the options as the key and the option values as the value
+     */
+    protected $curlOpts=array();
 
     // relooking over auth flow, we have to assume app is already authorized externally. rewrite to use tokens for connection
     // may need to store the tokens
@@ -64,6 +62,7 @@ class Connection extends Model implements ConnectionInterface
     {
         curl_setopt($ch , CURLOPT_RETURNTRANSFER , true);
         curl_setopt($ch , CURLOPT_SSL_VERIFYPEER , false);
+        return $ch;
     }
 
     /**
@@ -76,6 +75,19 @@ class Connection extends Model implements ConnectionInterface
         return $data;
     }
 
+    public function initAdditionalCurlOpts($ch)
+    {
+        $opts = $this->getCurlOpts();
+        if (0 != count($opts))
+        {
+            foreach ($opts as $opt=>$optValue)
+            {
+                curl_setopt($ch, constant($opt), $optValue);
+            }
+        }
+        return $ch;
+    }
+
     /**
      * GET
      * @param $uri
@@ -84,7 +96,9 @@ class Connection extends Model implements ConnectionInterface
     public function query($uri)
     {
         $ch = $this->initCurl();
+        $ch = $this->initCurlOpts($ch);
         curl_setopt($ch, CURLOPT_URL, $uri);
+        $ch = $this->initAdditionalCurlOpts($ch);
         $data = $this->getCurlData($ch);
         curl_close($ch);
 
@@ -106,16 +120,50 @@ class Connection extends Model implements ConnectionInterface
         }
 
         $ch = $this->initCurl();
+        $ch = $this->initCurlOpts($ch);
         curl_setopt($ch, CURLOPT_URL, $uri);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
+        $ch = $this->initAdditionalCurlOpts($ch);
         $data = $this->getCurlData($ch);
         curl_close($ch);
 
         return $data;
     }
 
+    /**
+     * @param array $curlOpts
+     * @return Connection|ConnectionInterface
+     */
+    public function setCurlOpts($curlOpts = null)
+    {
+        if (!is_array($curlOpts))
+        {
+            $curlOpts = array($curlOpts);
+        }
+        $this->curlOpts = $curlOpts;
+        return $this;
+    }
 
+    /**
+     * @return array
+     */
+    public function getCurlOpts()
+    {
+        return $this->curlOpts;
+    }
+
+    public function setResponseClass($responseClass = null)
+    {
+        $this->validateClass($responseClass,'ResponseInterface');
+        $this->responseClass = $responseClass;
+        return $this;
+    }
+
+    public function getResponseClass()
+    {
+        return $this->responseClass;
+    }
 
     public function setClientId($clientId = null)
     {

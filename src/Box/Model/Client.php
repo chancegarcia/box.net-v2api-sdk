@@ -18,6 +18,11 @@ use Box\Model\Model;
 use Box\Model\Connection\Token\TokenInterface;
 use Box\Model\Folder\Folder;
 
+/**
+ * Class Client
+ * @package Box\Model
+ * @todo implement getBoxFolderCollaborations in case we need to implement copy for collaborations too (unsure yet, depends if we find that collaborators aren't copied)
+ */
 class Client extends Model
 {
     CONST AUTH_URI = "https://www.box.com/api/oauth2/authorize";
@@ -139,6 +144,7 @@ class Client extends Model
         $uri = Folder::URI . '/' . $id; // all class constant URIs do not end in a slash
 
         $connection = $this->getConnection();
+        $connection = $this->setConnectionAuthHeader($connection);
 
         $data = $connection->query($uri);
 
@@ -218,6 +224,7 @@ class Client extends Model
         }
 
         $connection = $this->getConnection();
+        $connection = $this->setConnectionAuthHeader($connection);
 
         $data = $connection->post($uri,$params);
 
@@ -385,6 +392,16 @@ class Client extends Model
 
         return $uri;
     }
+
+    /**
+     * @param $connection Connection
+     * @return Connection
+     */
+    public function setConnectionAuthHeader($connection)
+    {
+        $connection->setCurlOpts(array('CURLOPT_HTTPHEADER' => $this->getAuthorizationHeader()));
+        return $connection;
+        }
 
     public function setClientId($clientId = null)
     {
@@ -591,6 +608,5 @@ class Client extends Model
     {
         return $this->root;
     }
-
 
 }
