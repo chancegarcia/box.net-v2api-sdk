@@ -56,8 +56,8 @@ class Client extends Model
     protected $clientSecret;
     protected $redirectUri;
 
-    protected $deviceId;
-    protected $deviceName;
+    protected $deviceId = null;
+    protected $deviceName = null;
 
 
     /**
