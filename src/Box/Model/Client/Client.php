@@ -417,7 +417,7 @@ class Client extends Model
         $params['state'] = $state;
 
         $query = $this->buildQuery($params);
-        $uri .= '?' . $query;
+        $uri .= $query;
 
         $redirectUri = $this->getRedirectUri();
 
