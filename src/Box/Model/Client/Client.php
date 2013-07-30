@@ -148,7 +148,7 @@ class Client extends Model
 
         $data = $connection->query($uri);
 
-        $jsonData = json_decode($data);
+        $jsonData = json_decode($data,true);
         /**
          * API docs says error is thrown if folder does not exist or no access.
          * no example of error to parse by. Have to assume success until can modify
@@ -204,7 +204,7 @@ class Client extends Model
         $connection = $this->setConnectionAuthHeader($connection);
         $data = $connection->put($uri,$params);
 
-        $jsonData = json_decode($data);
+        $jsonData = json_decode($data,true);
 
         /**
          * error decoding json data
@@ -261,7 +261,7 @@ class Client extends Model
 
         $json = $connection->post($uri,$params);
 
-        $data = json_decode($json);
+        $data = json_decode($json,true);
 
         if (array_key_exists('error',$data))
         {
@@ -295,7 +295,7 @@ class Client extends Model
 
         $json = $connection->post(self::TOKEN_URI,$params);
 
-        $data = json_decode($json);
+        $data = json_decode($json,true);
 
         if (array_key_exists('error',$data))
         {
@@ -335,7 +335,7 @@ class Client extends Model
         $connection = $this->getConnection();
 
         $json = $connection->post(self::TOKEN_URI,$params);
-        $data = json_decode($json);
+        $data = json_decode($json,true);
 
         if (array_key_exists('error',$data))
         {
@@ -386,7 +386,7 @@ class Client extends Model
         $connection = $this->getConnection();
 
         $json = $connection->post(self::REVOKE_URI,$params);
-        $data = json_decode($json);
+        $data = json_decode($json,true);
 
         return $data;
     }
