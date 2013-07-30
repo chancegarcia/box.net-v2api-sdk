@@ -63,10 +63,10 @@ class Client extends Model
     /**
      * allow for class injection by using an interface for these classes
      */
-    protected $folderClass = 'Box\Model\Folder';
-    protected $fileClass = 'Box\Model\File';
-    protected $connectionClass = 'Box\Model\Connection';
-    protected $tokenClass = 'Box\Model\Connection\Token';
+    protected $folderClass = 'Box\Model\Folder\Folder';
+    protected $fileClass = 'Box\Model\File\File';
+    protected $connectionClass = 'Box\Model\Connection\Connection';
+    protected $tokenClass = 'Box\Model\Connection\Token\Token';
 
 
     /**
