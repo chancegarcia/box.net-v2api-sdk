@@ -259,7 +259,9 @@ class Client extends Model
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $data = $connection->post($uri,$params);
+        $json = $connection->post($uri,$params);
+
+        $data = json_decode($json);
 
         if (array_key_exists('error',$data))
         {
@@ -291,9 +293,9 @@ class Client extends Model
             $params['redirect_uri'] = $redirectUri;
         }
 
+        $json = $connection->post(self::TOKEN_URI,$params);
 
-
-        $data = $connection->post(self::TOKEN_URI,$params);
+        $data = json_decode($json);
 
         if (array_key_exists('error',$data))
         {
@@ -332,7 +334,8 @@ class Client extends Model
 
         $connection = $this->getConnection();
 
-        $data = $connection->post(self::TOKEN_URI,$params);
+        $json = $connection->post(self::TOKEN_URI,$params);
+        $data = json_decode($json);
 
         if (array_key_exists('error',$data))
         {
@@ -382,7 +385,8 @@ class Client extends Model
 
         $connection = $this->getConnection();
 
-        $data = $connection->post(self::REVOKE_URI,$params);
+        $json = $connection->post(self::REVOKE_URI,$params);
+        $data = json_decode($json);
 
         return $data;
     }
