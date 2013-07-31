@@ -436,7 +436,10 @@ class Client extends Model
      */
     public function setConnectionAuthHeader($connection)
     {
-        $connection->setCurlOpts(array('CURLOPT_HTTPHEADER' => $this->getAuthorizationHeader()));
+        $headers = array($this->getAuthorizationHeader());
+        // header opt will require a merge with other headers to not overwrite.
+        // @todo refactor to allow additional headers with auth header
+        $connection->setCurlOpts(array('CURLOPT_HTTPHEADER' => $headers));
         return $connection;
         }
 

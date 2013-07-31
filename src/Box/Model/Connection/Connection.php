@@ -82,7 +82,30 @@ class Connection extends Model implements ConnectionInterface
         {
             foreach ($opts as $opt=>$optValue)
             {
-                curl_setopt($ch, constant($opt), $optValue);
+                // CURLOPT_HTTPHEADER, CURLOPT_QUOTE, CURLOPT_HTTP200ALIASES and CURLOPT_POSTQUOTE require array or object arguments
+
+                switch ($opt)
+                {
+                    case "CURLOPT_HTTPHEADER":
+                    case "CURLOPT_QUOTE":
+                    case "CURLOPT_HTTP200ALIASES":
+                    case "CURLOPT_POSTQUOTE":
+                        // throw exception so it doesn't throw a warning
+                        if (!is_array($optValue))
+                        {
+                            $this->error(
+                                array(
+                                    'error' => 'curl opt (' . $opt . ') needs to be an array or object',
+                                    'error_description' => 'curl opt (' . $opt . ') needs to be an array or object'
+                                )
+                            );
+                        }
+                        // no need to break, continue to default
+                    default:
+                        curl_setopt($ch, constant($opt), $optValue);
+                        break;
+                }
+
             }
         }
         return $ch;
