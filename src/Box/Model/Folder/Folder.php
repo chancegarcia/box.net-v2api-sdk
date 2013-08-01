@@ -10,8 +10,7 @@ namespace Box\Model\Folder;
 
 use Box\Model\Model;
 use Box\Model\Folder\FolderInterface;
-class Folder
-    extends Model implements FolderInterface
+class Folder extends Model implements FolderInterface
 {
     CONST URI =  'https://api.box.com/2.0/folders';
 

@@ -17,6 +17,8 @@ use Box\Model\Connection\Token\Token;
 use Box\Model\Model;
 use Box\Model\Connection\Token\TokenInterface;
 use Box\Model\Folder\Folder;
+use Box\Model\Collaboration\Collaboration;
+use Box\Model\Collaboration\CollaborationInterface;
 
 /**
  * Class Client
@@ -40,6 +42,10 @@ class Client extends Model
      */
     protected $folders;
     protected $files;
+    /**
+     * @var array of collaborations
+     */
+    protected $collaborations;
 
     /**
      * @var Folder
@@ -67,6 +73,7 @@ class Client extends Model
     protected $fileClass = 'Box\Model\File\File';
     protected $connectionClass = 'Box\Model\Connection\Connection';
     protected $tokenClass = 'Box\Model\Connection\Token\Token';
+    protected $collaborationClass = 'Box\Model\Collaboration\Collaboration';
 
 
     /**
@@ -219,6 +226,44 @@ class Client extends Model
         return $data; // inconsistent? figure out what return is needed, if any
     }
 
+    /**
+     * @param null|\Box\Model\Folder\Folder $folder
+     * @return mixed raw json data as an array
+     */
+    public function getFolderCollaborations($folder = null)
+    {
+        if (!$folder instanceof FolderInterface)
+        {
+            $err['error'] = 'sdk_unexpected_type';
+            $err['error_description'] = "expecting FolderInterface class. given (" . var_export($folder,true) . ")";
+            $this->error($err);
+        }
+        $folderId = $folder->getId();
+        $uri = Folder::URI . '/' . $folderId . '/collaborations';
+
+        $connection = $this->getConnection();
+        $connection = $this->setConnectionAuthHeader($connection);
+
+        $json = $connection->query($uri);
+
+        $data = json_decode($json,true);
+
+        if (array_key_exists('error',$data))
+        {
+            $this->error($data);
+        } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
+            $data['error'] = "sdk_unknown";
+            $ditto = $data;
+            $data['error_description'] = $ditto;
+            $this->error($data);
+        } else if (null === $data) {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description']  = "unable to decode or recursion level too deep";
+            $this->error($data);
+        }
+
+        return $data;
+    }
 
     /**
      * @param Folder       $originalFolder
@@ -605,6 +650,38 @@ class Client extends Model
         $this->folders = $folders;
         return $this;
     }
+
+    public function setCollaborationClass($collaborationClass = null)
+    {
+        $this->validateClass($collaborationClass,'CollaborationInterface');
+        $this->collaborationClass = $collaborationClass;
+        return $this;
+    }
+
+    public function getCollaborationClass()
+    {
+        return $this->collaborationClass;
+    }
+
+    /**
+     * @param array $collaborations
+     * @return \Box\Model\Client\Client $this
+     */
+    public function setCollaborations($collaborations = null)
+    {
+        $this->collaborations = $collaborations;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCollaborations()
+    {
+        return $this->collaborations;
+    }
+
+
 
     public function setDeviceId($deviceId = null)
     {
