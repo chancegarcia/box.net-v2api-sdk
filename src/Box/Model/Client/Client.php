@@ -19,6 +19,8 @@ use Box\Model\Connection\Token\TokenInterface;
 use Box\Model\Folder\Folder;
 use Box\Model\Collaboration\Collaboration;
 use Box\Model\Collaboration\CollaborationInterface;
+use Box\Model\User\User;
+use Box\Model\User\UserInterface;
 
 /**
  * Class Client
@@ -248,6 +250,7 @@ class Client extends Model
 
         $data = json_decode($json,true);
 
+        // this can be refactored too...from copyBoxFolder
         if (array_key_exists('error',$data))
         {
             $this->error($data);
@@ -263,6 +266,87 @@ class Client extends Model
         }
 
         return $data;
+    }
+
+    /**
+     * @param null|\Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface   $folder
+     * @param null|\Box\Model\User\User|\Box\Model\User\UserInterface   $user
+     * @param string $role see {@link http://developers.box.com/docs/#collaborations box documentation for all possible roles}
+     * default is viewer
+     */
+    public function addCollaboration($folder = null, $user = null, $role = 'viewer')
+    {
+        if (!$folder instanceof FolderInterface)
+        {
+            $err['error'] = 'sdk_unexpected_type';
+            $err['error_description'] = "expecting FolderInterface class. given (" . var_export($folder,true) . ")";
+            $this->error($err);
+        }
+
+        if (!$user instanceof UserInterface)
+        {
+            $err['error'] = 'sdk_unexpected_type';
+            $err['error_description'] = "expecting UserInterface class. given (" . var_export($user,true) . ")";
+            $this->error($err);
+        }
+
+        $uri = Collaboration::URI;
+
+        $folderId = $folder->getId();
+        $userId = $user->getId();
+
+        $params = array(
+            'item' => array(
+                "id" => $folderId,
+                "type" => "folder"
+            ),
+            'accessible_by' => array(
+                "id" => $userId
+            ),
+
+            'role' => $role
+        );
+
+        // oh god this can be refactored (cut and paste from copyBoxFolder...
+        $params = json_encode($params);
+
+        $connection = $this->getConnection();
+        $connection = $this->setConnectionAuthHeader($connection);
+
+        $json = $connection->post($uri,$params);
+
+        $data = json_decode($json,true);
+
+        if (array_key_exists('error',$data))
+        {
+            $this->error($data);
+        } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
+            $data['error'] = "sdk_unknown";
+            $ditto = $data;
+            $data['error_description'] = $ditto;
+            $this->error($data);
+        } else if (null === $data) {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description']  = "unable to decode or recursion level too deep";
+            $this->error($data);
+        }
+
+        $collaboration = $this->getNewCollaboration();
+        $collaboration->mapBoxToClass($data);
+
+        return $collaboration;
+    }
+
+    /**
+     * @return \Box\Model\Collaboration\Collaboration|\Box\Model\Collaboration\CollaborationInterface
+     */
+    public function getNewCollaboration()
+    {
+        $sClass = $this->getCollaborationClass();
+
+        $oClass = new $sClass();
+
+        return $oClass;
     }
 
     /**

@@ -9,8 +9,9 @@
 namespace Box\Model\Collaboration;
 
 use Box\Model\Model;
-use Box\Model\Collaboration\CollaborationInterface;
 use Box\Exception\Exception;
+use Box\Model\Collaboration\CollaborationInterface;
+
 class Collaboration extends Model implements CollaborationInterface {
 
     CONST URI = "https://api.box.com/2.0/collaborations";
