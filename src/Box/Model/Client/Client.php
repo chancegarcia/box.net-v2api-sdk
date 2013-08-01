@@ -339,6 +339,61 @@ class Client extends Model
     }
 
     /**
+     * @param null|\Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface $folder
+     * @return \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface
+     */
+    public function createSharedLinkForFolder($folder = null)
+    {
+        if (!$folder instanceof FolderInterface)
+        {
+            $err['error'] = 'sdk_unexpected_type';
+            $err['error_description'] = "expecting FolderInterface class. given (" . var_export($folder,true) . ")";
+            $this->error($err);
+        }
+
+        $uri = Folder::URI;
+
+        $folderId = $folder->getId();
+
+        $uri .= "/" . $folderId;
+
+        $params = array(
+            'shared_link' => array(
+                'access' => 'open'
+            )
+        );
+
+        // oh god this can be refactored (cut and paste from copyBoxFolder...
+        $params = json_encode($params);
+
+        $connection = $this->getConnection();
+        $connection = $this->setConnectionAuthHeader($connection);
+
+        $json = $connection->put($uri,$params);
+
+        $data = json_decode($json,true);
+
+        if (null === $data) {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description']  = "unable to decode or recursion level too deep";
+            $this->error($data);
+        } else if (array_key_exists('error',$data))
+        {
+            $this->error($data);
+        } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
+            $data['error'] = "sdk_unknown";
+            $ditto = $data;
+            $data['error_description'] = $ditto;
+            $this->error($data);
+        }
+
+        $updatedFolder = $this->getNewFolder();
+        $updatedFolder->mapBoxToClass($data);
+
+        return $updatedFolder;
+    }
+
+    /**
      * @return \Box\Model\User\User|\Box\Model\User\UserInterface
      */
     public function getNewUser()
