@@ -100,7 +100,8 @@ class Connection extends Model implements ConnectionInterface
                                 )
                             );
                         }
-                        // no need to break, continue to default
+                        curl_setopt($ch, constant($opt), $optValue);
+                        break;
                     default:
                         curl_setopt($ch, constant($opt), $optValue);
                         break;
@@ -134,7 +135,15 @@ class Connection extends Model implements ConnectionInterface
         $ch = $this->initCurlOpts($ch);
         curl_setopt($ch, CURLOPT_URL, $uri);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->buildQuery($params));
+        if (is_array($params))
+        {
+            $postParams = $this->buildQuery($params);
+        }
+        else
+        {
+            $postParams = $params;
+        }
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postParams);
         $ch = $this->initAdditionalCurlOpts($ch);
         $data = $this->getCurlData($ch);
         curl_close($ch);
@@ -146,7 +155,7 @@ class Connection extends Model implements ConnectionInterface
     /**
      * POST
      * @param       $uri
-     * @param array $params
+     * @param array|string $params will convert array to string
      * @throws \Box\Exception\Exception
      * @return mixed
      */
@@ -161,7 +170,15 @@ class Connection extends Model implements ConnectionInterface
         $ch = $this->initCurlOpts($ch);
         curl_setopt($ch, CURLOPT_URL, $uri);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->buildQuery($params));
+        if (is_array($params))
+        {
+            $postParams = $this->buildQuery($params);
+        }
+        else
+        {
+            $postParams = $params;
+        }
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postParams);
         $ch = $this->initAdditionalCurlOpts($ch);
         $data = $this->getCurlData($ch);
         curl_close($ch);
