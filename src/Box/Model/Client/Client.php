@@ -160,7 +160,7 @@ class Client extends Model
         if (null === $jsonData)
         {
             $data['error'] = "unable to decode json data";
-            $data['error_description'] = $jsonData;
+            $data['error_description'] = 'try refreshing the token';
             $this->error($data);
         }
 
@@ -263,7 +263,7 @@ class Client extends Model
 
         $data = json_decode($json,true);
 
-        if (array_key_exists('error',$data))
+        if (array_key_exists('error',$data) || (array_key_exists('type',$data) && 'error' == $data['type']))
         {
             $this->error($data);
         }
@@ -271,7 +271,7 @@ class Client extends Model
         $copy = $this->getNewFolder();
         $copy->mapBoxToClass($data);
 
-        if ($addToFolders)
+        if (true === $addToFolders && $copy instanceof Folder)
         {
             $this->addFolder($copy);
         }
