@@ -256,6 +256,8 @@ class Client extends Model
             $params['name'] = $name;
         }
 
+        $params = json_encode($params);
+
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 

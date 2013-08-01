@@ -161,10 +161,6 @@ class Connection extends Model implements ConnectionInterface
      */
     public function post($uri, $params = array())
     {
-        if (!is_array($params))
-        {
-            throw new Exception("params must be an array",Exception::INVALID_INPUT);
-        }
 
         $ch = $this->initCurl();
         $ch = $this->initCurlOpts($ch);
