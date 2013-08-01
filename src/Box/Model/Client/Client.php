@@ -263,8 +263,13 @@ class Client extends Model
 
         $data = json_decode($json,true);
 
-        if (array_key_exists('error',$data) || (array_key_exists('type',$data) && 'error' == $data['type']))
+        if (array_key_exists('error',$data))
         {
+            $this->error($data);
+        } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
+            $data['error'] = "sdk_unknown";
+            $ditto = $data;
+            $data['error_description'] = $ditto;
             $this->error($data);
         }
 
