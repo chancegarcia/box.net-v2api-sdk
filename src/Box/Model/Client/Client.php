@@ -252,17 +252,17 @@ class Client extends Model
         $data = json_decode($json,true);
 
         // this can be refactored too...from copyBoxFolder
-        if (array_key_exists('error',$data))
+        if (null === $data) {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description']  = "unable to decode or recursion level too deep";
+            $this->error($data);
+        } else if (array_key_exists('error',$data))
         {
             $this->error($data);
         } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
             $data['error'] = "sdk_unknown";
             $ditto = $data;
             $data['error_description'] = $ditto;
-            $this->error($data);
-        } else if (null === $data) {
-            $data['error'] = "sdk_json_decode";
-            $data['error_description']  = "unable to decode or recursion level too deep";
             $this->error($data);
         }
 
@@ -318,17 +318,17 @@ class Client extends Model
 
         $data = json_decode($json,true);
 
-        if (array_key_exists('error',$data))
+        if (null === $data) {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description']  = "unable to decode or recursion level too deep";
+            $this->error($data);
+        } else if (array_key_exists('error',$data))
         {
             $this->error($data);
         } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
             $data['error'] = "sdk_unknown";
             $ditto = $data;
             $data['error_description'] = $ditto;
-            $this->error($data);
-        } else if (null === $data) {
-            $data['error'] = "sdk_json_decode";
-            $data['error_description']  = "unable to decode or recursion level too deep";
             $this->error($data);
         }
 
@@ -407,7 +407,11 @@ class Client extends Model
 
         $data = json_decode($json,true);
 
-        if (array_key_exists('error',$data))
+        if (null === $data) {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description']  = "unable to decode or recursion level too deep";
+            $this->error($data);
+        } else if (array_key_exists('error',$data))
         {
             $this->error($data);
         } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
@@ -446,7 +450,11 @@ class Client extends Model
 
         $data = json_decode($json,true);
 
-        if (array_key_exists('error',$data))
+        if (null === $data) {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description']  = "unable to decode or recursion level too deep";
+            $this->error($data);
+        } else if (array_key_exists('error',$data))
         {
             $this->error($data);
         }
@@ -486,7 +494,11 @@ class Client extends Model
         $json = $connection->post(self::TOKEN_URI,$params);
         $data = json_decode($json,true);
 
-        if (array_key_exists('error',$data))
+        if (null === $data) {
+                    $data['error'] = "sdk_json_decode";
+            $data['error_description']  = "unable to decode or recursion level too deep";
+            $this->error($data);
+        } else if (array_key_exists('error',$data))
         {
             $this->error($data);
         }
