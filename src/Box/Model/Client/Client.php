@@ -76,6 +76,7 @@ class Client extends Model
     protected $connectionClass = 'Box\Model\Connection\Connection';
     protected $tokenClass = 'Box\Model\Connection\Token\Token';
     protected $collaborationClass = 'Box\Model\Collaboration\Collaboration';
+    protected $userClass = 'Box\Model\User\User';
 
 
     /**
@@ -335,6 +336,18 @@ class Client extends Model
         $collaboration->mapBoxToClass($data);
 
         return $collaboration;
+    }
+
+    /**
+     * @return \Box\Model\User\User|\Box\Model\User\UserInterface
+     */
+    public function getNewUser()
+    {
+        $sClass = $this->getUserClass();
+
+        $oClass = new $sClass();
+
+        return $oClass;
     }
 
     /**
@@ -746,6 +759,20 @@ class Client extends Model
     {
         return $this->collaborationClass;
     }
+
+    public function setUserClass($userClass = null)
+    {
+        $this->validateClass($userClass,'UserInterface');
+        $this->userClass = $userClass;
+        return $this;
+    }
+
+    public function getUserClass()
+    {
+        return $this->userClass;
+    }
+
+
 
     /**
      * @param array $collaborations
