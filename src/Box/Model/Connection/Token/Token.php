@@ -12,7 +12,6 @@ use Box\Model\Model;
 
 class Token extends Model implements TokenInterface
 {
-
     protected $accessToken;
     protected $refreshToken;
     protected $grantType = "authorization_code";

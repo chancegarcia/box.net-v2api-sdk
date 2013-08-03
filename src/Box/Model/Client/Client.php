@@ -230,7 +230,7 @@ class Client extends Model
     }
 
     /**
-     * @param null|\Box\Model\Folder\Folder $folder
+     * @param null|\Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface $folder
      * @return mixed raw json data as an array
      */
     public function getFolderCollaborations($folder = null)
@@ -271,9 +271,11 @@ class Client extends Model
 
     /**
      * @param null|\Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface   $folder
-     * @param null|\Box\Model\User\User|\Box\Model\User\UserInterface   $user
-     * @param string $role see {@link http://developers.box.com/docs/#collaborations box documentation for all possible roles}
+     * @param null                                                              $user
+     * @param string                                                            $role see {@link http://developers.box.com/docs/#collaborations box documentation for all possible roles}
      * default is viewer
+     * @param null|\Box\Model\User\User|\Box\Model\User\UserInterface           $user
+     * @return \Box\Model\Collaboration\Collaboration|\Box\Model\Collaboration\CollaborationInterface
      */
     public function addCollaboration($folder = null, $user = null, $role = 'viewer')
     {
@@ -523,7 +525,6 @@ class Client extends Model
 
     public function refreshToken()
     {
-
         // outside script will set token via getAccessToken
         $token = $this->getToken();
 
@@ -563,7 +564,6 @@ class Client extends Model
         $this->setToken($token);
 
         return $token;
-
     }
 
     public function getAuthorizationHeader()
@@ -591,17 +591,20 @@ class Client extends Model
     }
 
     /**
-     * @param $token \Box\Model\Connection\Token\TokenInterface
+     * @param $token \Box\Model\Connection\Token\TokenInterface|\Box\Model\Connection\Token\Token
+     * @return mixed
      */
     public function destroyToken($token)
     {
         $params['client_id'] = $this->getClientId();
         $params['client_secret'] = $this->getClientSecret();
+        // The access_token or refresh_token to be destroyed. Only one is required, though both will be destroyed.
         $params['token'] = $token->getAccessToken();
 
         $connection = $this->getConnection();
 
         $json = $connection->post(self::REVOKE_URI,$params);
+        // @todo add error handling for null data
         $data = json_decode($json,true);
 
         return $data;
@@ -630,9 +633,12 @@ class Client extends Model
         $params['client_id'] = $clientId;
 
         $state = $this->getState();
-        $params['state'] = $state;
+        if (null !== $state)
+        {
+            $params['state'] = $state;
+        }
 
-        $query = $this->buildQuery($params);
+        $query = $this->buildQuery($params); // buildQuery does urlencode
         $uri .= $query;
 
         $redirectUri = $this->getRedirectUri();
@@ -839,8 +845,6 @@ class Client extends Model
         return $this->userClass;
     }
 
-
-
     /**
      * @param array $collaborations
      * @return \Box\Model\Client\Client $this
@@ -858,8 +862,6 @@ class Client extends Model
     {
         return $this->collaborations;
     }
-
-
 
     public function setDeviceId($deviceId = null)
     {
@@ -895,7 +897,8 @@ class Client extends Model
     }
 
     /**
-     * @param \Box\Model\Folder\Folder $root
+     * @param \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface $root
+     * @return \Box\Model\Client\Client
      */
     public function setRoot($root = null)
     {
@@ -904,7 +907,7 @@ class Client extends Model
     }
 
     /**
-     * @return \Box\Model\Folder\Folder
+     * @return \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface
      */
     public function getRoot()
     {
