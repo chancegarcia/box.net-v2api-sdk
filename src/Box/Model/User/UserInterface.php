@@ -9,6 +9,7 @@
 namespace Box\Model\User;
 
 interface UserInterface {
+    public function __construct($options = null);
     public function getId();
     public function mapBoxToClass($aData);
 }

@@ -28,7 +28,6 @@ class Collaboration extends Model implements CollaborationInterface {
     protected $acknowledgedAt;
     protected $item;
 
-
     public function getId()
     {
         return $this->id;

@@ -80,15 +80,34 @@ class Client extends Model
 
 
     /**
+     * @param mixed $options
      * @return Folder|FolderInterface
      */
-    public function getNewFolder()
+    public function getNewFolder($options = null)
     {
-        $sFolderClass = $this->getFolderClass();
+        $oClass = $this->getNewClass('Folder',$options);
 
-        $oFolder = new $sFolderClass();
+        return $oClass;
+    }
 
-        return $oFolder;
+    /**
+     * @param mixed $options
+     * @return \Box\Model\User\User|\Box\Model\User\UserInterface
+     */
+    public function getNewUser($options = null)
+    {
+        $oClass = $this->getNewClass('User',$options);
+        return $oClass;
+    }
+
+    /**
+     * @param mixed $options
+     * @return \Box\Model\Collaboration\Collaboration|\Box\Model\Collaboration\CollaborationInterface
+     */
+    public function getNewCollaboration($options = null)
+    {
+        $oClass = $this->getNewClass('Collaboration',$options);
+        return $oClass;
     }
 
     /**
@@ -393,30 +412,6 @@ class Client extends Model
         $updatedFolder->mapBoxToClass($data);
 
         return $updatedFolder;
-    }
-
-    /**
-     * @return \Box\Model\User\User|\Box\Model\User\UserInterface
-     */
-    public function getNewUser()
-    {
-        $sClass = $this->getUserClass();
-
-        $oClass = new $sClass();
-
-        return $oClass;
-    }
-
-    /**
-     * @return \Box\Model\Collaboration\Collaboration|\Box\Model\Collaboration\CollaborationInterface
-     */
-    public function getNewCollaboration()
-    {
-        $sClass = $this->getCollaborationClass();
-
-        $oClass = new $sClass();
-
-        return $oClass;
     }
 
     /**

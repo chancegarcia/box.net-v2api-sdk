@@ -10,5 +10,5 @@ namespace Box\Model\Connection\Response;
 
 interface ResponseInterface
 {
-
+    public function __construct($options = null);
 }

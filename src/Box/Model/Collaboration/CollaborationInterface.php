@@ -9,6 +9,7 @@
 namespace Box\Model\Collaboration;
 
 interface CollaborationInterface {
+    public function __construct($options = null);
     public function getId();
     public function mapBoxToClass($aData);
 }

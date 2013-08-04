@@ -10,6 +10,7 @@ namespace Box\Model\Folder;
 
 interface FolderInterface
 {
+    public function __construct($options = null);
     public function getId();
     public function mapBoxToClass($aData);
     public function getItems();

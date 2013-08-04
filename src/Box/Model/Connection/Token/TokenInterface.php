@@ -10,6 +10,7 @@ namespace Box\Model\Connection\Token;
 
 interface TokenInterface
 {
+    public function __construct($options = null);
     public function getGrantType();
     public function getAccessToken();
     public function setAccessToken($accessToken=null);

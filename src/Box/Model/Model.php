@@ -12,6 +12,24 @@ use Box\Exception\Exception;
 
 class Model
 {
+
+    public function __construct($options = null){
+
+            if (null !== $options)
+            {
+                foreach ($options as $k=>$v)
+                {
+                    $method = 'set' . ucfirst($this->toClassVar($k));
+                    if (method_exists($this,$method))
+                    {
+                        $this->$method($v);
+                    }
+                }
+            }
+
+            return $this;
+        }
+
     /**
      * @param $data array containing error and error_description keys
      * @throws \Box\Exception\Exception
@@ -106,5 +124,21 @@ class Model
         }
 
         return $this;
+    }
+
+    public function getNewClass($className = null, $classConstructorOptions = null)
+    {
+        if (null === $className)
+        {
+            throw new Exception('undefined class name', Exception::INVALID_INPUT);
+        }
+
+        $sMethod = 'get' . ucfirst($className) . 'Class';
+
+        $sClass = $this->$sMethod();
+
+        $oClass = new $sClass($classConstructorOptions);
+
+        return $oClass;
     }
 }

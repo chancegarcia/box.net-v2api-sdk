@@ -14,6 +14,7 @@ namespace Box\Model\File;
 
 interface FileInterface
 {
+    public function __construct($options = null);
     public function getId();
 
 }
