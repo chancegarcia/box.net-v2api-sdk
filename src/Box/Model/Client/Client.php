@@ -361,9 +361,11 @@ class Client extends Model
 
     /**
      * @param null|\Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface $folder
+     * @param array|null shared link options with
+     * default shared link set to collaborator access, no unshared time or permissions set to
      * @return \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface
      */
-    public function createSharedLinkForFolder($folder = null)
+    public function createSharedLinkForFolder($folder = null, $params = null)
     {
         if (!$folder instanceof FolderInterface)
         {
@@ -378,11 +380,14 @@ class Client extends Model
 
         $uri .= "/" . $folderId;
 
-        $params = array(
-            'shared_link' => array(
-                'access' => 'open'
-            )
-        );
+        if (!is_array($params))
+        {
+            $params = array(
+                'shared_link' => array(
+                    'access' => 'collaborators'
+                )
+            );
+        }
 
         // oh god this can be refactored (cut and paste from copyBoxFolder...
         $params = json_encode($params);
