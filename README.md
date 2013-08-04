@@ -1,7 +1,7 @@
 box.net-v2api-sdk
 =================
 
-Requires at least 5.4.0
+Requires at least 5.3.0
 
 php sdk for use with box.net v2 api (http://developers.box.com/)
 

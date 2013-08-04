@@ -61,7 +61,20 @@ class Model
 
     public function buildQuery($params,$numericPrefix=null)
     {
-        $query = http_build_query($params,$numericPrefix,'&', PHP_QUERY_RFC3986);
+
+        if (version_compare(PHP_VERSION, '5.4.0', '>='))
+        {
+            $query = http_build_query($params , $numericPrefix , '&' , PHP_QUERY_RFC3986);
+        }
+        else
+        {
+            $pleaseUpgradeTo54 = array();
+            foreach($params as $k=>$v)
+            {
+                $pleaseUpgradeTo54[$k]=urlencode($v);
+            }
+            $query = http_build_query($pleaseUpgradeTo54,$numericPrefix,'&');
+        }
         return $query;
     }
 
