@@ -25,7 +25,6 @@ use Box\Model\User\UserInterface;
 /**
  * Class Client
  * @package Box\Model
- * @todo implement getBoxFolderCollaborations in case we need to implement copy for collaborations too (unsure yet, depends if we find that collaborators aren't copied)
  */
 class Client extends Model
 {
@@ -41,6 +40,7 @@ class Client extends Model
     protected $connection;
     /**
      * @var array of folder items indexed by the folder ID
+     * @internal should just be an array of any folder known/retrieved by the client. does not need to be recursive since folders know their parents and items
      */
     protected $folders;
     protected $files;
@@ -295,6 +295,7 @@ class Client extends Model
      * default is viewer
      * @param null|\Box\Model\User\User|\Box\Model\User\UserInterface           $user
      * @return \Box\Model\Collaboration\Collaboration|\Box\Model\Collaboration\CollaborationInterface
+     * @throws \Box\Exception\Exception
      */
     public function addCollaboration($folder = null, $user = null, $role = 'viewer')
     {
