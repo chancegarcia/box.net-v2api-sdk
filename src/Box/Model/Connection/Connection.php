@@ -19,6 +19,7 @@ use Box\Model\Connection\Response\Response;
 /**
  * Class Connection
  * @package Box\Model
+ * @todo add in method to access last curl info, error and error number for debugging
  */
 class Connection extends Model implements ConnectionInterface
 {
