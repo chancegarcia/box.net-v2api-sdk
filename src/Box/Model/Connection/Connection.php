@@ -129,13 +129,17 @@ class Connection extends Model implements ConnectionInterface
         return $data;
     }
 
-    public function put($uri, $params = array())
+    public function put($uri, $params = array(), $nameValuePair = false)
     {
         $ch = $this->initCurl();
         $ch = $this->initCurlOpts($ch);
         curl_setopt($ch, CURLOPT_URL, $uri);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-        if (is_array($params))
+
+        if ($nameValuePair)
+        {
+            $params = json_encode($params);
+        } else if (is_array($params))
         {
             $postParams = $this->buildQuery($params);
         }
@@ -159,13 +163,19 @@ class Connection extends Model implements ConnectionInterface
      * @throws \Box\Exception\Exception
      * @return mixed
      */
-    public function post($uri, $params = array())
+    public function post($uri, $params = array(), $nameValuePair = false)
     {
 
         $ch = $this->initCurl();
         $ch = $this->initCurlOpts($ch);
         curl_setopt($ch, CURLOPT_URL, $uri);
         curl_setopt($ch, CURLOPT_POST, true);
+
+        if ($nameValuePair)
+        {
+            $params = json_encode($params);
+        }
+
         if (is_array($params))
         {
             $postParams = $this->buildQuery($params);
