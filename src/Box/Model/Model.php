@@ -36,7 +36,7 @@ class Model
      */
     public function error($data)
     {
-        $exception = new Exception($data['error']);
+        $exception = new \Box\Exception\Exception($data['error']);
         $exception->setError($data['error']);
         $exception->setErrorDescription($data['error_description']);
         throw $exception;

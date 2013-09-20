@@ -209,10 +209,47 @@ class Client extends Model
         return $folder->getItems();
     }
 
-    public function createNewBoxFolder($name,$parent=array('id'=>0))
+    /**
+     * @param     $name
+     * @param int $parentFolderId
+     * @return Folder|FolderInterface
+     */
+    public function createNewBoxFolder($name,$parentFolderId = 0)
     {
-        // stubbing this for now too
-        return null;
+        $uri = Folder::URI;
+
+        $connection = $this->getConnection();
+        $connection = $this->setConnectionAuthHeader($connection);
+
+        $params = array(
+            'name' => $name,
+            'parent' => array('id' => $parentFolderId)
+        );
+
+        $data = $connection->post($uri,$params,true);
+
+        $jsonData = json_decode($data,true);
+
+        /**
+         * error decoding json data
+         */
+        if (null === $jsonData)
+        {
+            $data = array();
+            $data['error'] = "unable to decode json data";
+            $data['error_description'] = 'try refreshing the token';
+            $this->error($data);
+        } else if (is_array($jsonData) && array_key_exists('type', $jsonData) && 'error' == $jsonData['type']) {
+            $data = array();
+            $data['error'] = $jsonData['status'] .  "  - " . $jsonData['code'];
+            $data['error_description'] = var_export($jsonData['context_info'],true);
+            $this->error($data);
+        }
+
+        $folder = $this->getNewFolder();
+        $folder->mapBoxToClass($jsonData);
+
+        return $folder;
     }
 
     /**
@@ -330,13 +367,11 @@ class Client extends Model
             'role' => $role
         );
 
-        // oh god this can be refactored (cut and paste from copyBoxFolder...
-        $params = json_encode($params);
-
+        // can be refactored a bit more but the json encode works in the connection class
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $json = $connection->post($uri,$params);
+        $json = $connection->post($uri,$params,true);
 
         $data = json_decode($json,true);
 
@@ -362,9 +397,11 @@ class Client extends Model
 
     /**
      * @param null|\Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface $folder
+     * @param array|null shared link options with
+     * default shared link set to collaborator access, no unshared time or permissions set to
      * @return \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface
      */
-    public function createSharedLinkForFolder($folder = null)
+    public function createSharedLinkForFolder($folder = null, $params = null)
     {
         if (!$folder instanceof FolderInterface)
         {
@@ -379,19 +416,20 @@ class Client extends Model
 
         $uri .= "/" . $folderId;
 
-        $params = array(
-            'shared_link' => array(
-                'access' => 'open'
-            )
-        );
+        if (!is_array($params))
+        {
+            $params = array(
+                'shared_link' => array(
+                    'access' => 'collaborators'
+                )
+            );
+        }
 
-        // oh god this can be refactored (cut and paste from copyBoxFolder...
-        $params = json_encode($params);
-
+        // can be refactored a bit more but the json encode works in the connection class
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $json = $connection->put($uri,$params);
+        $json = $connection->put($uri,$params,true);
 
         $data = json_decode($json,true);
 
@@ -451,12 +489,10 @@ class Client extends Model
             $params['name'] = $name;
         }
 
-        $params = json_encode($params);
-
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $json = $connection->post($uri,$params);
+        $json = $connection->post($uri,$params,true);
 
         $data = json_decode($json,true);
 

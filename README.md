@@ -15,7 +15,7 @@ tasks:
     - [x] refresh token
     - [x] retrieve folder information from box given id
     - [x] get array of folder items (json decoded format)
-    - [ ] create new box folder
+    - [x] create new box folder
     - [ ] update folder information
     - [x] get folder collaborators
     - [x] add collaborator to a folder
