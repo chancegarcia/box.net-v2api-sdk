@@ -139,7 +139,9 @@ class Connection extends Model implements ConnectionInterface
         if ($nameValuePair)
         {
             $params = json_encode($params);
-        } else if (is_array($params))
+        }
+
+        if (is_array($params))
         {
             $postParams = $this->buildQuery($params);
         }
