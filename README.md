@@ -42,6 +42,8 @@ tasks:
     - [x] return PUT response
     - [x] send POST request
     - [x] return POST response
+    - [ ] send DELETE request
+    - [ ] return DELETE response
 - [x] Token class
 - [ ] Folder class
     - [x] interface implemented

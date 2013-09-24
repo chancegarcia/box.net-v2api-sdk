@@ -130,6 +130,11 @@ class Connection extends Model implements ConnectionInterface
         return $data;
     }
 
+    public function delete($uri)
+    {
+        throw new Exception('stubbed method. please implement');
+    }
+
     public function put($uri, $params = array(), $nameValuePair = false)
     {
         $ch = $this->initCurl();
@@ -161,9 +166,9 @@ class Connection extends Model implements ConnectionInterface
 
     /**
      * POST
-     * @param       $uri
+     * @param              $uri
      * @param array|string $params will convert array to string
-     * @throws \Box\Exception\Exception
+     * @param bool         $nameValuePair
      * @return mixed
      */
     public function post($uri, $params = array(), $nameValuePair = false)
