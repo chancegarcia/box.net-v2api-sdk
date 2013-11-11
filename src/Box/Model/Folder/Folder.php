@@ -8,6 +8,7 @@
 
 namespace Box\Model\Folder;
 
+use Box\Exception\Exception;
 use Box\Model\Model;
 use Box\Model\Folder\FolderInterface;
 class Folder extends Model implements FolderInterface
@@ -34,6 +35,30 @@ class Folder extends Model implements FolderInterface
     protected $itemCollection;
     protected $syncState;
     protected $hasCollaborations;
+
+
+    public function getBoxFolderItemsUri($limit = 100, $offset = 0)
+    {
+        $selfId = $this->getId();
+        if (!is_numeric($selfId))
+        {
+            throw new Exception("Please set the folder Id to retrieve items for this folder.". Exception::MISSING_ID);
+        }
+
+        if (!is_numeric($limit))
+        {
+            throw new Exception("Limit must be a valid integer", Exception::INVALID_INPUT);
+        }
+
+        if (!is_numeric($offset))
+        {
+            throw new Exception("Offset must be a valid integer", Exception::INVALID_INPUT);
+        }
+
+        $uri = self::URI . "/" . $selfId . "/items" . "?limit=" . $limit . "&offset=" . $offset;
+
+        return $uri;
+    }
 
     /**
      * convenience function

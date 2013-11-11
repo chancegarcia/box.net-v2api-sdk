@@ -199,6 +199,40 @@ class Client extends Model
         return $folder;
     }
 
+    /**
+     * @param \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface   $folder
+     * @param int $limit
+     * @param int $offset
+     */
+    public function getBoxFolderItems($folder, $limit = 100, $offset = 0)
+    {
+        $uri = $folder->getBoxFolderItemsUri($limit, $offset);
+        $connection = $this->getConnection();
+        $connection = $this->setConnectionAuthHeader($connection);
+
+        $json = $connection->query($uri);
+
+        $data = json_decode($json,true);
+
+        if (null === $data) {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description']  = "unable to decode or recursion level too deep";
+            $this->error($data);
+        } else if (array_key_exists('error',$data))
+        {
+            $this->error($data);
+        } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
+            $data['error'] = "sdk_unknown";
+            $ditto = $data;
+            $data['error_description'] = $ditto;
+            $this->error($data);
+        }
+
+        $folder->setItemCollection($data);
+
+        return $folder;
+    }
+
     public function getFolderItems($id=0)
     {
         /**
