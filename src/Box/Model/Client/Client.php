@@ -294,11 +294,11 @@ class Client extends Model
     public function updateBoxFolder($folder,$ifMatchHeader=false)
     {
         $uri = Folder::URI . '/' . $folder->getId();
-        var_dump($uri);
 
         // can't just do toArray(), only certain request attributes can be sent so have to send specialized param array.
         // @todo implement this to work. restubbing for now since toArray isn't working
         $params = $folder->toArray();
+        throw new \Exception("currently not implemented/working.");
 
         // @todo implement If-Match header logic
 

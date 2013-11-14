@@ -64,6 +64,15 @@ class Folder extends Model implements FolderInterface
             }
         }
 
+        if (null === $aFolder['shared_link'])
+        {
+            unset($aFolder['owned_by']);
+        }
+
+        $aFolder['parent'] = array(
+            "id" => $this->getParentId()
+        );
+
         $aFolder['sync_state'] = $syncState;
 
         return $aFolder;
