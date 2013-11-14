@@ -36,6 +36,38 @@ class Folder extends Model implements FolderInterface
     protected $syncState;
     protected $hasCollaborations;
 
+    public function toArray($syncState = "synced")
+    {
+        $aFolder = parent::toArray();
+
+        if (!in_array($syncState, array("synced", "not_synced", "partially_synced")))
+        {
+            throw new Exception("invalid sync state value given (" . var_export($syncState, true) . ").\n
+            Expecting one of the following values: synced, not_synced, partially_synced
+            ");
+        }
+
+        foreach ($aFolder as $key => $value)
+        {
+            $aAllowedRequestAttributes = array(
+                "name",
+                "description",
+                "parent",
+                "shared_link",
+                "folder_upload_email",
+                "owned_by"
+            );
+
+            if (!in_array($key, $aAllowedRequestAttributes))
+            {
+                unset($aFolder[$key]);
+            }
+        }
+
+        $aFolder['sync_state'] = $syncState;
+
+        return $aFolder;
+    }
 
     public function getBoxFolderItemsUri($limit = 100, $offset = 0)
     {
@@ -58,6 +90,31 @@ class Folder extends Model implements FolderInterface
         $uri = self::URI . "/" . $selfId . "/items" . "?limit=" . $limit . "&offset=" . $offset;
 
         return $uri;
+    }
+
+    /**
+     * @return int
+     */
+    public function getParentId()
+    {
+        $parent = $this->getParent();
+
+        $parentId = 0;
+
+        if (is_object($parent))
+        {
+            /**
+             * @var \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface $parent
+             */
+            $parentId = $parent->getId();
+        }
+
+        if (is_array($parent))
+        {
+            $parentId = $parent['id'];
+            return $parentId;
+        }
+        return $parentId;
     }
 
     /**
@@ -293,4 +350,5 @@ class Folder extends Model implements FolderInterface
     {
         return $this->type;
     }
+
 }

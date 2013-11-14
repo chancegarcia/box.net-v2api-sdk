@@ -294,26 +294,34 @@ class Client extends Model
     public function updateBoxFolder($folder,$ifMatchHeader=false)
     {
         $uri = Folder::URI . '/' . $folder->getId();
+        var_dump($uri);
 
-        // @todo make param array from folder object. stubbing for now
-        $params = array();
+        // can't just do toArray(), only certain request attributes can be sent so have to send specialized param array.
+        // @todo implement this to work. restubbing for now since toArray isn't working
+        $params = $folder->toArray();
 
         // @todo implement If-Match header logic
 
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
-        $data = $connection->put($uri,$params);
+        $json = $connection->put($uri,$params, true);
 
-        $jsonData = json_decode($data,true);
+        $data = json_decode($json,true);
 
         /**
          * error decoding json data
          */
-        if (null === $jsonData)
+        if (null === $data)
         {
-            $data['error'] = "unable to decode json data";
-            $data['error_description'] = $jsonData;
-            $this->error($data);
+            $errorData = array();
+            $errorData['error'] = "unable to decode json data";
+            $errorData['error_description'] = $data;
+            $this->error($errorData);
+        } else if (is_array($data) && array_key_exists('type', $data) && 'error' == $data['type']) {
+            $errorData = array();
+            $errorData['error'] = $data['status'] .  "  - " . $data['code'];
+            $errorData['error_description'] = var_export($data['context_info'],true);
+            $this->error($errorData);
         }
 
         return $data; // inconsistent? figure out what return is needed, if any
