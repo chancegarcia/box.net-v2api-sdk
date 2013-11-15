@@ -30,7 +30,22 @@ class Model
             return $this;
         }
 
+    public function toArray()
+    {
+        $aModel = get_object_vars($this);
+        $aArray = array();
+
+        foreach ($aModel as $k => $v)
+        {
+            $sKey = $this->toBoxVar($k);
+            $aArray[$sKey] = $v;
+        }
+
+        return $aArray;
+    }
+
     /**
+     * used to throw exceptions that need to contain error information returned from Box
      * @param $data array containing error and error_description keys
      * @throws \Box\Exception\Exception
      */
@@ -115,12 +130,24 @@ class Model
         return $boxVar;
     }
 
+    /**
+     * this will bomb out if any properties are private
+     * @todo try using setter if found?
+     * @param $aData
+     * @return $this
+     */
     public function mapBoxToClass($aData)
     {
         foreach ($aData as $k=>$v)
         {
             $sClassProp = $this->toClassVar($k);
-            $this->{$sClassProp} = $v;
+            $sSetterMethod = "set" . ucfirst($sClassProp);
+            if (method_exists($this, $sSetterMethod))
+            {
+                $this->{$sSetterMethod}($v);
+            } else {
+                $this->{$sClassProp} = $v;
+            }
         }
 
         return $this;

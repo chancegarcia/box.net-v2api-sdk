@@ -14,6 +14,7 @@ class Exception extends \Exception
     const UNKNOWN_CLASS = "Unknown Class";
     const INVALID_CLASS = "Invalid Class";
     const INVALID_INPUT = "Invalid Input";
+    const MISSING_ID = "Missing Id";
 
     protected $error;
     protected $errorDescription;
