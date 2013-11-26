@@ -576,7 +576,16 @@ class Client extends Model
 
         $uploaded = $connection->postFile($uri, $file);
 
-        return $uploaded;
+        $data = json_decode($uploaded, true);
+
+        if (array_key_exists('type',$data) && 'error' == $data['type']) {
+            $data['error'] = "sdk_unknown";
+            $ditto = $data;
+            $data['error_description'] = $ditto;
+            $this->error($data);
+        }
+
+        return $data;
     }
 
     public function getAccessToken()
