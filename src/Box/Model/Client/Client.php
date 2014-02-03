@@ -21,6 +21,9 @@ use Box\Model\Collaboration\Collaboration;
 use Box\Model\Collaboration\CollaborationInterface;
 use Box\Model\User\User;
 use Box\Model\User\UserInterface;
+use Box\Model\Group\Group;
+use Box\Model\Group\GroupException;
+use Box\Model\Group\GroupInterface;
 
 /**
  * Class Client
@@ -77,6 +80,7 @@ class Client extends Model
     protected $tokenClass = 'Box\Model\Connection\Token\Token';
     protected $collaborationClass = 'Box\Model\Collaboration\Collaboration';
     protected $userClass = 'Box\Model\User\User';
+    protected $groupClass = 'Box\Model\Group\Group';
 
 
     /**
@@ -97,6 +101,16 @@ class Client extends Model
     public function getNewUser($options = null)
     {
         $oClass = $this->getNewClass('User',$options);
+        return $oClass;
+    }
+
+    /**
+     * @param mixed $options
+     * @return \Box\Model\User\User|\Box\Model\User\UserInterface
+     */
+    public function getNewGroup($options = null)
+    {
+        $oClass = $this->getNewClass('Group',$options);
         return $oClass;
     }
 
@@ -168,6 +182,76 @@ class Client extends Model
 
     }
 
+    /**
+     * get membership list of a given group. if limit or offset is numeric, only retrieve specific list page;
+     * @param null $group
+     * @param null $limit leave null to get all; if limit is null but offset is numeric, limit will default to 100
+     * @param null $offset leave null to get all; if limit is null but offset is numeric, limit will default to 100
+     * @return mixed
+     * @throws \Box\Exception\Exception
+     */
+    public function getGroupMembershipList($group = null, $limit = null, $offset = null)
+    {
+        if (is_numeric($group) && is_int($group))
+        {
+            $groupId = $group;
+            $group = $this->getNewGroup();
+            $group->setId($groupId);
+        }
+
+        if (!$group instanceof Group)
+        {
+            throw new Exception("Group object expected", Exception::INVALID_INPUT);
+        }
+
+        $members = array();
+
+        if (is_numeric($limit) || is_numeric($offset)) {
+            if (!is_numeric($limit))
+            {
+                $limit = 100;
+            }
+
+            $uri = $group->getMembershipListUri($limit, $offset);
+
+            $data = $this->query($uri);
+
+            $members = $data['entries'];
+        } else {
+            $limit = 100;
+            $offset = 0;
+
+            $uri = $group->getMembershipListUri($limit, $offset);
+
+            $data = $this->query($uri);
+
+            $totalMembers = $data['total_count'];
+
+            $members = array_merge($members, $data['entries']);
+
+            $currentTotal = count($members);
+
+            while ($currentTotal < $totalMembers)
+            {
+                if (0 == $offset)
+                {
+                    continue;
+                } else {
+                    $nextPage = $group->getMembershipListUri($limit, $offset);
+                    $data = $this->query($nextPage);
+                    $moreMembers = $data['entries'];
+                    $members = array_merge($members, $moreMembers);
+
+                    $currentTotal = count($members);
+                }
+
+                $offset += $limit;
+            }
+        }
+
+        return $members;
+    }
+
     public function getFolderFromBox($id=0)
     {
         $uri = Folder::URI . '/' . $id; // all class constant URIs do not end in a slash
@@ -200,33 +284,15 @@ class Client extends Model
     }
 
     /**
-     * @param \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface   $folder
-     * @param int $limit
-     * @param int $offset
+     * @param \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface $folder
+     * @param int                                                        $limit
+     * @param int                                                        $offset
+     * @return \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface
      */
     public function getBoxFolderItems($folder, $limit = 100, $offset = 0)
     {
         $uri = $folder->getBoxFolderItemsUri($limit, $offset);
-        $connection = $this->getConnection();
-        $connection = $this->setConnectionAuthHeader($connection);
-
-        $json = $connection->query($uri);
-
-        $data = json_decode($json,true);
-
-        if (null === $data) {
-            $data['error'] = "sdk_json_decode";
-            $data['error_description']  = "unable to decode or recursion level too deep";
-            $this->error($data);
-        } else if (array_key_exists('error',$data))
-        {
-            $this->error($data);
-        } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
-            $data['error'] = "sdk_unknown";
-            $ditto = $data;
-            $data['error_description'] = $ditto;
-            $this->error($data);
-        }
+        $data = $this->query($uri);
 
         $folder->setItemCollection($data);
 
@@ -287,8 +353,9 @@ class Client extends Model
     }
 
     /**
-     * @param Folder|FolderInterface     $folder
-     * @param bool $ifMatchHeader
+     * @param Folder|FolderInterface $folder
+     * @param bool                   $ifMatchHeader
+     * @throws \Exception
      * @return mixed
      */
     public function updateBoxFolder($folder,$ifMatchHeader=false)
@@ -986,6 +1053,43 @@ class Client extends Model
     public function getRoot()
     {
         return $this->root;
+    }
+
+    /**
+     * @param $uri
+     * @return mixed
+     */
+    public function query($uri = null)
+    {
+        $connection = $this->getConnection();
+        $connection = $this->setConnectionAuthHeader($connection);
+
+        $json = $connection->query($uri);
+
+        $data = json_decode($json , true);
+
+        if (null === $data)
+        {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description'] = "unable to decode or recursion level too deep";
+            $this->error($data);
+            return $data;
+        }
+        else if (array_key_exists('error' , $data))
+        {
+            $this->error($data);
+            return $data;
+        }
+        else if (array_key_exists('type' , $data) && 'error' == $data['type'])
+        {
+            $data['error'] = "sdk_unknown";
+            $ditto = $data;
+            $data['error_description'] = $ditto;
+            $this->error($data);
+            return $data;
+        }
+
+        return $data;
     }
 
 }
