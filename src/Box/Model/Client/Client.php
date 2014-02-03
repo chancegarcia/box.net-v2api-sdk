@@ -10,6 +10,7 @@ namespace Box\Model\Client;
 
 use Box\Exception\Exception;
 use Box\Model\Connection\ConnectionInterface;
+use Box\Model\File\File;
 use Box\Model\File\FileInterface;
 use Box\Model\Folder\FolderInterface;
 use Box\Model\Connection\Connection;
@@ -630,6 +631,30 @@ class Client extends Model
         return $copy;
     }
 
+    // @todo make multiple file upload
+    public function uploadFileToBox($file)
+    {
+        $uri = File::UPLOAD_URI;
+
+        // loop through the files and add the @ to the filename if not present
+
+        $connection = $this->getConnection();
+        $connection = $this->setConnectionAuthHeader($connection);
+
+        $uploaded = $connection->postFile($uri, $file);
+
+        $data = json_decode($uploaded, true);
+
+        if (array_key_exists('type',$data) && 'error' == $data['type']) {
+            $data['error'] = "sdk_unknown";
+            $ditto = $data;
+            $data['error_description'] = $ditto;
+            $this->error($data);
+        }
+
+        return $data;
+    }
+
     public function getAccessToken()
     {
         $connection = $this->getConnection();
@@ -664,6 +689,9 @@ class Client extends Model
 
     }
 
+    /**
+     * @return \Box\Model\Connection\Token\Token|\Box\Model\Connection\Token\TokenInterface
+     */
     public function refreshToken()
     {
         // outside script will set token via getAccessToken

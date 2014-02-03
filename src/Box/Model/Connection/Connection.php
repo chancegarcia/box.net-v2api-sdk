@@ -200,6 +200,32 @@ class Connection extends Model implements ConnectionInterface
         return $data;
     }
 
+    public function postFile($uri, $file, $parentId = 0)
+    {
+        // @todo allow Content-MD5 header to be set
+        //Post 1-n files, each element of $files array assumed to be absolute
+        // path to a file.  $files can be array (multiple) or string (one file).
+        // Data will be posted in a series of POST vars named $file0, $file1...
+        // $fileN
+        $data=array(
+            'filename' => '@' . $file,
+            'parent_id' => $parentId
+        );
+
+        $ch = $this->initCurl();
+        $ch = $this->initCurlOpts($ch);
+        curl_setopt($ch, CURLOPT_URL, $uri);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+
+        $ch = $this->initAdditionalCurlOpts($ch);
+        $data = $this->getCurlData($ch);
+        curl_close($ch);
+
+        return $data;
+    }
+
     /**
      * @param array $curlOpts
      * @return Connection|ConnectionInterface
