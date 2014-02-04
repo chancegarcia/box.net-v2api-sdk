@@ -188,7 +188,8 @@ class Client extends Model
      * @param null $group
      * @param null $limit leave null to get all; if limit is null but offset is numeric, limit will default to 100
      * @param null $offset leave null to get all; if limit is null but offset is numeric, limit will default to 100
-     * @return mixed
+     * @return array returns an array of User objects that are in the group membership
+     * @return array returns an array of User objects that are in the group membership
      * @throws \Box\Exception\Exception
      */
     public function getGroupMembershipList($group = null, $limit = null, $offset = null)
@@ -206,6 +207,7 @@ class Client extends Model
         }
 
         $members = array();
+        $entries = array();
 
         if (is_numeric($limit) || is_numeric($offset)) {
             if (!is_numeric($limit))
@@ -217,7 +219,7 @@ class Client extends Model
 
             $data = $this->query($uri);
 
-            $members = $data['entries'];
+            $entries = $data['entries'];
         } else {
             $limit = 100;
             $offset = 0;
@@ -228,9 +230,9 @@ class Client extends Model
 
             $totalMembers = $data['total_count'];
 
-            $members = array_merge($members, $data['entries']);
+            $entries = $data['entries'];
 
-            $currentTotal = count($members);
+            $currentTotal = count($entries);
 
             while ($currentTotal < $totalMembers)
             {
@@ -240,14 +242,22 @@ class Client extends Model
                 } else {
                     $nextPage = $group->getMembershipListUri($limit, $offset);
                     $data = $this->query($nextPage);
-                    $moreMembers = $data['entries'];
-                    $members = array_merge($members, $moreMembers);
+                    $moreEntries = $data['entries'];
+                    $entries = array_merge($entries, $moreEntries);
 
-                    $currentTotal = count($members);
+                    $currentTotal = count($entries);
                 }
 
                 $offset += $limit;
             }
+        }
+
+        foreach ($entries as $entry)
+        {
+            $userData = $entry['user'];
+            $user = $this->getNewUser();
+            $user->mapBoxToClass($userData);
+            $members[] = $user;
         }
 
         return $members;
