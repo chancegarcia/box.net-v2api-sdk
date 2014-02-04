@@ -12,4 +12,5 @@ interface GroupInterface {
     public function __construct($options = null);
     public function getId();
     public function mapBoxToClass($aData);
+    public function getMembershipListUri($limit = 100, $offset = 0);
 }

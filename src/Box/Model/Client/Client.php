@@ -200,7 +200,7 @@ class Client extends Model
             $group->setId($groupId);
         }
 
-        if (!$group instanceof Group)
+        if (!$group instanceof GroupInterface)
         {
             throw new Exception("Group object expected", Exception::INVALID_INPUT);
         }
