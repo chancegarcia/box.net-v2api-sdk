@@ -13,6 +13,9 @@ use Box\Exception\Exception;
 class Model
 {
 
+    // @todo add curl history on info/error/errno properties for child classes to access for recording
+    // @todo add last curl info/error/errno properties as well
+
     public function __construct($options = null){
 
             if (null !== $options)
