@@ -437,14 +437,13 @@ class Client extends Model
 
     /**
      * @param null|\Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface   $folder
-     * @param null                                                              $user
+     * @param null|\Box\Model\User\User|\Box\Model\User\UserInterface|\Box\Model\Group\GroupInterface           $collaborator
      * @param string                                                            $role see {@link http://developers.box.com/docs/#collaborations box documentation for all possible roles}
      * default is viewer
-     * @param null|\Box\Model\User\User|\Box\Model\User\UserInterface           $user
      * @return \Box\Model\Collaboration\Collaboration|\Box\Model\Collaboration\CollaborationInterface
      * @throws \Box\Exception\Exception
      */
-    public function addCollaboration($folder = null, $user = null, $role = 'viewer')
+    public function addCollaboration($folder = null, $collaborator = null, $role = 'viewer')
     {
         if (!$folder instanceof FolderInterface)
         {
@@ -453,17 +452,17 @@ class Client extends Model
             $this->error($err);
         }
 
-        if (!$user instanceof UserInterface)
+        if (!$collaborator instanceof UserInterface && !$collaborator instanceof GroupInterface)
         {
             $err['error'] = 'sdk_unexpected_type';
-            $err['error_description'] = "expecting UserInterface class. given (" . var_export($user,true) . ")";
+            $err['error_description'] = "expecting UserInterface class. given (" . var_export($collaborator,true) . ")";
             $this->error($err);
         }
 
         $uri = Collaboration::URI;
 
         $folderId = $folder->getId();
-        $userId = $user->getId();
+        $collaboratorId = $collaborator->getId();
 
         $params = array(
             'item' => array(
@@ -471,7 +470,7 @@ class Client extends Model
                 "type" => "folder"
             ),
             'accessible_by' => array(
-                "id" => $userId
+                "id" => $collaboratorId
             ),
 
             'role' => $role
