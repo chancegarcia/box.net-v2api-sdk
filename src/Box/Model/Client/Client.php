@@ -35,6 +35,7 @@ class Client extends Model
     CONST AUTH_URI = "https://www.box.com/api/oauth2/authorize";
     CONST TOKEN_URI = "https://www.box.com/api/oauth2/token";
     CONST REVOKE_URI = "https://www.box.com/api/oauth2/revoke";
+    CONST SEARCH_URI = "https://api.box.com/2.0/search";
 
     protected $state;
 
@@ -1129,4 +1130,29 @@ class Client extends Model
         return $data;
     }
 
+    public function search($query = null, $limit = null, $offset = null)
+    {
+        if (empty($query))
+        {
+            throw new Exception('please enter a search term', Exception::INVALID_INPUT);
+        }
+
+        $uriQuery = rawurlencode($query);
+
+        $uri = self::SEARCH_URI . "/?query=" . $uriQuery;
+
+        if (is_numeric($limit) && is_int($limit))
+        {
+            $uri .= "&limit=" . $limit;
+        }
+
+        if (is_numeric($offset) && is_int($offset))
+        {
+            $uri .= "&offset=" . $offset;
+        }
+
+        $data = $this->query($uri);
+
+        return $data;
+    }
 }
