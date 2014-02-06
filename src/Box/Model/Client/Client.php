@@ -108,7 +108,7 @@ class Client extends Model
 
     /**
      * @param mixed $options
-     * @return \Box\Model\User\User|\Box\Model\User\UserInterface
+     * @return \Box\Model\Group\Group|\Box\Model\Group\GroupInterface
      */
     public function getNewGroup($options = null)
     {
@@ -1022,6 +1022,18 @@ class Client extends Model
     public function getUserClass()
     {
         return $this->userClass;
+    }
+
+    public function setGroupClass($groupClass = null)
+    {
+        $this->validateClass($groupClass,'GroupInterface');
+        $this->groupClass = $groupClass;
+        return $this;
+    }
+
+    public function getGroupClass()
+    {
+        return $this->groupClass;
     }
 
     /**
