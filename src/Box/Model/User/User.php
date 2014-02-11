@@ -16,7 +16,7 @@ class User extends Model implements UserInterface{
     const URI = 'https://api.box.com/2.0/users';
     const CURRENT_USER_URI = 'https://api.box.com/2.0/users/me';
 
-    protected $type="user";
+    protected $type = "user";
     protected $id;
     protected $name;
     protected $login;

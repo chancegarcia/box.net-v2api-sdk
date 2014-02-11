@@ -22,6 +22,9 @@ use Box\Model\Collaboration\Collaboration;
 use Box\Model\Collaboration\CollaborationInterface;
 use Box\Model\User\User;
 use Box\Model\User\UserInterface;
+use Box\Model\Group\Group;
+use Box\Model\Group\GroupException;
+use Box\Model\Group\GroupInterface;
 
 /**
  * Class Client
@@ -32,6 +35,7 @@ class Client extends Model
     CONST AUTH_URI = "https://www.box.com/api/oauth2/authorize";
     CONST TOKEN_URI = "https://www.box.com/api/oauth2/token";
     CONST REVOKE_URI = "https://www.box.com/api/oauth2/revoke";
+    CONST SEARCH_URI = "https://api.box.com/2.0/search";
 
     protected $state;
 
@@ -78,6 +82,7 @@ class Client extends Model
     protected $tokenClass = 'Box\Model\Connection\Token\Token';
     protected $collaborationClass = 'Box\Model\Collaboration\Collaboration';
     protected $userClass = 'Box\Model\User\User';
+    protected $groupClass = 'Box\Model\Group\Group';
 
 
     /**
@@ -98,6 +103,16 @@ class Client extends Model
     public function getNewUser($options = null)
     {
         $oClass = $this->getNewClass('User',$options);
+        return $oClass;
+    }
+
+    /**
+     * @param mixed $options
+     * @return \Box\Model\Group\Group|\Box\Model\Group\GroupInterface
+     */
+    public function getNewGroup($options = null)
+    {
+        $oClass = $this->getNewClass('Group',$options);
         return $oClass;
     }
 
@@ -169,6 +184,86 @@ class Client extends Model
 
     }
 
+    /**
+     * get membership list of a given group. if limit or offset is numeric, only retrieve specific list page;
+     * @param null $group
+     * @param null $limit leave null to get all; if limit is null but offset is numeric, limit will default to 100
+     * @param null $offset leave null to get all; if limit is null but offset is numeric, limit will default to 100
+     * @return array returns an array of User objects that are in the group membership
+     * @return array returns an array of User objects that are in the group membership
+     * @throws \Box\Exception\Exception
+     */
+    public function getGroupMembershipList($group = null, $limit = null, $offset = null)
+    {
+        if (is_numeric($group) && is_int($group))
+        {
+            $groupId = $group;
+            $group = $this->getNewGroup();
+            $group->setId($groupId);
+        }
+
+        if (!$group instanceof GroupInterface)
+        {
+            throw new Exception("Group object expected", Exception::INVALID_INPUT);
+        }
+
+        $members = array();
+        $entries = array();
+
+        if (is_numeric($limit) || is_numeric($offset)) {
+            if (!is_numeric($limit))
+            {
+                $limit = 100;
+            }
+
+            $uri = $group->getMembershipListUri($limit, $offset);
+
+            $data = $this->query($uri);
+
+            $entries = $data['entries'];
+        } else {
+            $limit = 100;
+            $offset = 0;
+
+            $uri = $group->getMembershipListUri($limit, $offset);
+
+            $data = $this->query($uri);
+
+            $totalMembers = $data['total_count'];
+
+            $entries = $data['entries'];
+
+            $currentTotal = count($entries);
+
+            while ($currentTotal < $totalMembers)
+            {
+                if (0 == $offset)
+                {
+                    continue;
+                } else {
+                    $nextPage = $group->getMembershipListUri($limit, $offset);
+                    $data = $this->query($nextPage);
+                    $moreEntries = $data['entries'];
+                    $entries = array_merge($entries, $moreEntries);
+
+                    $currentTotal = count($entries);
+                }
+
+                $offset += $limit;
+            }
+        }
+
+        foreach ($entries as $entry)
+        {
+            $userData = $entry['user'];
+            $user = $this->getNewUser();
+            $user->mapBoxToClass($userData);
+            $members[] = $user;
+        }
+
+        return $members;
+    }
+
     public function getFolderFromBox($id=0)
     {
         $uri = Folder::URI . '/' . $id; // all class constant URIs do not end in a slash
@@ -201,33 +296,15 @@ class Client extends Model
     }
 
     /**
-     * @param \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface   $folder
-     * @param int $limit
-     * @param int $offset
+     * @param \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface $folder
+     * @param int                                                        $limit
+     * @param int                                                        $offset
+     * @return \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface
      */
     public function getBoxFolderItems($folder, $limit = 100, $offset = 0)
     {
         $uri = $folder->getBoxFolderItemsUri($limit, $offset);
-        $connection = $this->getConnection();
-        $connection = $this->setConnectionAuthHeader($connection);
-
-        $json = $connection->query($uri);
-
-        $data = json_decode($json,true);
-
-        if (null === $data) {
-            $data['error'] = "sdk_json_decode";
-            $data['error_description']  = "unable to decode or recursion level too deep";
-            $this->error($data);
-        } else if (array_key_exists('error',$data))
-        {
-            $this->error($data);
-        } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
-            $data['error'] = "sdk_unknown";
-            $ditto = $data;
-            $data['error_description'] = $ditto;
-            $this->error($data);
-        }
+        $data = $this->query($uri);
 
         $folder->setItemCollection($data);
 
@@ -288,8 +365,9 @@ class Client extends Model
     }
 
     /**
-     * @param Folder|FolderInterface     $folder
-     * @param bool $ifMatchHeader
+     * @param Folder|FolderInterface $folder
+     * @param bool                   $ifMatchHeader
+     * @throws \Exception
      * @return mixed
      */
     public function updateBoxFolder($folder,$ifMatchHeader=false)
@@ -370,14 +448,13 @@ class Client extends Model
 
     /**
      * @param null|\Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface   $folder
-     * @param null                                                              $user
+     * @param null|\Box\Model\User\User|\Box\Model\User\UserInterface|\Box\Model\Group\GroupInterface           $collaborator
      * @param string                                                            $role see {@link http://developers.box.com/docs/#collaborations box documentation for all possible roles}
      * default is viewer
-     * @param null|\Box\Model\User\User|\Box\Model\User\UserInterface           $user
      * @return \Box\Model\Collaboration\Collaboration|\Box\Model\Collaboration\CollaborationInterface
      * @throws \Box\Exception\Exception
      */
-    public function addCollaboration($folder = null, $user = null, $role = 'viewer')
+    public function addCollaboration($folder = null, $collaborator = null, $role = 'viewer')
     {
         if (!$folder instanceof FolderInterface)
         {
@@ -386,17 +463,17 @@ class Client extends Model
             $this->error($err);
         }
 
-        if (!$user instanceof UserInterface)
+        if (!$collaborator instanceof UserInterface && !$collaborator instanceof GroupInterface)
         {
             $err['error'] = 'sdk_unexpected_type';
-            $err['error_description'] = "expecting UserInterface class. given (" . var_export($user,true) . ")";
+            $err['error_description'] = "expecting UserInterface class. given (" . var_export($collaborator,true) . ")";
             $this->error($err);
         }
 
         $uri = Collaboration::URI;
 
         $folderId = $folder->getId();
-        $userId = $user->getId();
+        $collaboratorId = $collaborator->getId();
 
         $params = array(
             'item' => array(
@@ -404,7 +481,7 @@ class Client extends Model
                 "type" => "folder"
             ),
             'accessible_by' => array(
-                "id" => $userId
+                "id" => $collaboratorId
             ),
 
             'role' => $role
@@ -947,6 +1024,18 @@ class Client extends Model
         return $this->userClass;
     }
 
+    public function setGroupClass($groupClass = null)
+    {
+        $this->validateClass($groupClass,'GroupInterface');
+        $this->groupClass = $groupClass;
+        return $this;
+    }
+
+    public function getGroupClass()
+    {
+        return $this->groupClass;
+    }
+
     /**
      * @param array $collaborations
      * @return \Box\Model\Client\Client $this
@@ -1016,4 +1105,66 @@ class Client extends Model
         return $this->root;
     }
 
+    /**
+     * @param $uri
+     * @return mixed
+     */
+    public function query($uri = null)
+    {
+        $connection = $this->getConnection();
+        $connection = $this->setConnectionAuthHeader($connection);
+
+        $json = $connection->query($uri);
+
+        $data = json_decode($json , true);
+
+        if (null === $data)
+        {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description'] = "unable to decode or recursion level too deep";
+            $this->error($data);
+            return $data;
+        }
+        else if (array_key_exists('error' , $data))
+        {
+            $this->error($data);
+            return $data;
+        }
+        else if (array_key_exists('type' , $data) && 'error' == $data['type'])
+        {
+            $data['error'] = "sdk_unknown";
+            $ditto = $data;
+            $data['error_description'] = $ditto;
+            $this->error($data);
+            return $data;
+        }
+
+        return $data;
+    }
+
+    public function search($query = null, $limit = null, $offset = null)
+    {
+        if (empty($query))
+        {
+            throw new Exception('please enter a search term', Exception::INVALID_INPUT);
+        }
+
+        $uriQuery = rawurlencode($query);
+
+        $uri = self::SEARCH_URI . "/?query=" . $uriQuery;
+
+        if (is_numeric($limit) && is_int($limit))
+        {
+            $uri .= "&limit=" . $limit;
+        }
+
+        if (is_numeric($offset) && is_int($offset))
+        {
+            $uri .= "&offset=" . $offset;
+        }
+
+        $data = $this->query($uri);
+
+        return $data;
+    }
 }
