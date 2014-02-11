@@ -237,10 +237,8 @@ class Client extends Model
 
             while ($currentTotal < $totalMembers)
             {
-                if (0 == $offset)
+                if (0 != $offset)
                 {
-                    continue;
-                } else {
                     $nextPage = $group->getMembershipListUri($limit, $offset);
                     $data = $this->query($nextPage);
                     $moreEntries = $data['entries'];
