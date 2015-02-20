@@ -52,10 +52,16 @@ class Model
      * @param $data array containing error and error_description keys
      * @throws \Box\Exception\Exception
      */
-    public function error($data)
+    public function error($data, $message = null)
     {
-        $exception = new \Box\Exception\Exception($data['error']);
-        $exception->setError($data['error']);
+        $error = $data['error'];
+        if (null === $message || !is_string($message))
+        {
+            $message = $error;
+        }
+
+        $exception = new Exception($message);
+        $exception->setError($error);
         $exception->setErrorDescription($data['error_description']);
         throw $exception;
     }
