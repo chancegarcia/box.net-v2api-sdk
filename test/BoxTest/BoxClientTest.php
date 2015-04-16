@@ -9,6 +9,8 @@
 
 namespace BoxTest;
 use Box\Model\Client\Client;
+use Box\Model\Connection\Token\Token;
+use Box\Model\Group\Group;
 
 class BoxClientTest extends \PHPUnit_Framework_TestCase {
 
@@ -16,6 +18,11 @@ class BoxClientTest extends \PHPUnit_Framework_TestCase {
 
     protected function setUp()
     {
+        $client = new Client();
+        $token = new Token();
+        $token->setAccessToken('DY994XYpCLJ0rErndKZEbYAcS85VsNHB');
+        $client->setToken($token);
+        $this->setClient($client);
         parent::setUp();
     }
 
@@ -24,11 +31,16 @@ class BoxClientTest extends \PHPUnit_Framework_TestCase {
         $this->client = $client;
     }
 
+    /**
+     * @param bool $reset
+     * @return null|\Box\Model\Client\Client
+     */
     protected function getClient($reset=false)
     {
         if (null === $this->client || true === $reset)
         {
-            $this->setClient(new Client());
+            $client = new Client();
+            $this->setClient($client);
         }
 
         return $this->client;
@@ -36,6 +48,16 @@ class BoxClientTest extends \PHPUnit_Framework_TestCase {
 
     public function testClient()
     {
-        $this->assertTrue(false);
+        $client = $this->getClient();
+
+        $this->assertInstanceOf('\Box\Model\Client\Client', $client);
+    }
+
+    public function testClientToken()
+    {
+        $client = $this->getClient();
+        $token = $client->getToken();
+
+        $this->assertInstanceOf('\Box\Model\Connection\Token\Token', $token);
     }
 }
