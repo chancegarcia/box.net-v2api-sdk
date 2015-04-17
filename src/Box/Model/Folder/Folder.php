@@ -10,10 +10,11 @@ namespace Box\Model\Folder;
 
 use Box\Exception\Exception;
 use Box\Model\Model;
-use Box\Model\Folder\FolderInterface;
+
 class Folder extends Model implements FolderInterface
 {
     CONST URI =  'https://api.box.com/2.0/folders';
+    CONST SHARED_ITEM_URI = "https://api.box.com/2.0/shared_items";
 
     protected $type = "folder";
     protected $id;
