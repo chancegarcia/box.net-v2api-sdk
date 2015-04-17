@@ -653,7 +653,7 @@ class Client extends Model
 
         $data = json_decode($uploaded, true);
 
-        if (array_key_exists('type',$data) && 'error' == $data['type']) {
+        if (is_array($data) && array_key_exists('type',$data) && 'error' == $data['type']) {
             $data['error'] = "sdk_unknown";
             $ditto = $data;
             $data['error_description'] = $ditto;
