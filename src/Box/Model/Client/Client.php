@@ -9,22 +9,17 @@
 namespace Box\Model\Client;
 
 use Box\Exception\Exception;
-use Box\Model\Connection\ConnectionInterface;
-use Box\Model\File\File;
-use Box\Model\File\FileInterface;
-use Box\Model\Folder\FolderInterface;
-use Box\Model\Connection\Connection;
-use Box\Model\Connection\Token\Token;
-use Box\Model\Model;
-use Box\Model\Connection\Token\TokenInterface;
-use Box\Model\Folder\Folder;
 use Box\Model\Collaboration\Collaboration;
-use Box\Model\Collaboration\CollaborationInterface;
-use Box\Model\User\User;
-use Box\Model\User\UserInterface;
-use Box\Model\Group\Group;
-use Box\Model\Group\GroupException;
+use Box\Model\Connection\Connection;
+use Box\Model\Connection\ConnectionInterface;
+use Box\Model\Connection\Token\Token;
+use Box\Model\Connection\Token\TokenInterface;
+use Box\Model\File\File;
+use Box\Model\Folder\Folder;
+use Box\Model\Folder\FolderInterface;
 use Box\Model\Group\GroupInterface;
+use Box\Model\Model;
+use Box\Model\User\UserInterface;
 
 /**
  * Class Client
@@ -260,6 +255,54 @@ class Client extends Model
         }
 
         return $members;
+    }
+
+    public function getFolderBySharedUri($sharedUri = null)
+    {
+        if (!is_string($sharedUri))
+        {
+            throw new Exception('shared uri must be a string value', Exception::INVALID_INPUT);
+        }
+
+        $uri = Folder::SHARED_ITEM_URI;
+        $sSharedLinkHeader = "BoxApi: shared_link=" . $sharedUri;
+        $aSharedLinkHeader = array($sSharedLinkHeader);
+
+        $connection = $this->getConnection();
+        $connection = $this->setConnectionAuthHeader($connection, $aSharedLinkHeader);
+
+        $data = $connection->query($uri);
+
+        $jsonData = json_decode($data,true);
+        /**
+         * API docs says error is thrown if folder does not exist or no access.
+         * no example of error to parse by. Have to assume success until can modify
+         */
+
+        /**
+         * error decoding json data
+         */
+        if (null === $jsonData)
+        {
+            $data['error'] = "unable to decode json data";
+            $data['error_description'] = 'try refreshing the token';
+            $this->error($data);
+        }
+
+        if (is_array($jsonData) && array_key_exists('type', $jsonData) && 'folder' === $jsonData['type'])
+        {
+            $folder = $this->getNewFolder();
+            $folder->mapBoxToClass($jsonData);
+        } else if (is_array($jsonData) && array_key_exists('type', $jsonData) && 'error' === $jsonData['type']) {
+            $errorData['error'] = $jsonData['message'];
+            $errorData['error_description'] = $jsonData;
+            $this->error($errorData);
+            $folder = null;
+        } else {
+            $folder = false;
+        }
+
+        return $folder;
     }
 
     public function getFolderFromBox($id=0)
@@ -830,12 +873,25 @@ class Client extends Model
     }
 
     /**
-     * @param $connection Connection
+     * @param      $connection Connection
+     * @param null|array $additionalHeaders
      * @return Connection
+     * @throws Exception
      */
-    public function setConnectionAuthHeader($connection)
+    public function setConnectionAuthHeader($connection, $additionalHeaders = null)
     {
         $headers = array($this->getAuthorizationHeader());
+
+        if (null !== $additionalHeaders && !is_array($additionalHeaders))
+        {
+            throw new Exception('additional headers must be in array format', Exception::INVALID_INPUT);
+        }
+
+        if (is_array($additionalHeaders))
+        {
+            $headers = array_merge($headers, $additionalHeaders);
+        }
+
         // header opt will require a merge with other headers to not overwrite.
         // @todo refactor to allow additional headers with auth header
         $connection->setCurlOpts(array('CURLOPT_HTTPHEADER' => $headers));
