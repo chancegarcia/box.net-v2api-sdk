@@ -33,6 +33,8 @@ tasks:
 - [x] Collaboration class
     - [x] interface implemented
     - [x] validate status
+- [ ] Collection class
+    - figure out how to create dependency to an array collection library; not as separatable but better than maintaining our own/re-inventing the wheel
 - [x] Connection class
     - [x] interface implemented
     - [x] ability to set additional curl opts

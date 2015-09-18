@@ -415,9 +415,9 @@ class Client extends Model
     {
         $uri = Folder::URI . '/' . $folder->getId();
 
-        // can't just do toArray(), only certain request attributes can be sent so have to send specialized param array.
-        // @todo implement this to work. restubbing for now since toArray isn't working
-        $params = $folder->toArray();
+        // can't just do classArray(), only certain request attributes can be sent so have to send specialized param array.
+        // @todo implement this to work. restubbing for now since classArray isn't working
+        $params = $folder->classArray();
         throw new \Exception("currently not implemented/working.");
 
         // @todo implement If-Match header logic
