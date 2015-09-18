@@ -14,6 +14,5 @@ interface FolderInterface
     public function getId();
     public function mapBoxToClass($aData);
     public function getItems();
-    public function toArray($syncState = "synced");
-
+    public function classArray($syncState = "synced");
 }

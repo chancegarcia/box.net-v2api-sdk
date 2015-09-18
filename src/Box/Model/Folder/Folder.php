@@ -37,9 +37,9 @@ class Folder extends Model implements FolderInterface
     protected $syncState;
     protected $hasCollaborations;
 
-    public function toArray($syncState = "synced")
+    public function classArray($syncState = "synced")
     {
-        $aFolder = parent::toArray();
+        $aFolder = parent::classArray();
 
         if (!in_array($syncState, array("synced", "not_synced", "partially_synced")))
         {
