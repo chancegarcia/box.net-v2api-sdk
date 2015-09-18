@@ -40,7 +40,8 @@ class Client extends Model
     protected $connection;
     /**
      * @var array of folder items indexed by the folder ID
-     * @internal should just be an array of any folder known/retrieved by the client. does not need to be recursive since folders know their parents and items
+     * @internal should just be an array of any folder known/retrieved by the client. does not need to be recursive
+     *     since folders know their parents and items
      */
     protected $folders;
     protected $files;
@@ -82,51 +83,59 @@ class Client extends Model
 
     /**
      * @param mixed $options
+     *
      * @return Folder|FolderInterface
      */
     public function getNewFolder($options = null)
     {
-        $oClass = $this->getNewClass('Folder',$options);
+        $oClass = $this->getNewClass('Folder', $options);
 
         return $oClass;
     }
 
     /**
      * @param mixed $options
+     *
      * @return \Box\Model\User\User|\Box\Model\User\UserInterface
      */
     public function getNewUser($options = null)
     {
-        $oClass = $this->getNewClass('User',$options);
+        $oClass = $this->getNewClass('User', $options);
+
         return $oClass;
     }
 
     /**
      * @param mixed $options
+     *
      * @return \Box\Model\Group\Group|\Box\Model\Group\GroupInterface
      */
     public function getNewGroup($options = null)
     {
-        $oClass = $this->getNewClass('Group',$options);
+        $oClass = $this->getNewClass('Group', $options);
+
         return $oClass;
     }
 
     /**
      * @param mixed $options
+     *
      * @return \Box\Model\Collaboration\Collaboration|\Box\Model\Collaboration\CollaborationInterface
      */
     public function getNewCollaboration($options = null)
     {
-        $oClass = $this->getNewClass('Collaboration',$options);
+        $oClass = $this->getNewClass('Collaboration', $options);
+
         return $oClass;
     }
 
     /**
      * @param int $id use 0 for returning all folders
      * @param bool $retrieve if no folder is found, attempt to retrieve from box
+     *
      * @return array|null|Folder returns null if no such folder exists and retrieve is false
      */
-    public function getFolder($id=0, $retrieve=true)
+    public function getFolder($id = 0, $retrieve = true)
     {
         $folders = $this->getFolders($retrieve);
 
@@ -135,7 +144,7 @@ class Client extends Model
             return $folders;
         }
 
-        if (!array_key_exists($id,$folders))
+        if (!array_key_exists($id, $folders))
         {
             if (!$retrieve)
             {
@@ -146,7 +155,8 @@ class Client extends Model
         }
 
 
-        $folder = $folders[$id];
+        $folder = $folders[ $id ];
+
         return $folder;
 
     }
@@ -154,13 +164,13 @@ class Client extends Model
     public function addFolder($folder)
     {
         $folders = $this->getFolders();
-        array_push($folders,$folder);
+        array_push($folders, $folder);
         $this->setFolders($folders);
 
         return $this;
     }
 
-    public function getFolders($retrieve=true)
+    public function getFolders($retrieve = true)
     {
         if (!$retrieve)
         {
@@ -181,9 +191,11 @@ class Client extends Model
 
     /**
      * get membership list of a given group. if limit or offset is numeric, only retrieve specific list page;
+     *
      * @param null $group
      * @param null $limit leave null to get all; if limit is null but offset is numeric, limit will default to 100
      * @param null $offset leave null to get all; if limit is null but offset is numeric, limit will default to 100
+     *
      * @return array returns an array of User objects that are in the group membership
      * @return array returns an array of User objects that are in the group membership
      * @throws \Box\Exception\Exception
@@ -205,7 +217,8 @@ class Client extends Model
         $members = array();
         $entries = array();
 
-        if (is_numeric($limit) || is_numeric($offset)) {
+        if (is_numeric($limit) || is_numeric($offset))
+        {
             if (!is_numeric($limit))
             {
                 $limit = 100;
@@ -216,7 +229,9 @@ class Client extends Model
             $data = $this->query($uri);
 
             $entries = $data['entries'];
-        } else {
+        }
+        else
+        {
             $limit = 100;
             $offset = 0;
 
@@ -273,7 +288,7 @@ class Client extends Model
 
         $data = $connection->query($uri);
 
-        $jsonData = json_decode($data,true);
+        $jsonData = json_decode($data, true);
         /**
          * API docs says error is thrown if folder does not exist or no access.
          * no example of error to parse by. Have to assume success until can modify
@@ -293,19 +308,26 @@ class Client extends Model
         {
             $folder = $this->getNewFolder();
             $folder->mapBoxToClass($jsonData);
-        } else if (is_array($jsonData) && array_key_exists('type', $jsonData) && 'error' === $jsonData['type']) {
-            $errorData['error'] = $jsonData['message'];
-            $errorData['error_description'] = $jsonData;
-            $this->error($errorData);
-            $folder = null;
-        } else {
-            $folder = false;
+        }
+        else
+        {
+            if (is_array($jsonData) && array_key_exists('type', $jsonData) && 'error' === $jsonData['type'])
+            {
+                $errorData['error'] = $jsonData['message'];
+                $errorData['error_description'] = $jsonData;
+                $this->error($errorData);
+                $folder = null;
+            }
+            else
+            {
+                $folder = false;
+            }
         }
 
         return $folder;
     }
 
-    public function getFolderFromBox($id=0)
+    public function getFolderFromBox($id = 0)
     {
         $uri = Folder::URI . '/' . $id; // all class constant URIs do not end in a slash
 
@@ -314,7 +336,7 @@ class Client extends Model
 
         $data = $connection->query($uri);
 
-        $jsonData = json_decode($data,true);
+        $jsonData = json_decode($data, true);
         /**
          * API docs says error is thrown if folder does not exist or no access.
          * no example of error to parse by. Have to assume success until can modify
@@ -338,8 +360,9 @@ class Client extends Model
 
     /**
      * @param \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface $folder
-     * @param int                                                        $limit
-     * @param int                                                        $offset
+     * @param int $limit
+     * @param int $offset
+     *
      * @return \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface
      */
     public function getBoxFolderItems($folder, $limit = 100, $offset = 0)
@@ -352,7 +375,7 @@ class Client extends Model
         return $folder;
     }
 
-    public function getFolderItems($id=0)
+    public function getFolderItems($id = 0)
     {
         /**
          * @var Folder|FolderInterface $folder
@@ -365,9 +388,10 @@ class Client extends Model
     /**
      * @param     $name
      * @param int $parentFolderId
+     *
      * @return Folder|FolderInterface
      */
-    public function createNewBoxFolder($name,$parentFolderId = 0)
+    public function createNewBoxFolder($name, $parentFolderId = 0)
     {
         $uri = Folder::URI;
 
@@ -379,9 +403,9 @@ class Client extends Model
             'parent' => array('id' => $parentFolderId)
         );
 
-        $data = $connection->post($uri,$params,true);
+        $data = $connection->post($uri, $params, true);
 
-        $jsonData = json_decode($data,true);
+        $jsonData = json_decode($data, true);
 
         /**
          * error decoding json data
@@ -392,11 +416,16 @@ class Client extends Model
             $data['error'] = "unable to decode json data";
             $data['error_description'] = 'try refreshing the token';
             $this->error($data);
-        } else if (is_array($jsonData) && array_key_exists('type', $jsonData) && 'error' == $jsonData['type']) {
-            $data = array();
-            $data['error'] = $jsonData['status'] .  "  - " . $jsonData['code'];
-            $data['error_description'] = var_export($jsonData['context_info'],true);
-            $this->error($data);
+        }
+        else
+        {
+            if (is_array($jsonData) && array_key_exists('type', $jsonData) && 'error' == $jsonData['type'])
+            {
+                $data = array();
+                $data['error'] = $jsonData['status'] . "  - " . $jsonData['code'];
+                $data['error_description'] = var_export($jsonData['context_info'], true);
+                $this->error($data);
+            }
         }
 
         $folder = $this->getNewFolder();
@@ -407,11 +436,12 @@ class Client extends Model
 
     /**
      * @param Folder|FolderInterface $folder
-     * @param bool                   $ifMatchHeader
+     * @param bool $ifMatchHeader
+     *
      * @throws \Exception
      * @return mixed
      */
-    public function updateBoxFolder($folder,$ifMatchHeader=false)
+    public function updateBoxFolder($folder, $ifMatchHeader = false)
     {
         $uri = Folder::URI . '/' . $folder->getId();
 
@@ -424,9 +454,9 @@ class Client extends Model
 
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
-        $json = $connection->put($uri,$params, true);
+        $json = $connection->put($uri, $params, true);
 
-        $data = json_decode($json,true);
+        $data = json_decode($json, true);
 
         /**
          * error decoding json data
@@ -437,11 +467,16 @@ class Client extends Model
             $errorData['error'] = "unable to decode json data";
             $errorData['error_description'] = $data;
             $this->error($errorData);
-        } else if (is_array($data) && array_key_exists('type', $data) && 'error' == $data['type']) {
-            $errorData = array();
-            $errorData['error'] = $data['status'] .  "  - " . $data['code'];
-            $errorData['error_description'] = var_export($data['context_info'],true);
-            $this->error($errorData);
+        }
+        else
+        {
+            if (is_array($data) && array_key_exists('type', $data) && 'error' == $data['type'])
+            {
+                $errorData = array();
+                $errorData['error'] = $data['status'] . "  - " . $data['code'];
+                $errorData['error_description'] = var_export($data['context_info'], true);
+                $this->error($errorData);
+            }
         }
 
         return $data; // inconsistent? figure out what return is needed, if any
@@ -449,6 +484,7 @@ class Client extends Model
 
     /**
      * @param null|\Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface $folder
+     *
      * @return mixed raw json data as an array
      */
     public function getFolderCollaborations($folder = null)
@@ -456,7 +492,7 @@ class Client extends Model
         if (!$folder instanceof FolderInterface)
         {
             $err['error'] = 'sdk_unexpected_type';
-            $err['error_description'] = "expecting FolderInterface class. given (" . var_export($folder,true) . ")";
+            $err['error_description'] = "expecting FolderInterface class. given (" . var_export($folder, true) . ")";
             $this->error($err);
         }
         $folderId = $folder->getId();
@@ -467,31 +503,42 @@ class Client extends Model
 
         $json = $connection->query($uri);
 
-        $data = json_decode($json,true);
+        $data = json_decode($json, true);
 
         // this can be refactored too...from copyBoxFolder
-        if (null === $data) {
-            $data['error'] = "sdk_json_decode";
-            $data['error_description']  = "unable to decode or recursion level too deep";
-            $this->error($data);
-        } else if (array_key_exists('error',$data))
+        if (null === $data)
         {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description'] = "unable to decode or recursion level too deep";
             $this->error($data);
-        } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
-            $data['error'] = "sdk_unknown";
-            $ditto = $data;
-            $data['error_description'] = $ditto;
-            $this->error($data);
+        }
+        else
+        {
+            if (array_key_exists('error', $data))
+            {
+                $this->error($data);
+            }
+            else
+            {
+                if (array_key_exists('type', $data) && 'error' == $data['type'])
+                {
+                    $data['error'] = "sdk_unknown";
+                    $ditto = $data;
+                    $data['error_description'] = $ditto;
+                    $this->error($data);
+                }
+            }
         }
 
         return $data;
     }
 
     /**
-     * @param null|\Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface   $folder
-     * @param null|\Box\Model\User\User|\Box\Model\User\UserInterface|\Box\Model\Group\GroupInterface           $collaborator
-     * @param string                                                            $role see {@link http://developers.box.com/docs/#collaborations box documentation for all possible roles}
-     * default is viewer
+     * @param null|\Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface $folder
+     * @param null|\Box\Model\User\User|\Box\Model\User\UserInterface|\Box\Model\Group\GroupInterface $collaborator
+     * @param string $role see {@link http://developers.box.com/docs/#collaborations box documentation for all possible
+     *     roles} default is viewer
+     *
      * @return \Box\Model\Collaboration\Collaboration|\Box\Model\Collaboration\CollaborationInterface
      * @throws \Box\Exception\Exception
      */
@@ -500,14 +547,14 @@ class Client extends Model
         if (!$folder instanceof FolderInterface)
         {
             $err['error'] = 'sdk_unexpected_type';
-            $err['error_description'] = "expecting FolderInterface class. given (" . var_export($folder,true) . ")";
+            $err['error_description'] = "expecting FolderInterface class. given (" . var_export($folder, true) . ")";
             $this->error($err);
         }
 
         if (!$collaborator instanceof UserInterface && !$collaborator instanceof GroupInterface)
         {
             $err['error'] = 'sdk_unexpected_type';
-            $err['error_description'] = "expecting UserInterface class. given (" . var_export($collaborator,true) . ")";
+            $err['error_description'] = "expecting UserInterface class. given (" . var_export($collaborator, true) . ")";
             $this->error($err);
         }
 
@@ -532,22 +579,32 @@ class Client extends Model
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $json = $connection->post($uri,$params,true);
+        $json = $connection->post($uri, $params, true);
 
-        $data = json_decode($json,true);
+        $data = json_decode($json, true);
 
-        if (null === $data) {
-            $data['error'] = "sdk_json_decode";
-            $data['error_description']  = "unable to decode or recursion level too deep";
-            $this->error($data);
-        } else if (array_key_exists('error',$data))
+        if (null === $data)
         {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description'] = "unable to decode or recursion level too deep";
             $this->error($data);
-        } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
-            $data['error'] = "sdk_unknown";
-            $ditto = $data;
-            $data['error_description'] = $ditto;
-            $this->error($data);
+        }
+        else
+        {
+            if (array_key_exists('error', $data))
+            {
+                $this->error($data);
+            }
+            else
+            {
+                if (array_key_exists('type', $data) && 'error' == $data['type'])
+                {
+                    $data['error'] = "sdk_unknown";
+                    $ditto = $data;
+                    $data['error_description'] = $ditto;
+                    $this->error($data);
+                }
+            }
         }
 
         $collaboration = $this->getNewCollaboration();
@@ -560,6 +617,7 @@ class Client extends Model
      * @param null|\Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface $folder
      * @param array|null shared link options with
      * default shared link set to collaborator access, no unshared time or permissions set to
+     *
      * @return \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface
      */
     public function createSharedLinkForFolder($folder = null, $params = null)
@@ -567,7 +625,7 @@ class Client extends Model
         if (!$folder instanceof FolderInterface)
         {
             $err['error'] = 'sdk_unexpected_type';
-            $err['error_description'] = "expecting FolderInterface class. given (" . var_export($folder,true) . ")";
+            $err['error_description'] = "expecting FolderInterface class. given (" . var_export($folder, true) . ")";
             $this->error($err);
         }
 
@@ -590,22 +648,32 @@ class Client extends Model
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $json = $connection->put($uri,$params,true);
+        $json = $connection->put($uri, $params, true);
 
-        $data = json_decode($json,true);
+        $data = json_decode($json, true);
 
-        if (null === $data) {
-            $data['error'] = "sdk_json_decode";
-            $data['error_description']  = "unable to decode or recursion level too deep";
-            $this->error($data);
-        } else if (array_key_exists('error',$data))
+        if (null === $data)
         {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description'] = "unable to decode or recursion level too deep";
             $this->error($data);
-        } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
-            $data['error'] = "sdk_unknown";
-            $ditto = $data;
-            $data['error_description'] = $ditto;
-            $this->error($data);
+        }
+        else
+        {
+            if (array_key_exists('error', $data))
+            {
+                $this->error($data);
+            }
+            else
+            {
+                if (array_key_exists('type', $data) && 'error' == $data['type'])
+                {
+                    $data['error'] = "sdk_unknown";
+                    $ditto = $data;
+                    $data['error_description'] = $ditto;
+                    $this->error($data);
+                }
+            }
         }
 
         $updatedFolder = $this->getNewFolder();
@@ -615,19 +683,23 @@ class Client extends Model
     }
 
     /**
-     * @param Folder       $originalFolder
+     * @param Folder $originalFolder
      * @param Folder|array $parent
-     * @param string       $name
-     * @param bool         $addToFolders
+     * @param string $name
+     * @param bool $addToFolders
+     *
      * @return \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface
      * @internal param $destinationId
      * @throws Exception
      */
-    public function copyBoxFolder($originalFolder, $parent, $name=null, $addToFolders=true)
+    public function copyBoxFolder($originalFolder, $parent, $name = null, $addToFolders = true)
     {
         if (!$originalFolder instanceof FolderInterface)
         {
-            $this->error(array('error'=>'Folder or FolderInterface expected','error_description'=>$originalFolder));
+            $this->error(array(
+                'error' => 'Folder or FolderInterface expected',
+                'error_description' => $originalFolder
+            ));
         }
 
         $uri = Folder::URI . '/' . $originalFolder->getId() . '/copy';
@@ -641,10 +713,13 @@ class Client extends Model
 
         if (!$parent instanceof FolderInterface)
         {
-            $this->error(array('error'=>'Folder or FolderInterface expected','error_description'=>$parent));
+            $this->error(array(
+                'error' => 'Folder or FolderInterface expected',
+                'error_description' => $parent
+            ));
         }
 
-        $params['parent'] = array('id'=>$parent->getId());
+        $params['parent'] = array('id' => $parent->getId());
         if (null !== $name)
         {
             $params['name'] = $name;
@@ -653,22 +728,32 @@ class Client extends Model
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $json = $connection->post($uri,$params,true);
+        $json = $connection->post($uri, $params, true);
 
-        $data = json_decode($json,true);
+        $data = json_decode($json, true);
 
-        if (null === $data) {
-            $data['error'] = "sdk_json_decode";
-            $data['error_description']  = "unable to decode or recursion level too deep";
-            $this->error($data);
-        } else if (array_key_exists('error',$data))
+        if (null === $data)
         {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description'] = "unable to decode or recursion level too deep";
             $this->error($data);
-        } else if (array_key_exists('type',$data) && 'error' == $data['type']) {
-            $data['error'] = "sdk_unknown";
-            $ditto = $data;
-            $data['error_description'] = $ditto;
-            $this->error($data);
+        }
+        else
+        {
+            if (array_key_exists('error', $data))
+            {
+                $this->error($data);
+            }
+            else
+            {
+                if (array_key_exists('type', $data) && 'error' == $data['type'])
+                {
+                    $data['error'] = "sdk_unknown";
+                    $ditto = $data;
+                    $data['error_description'] = $ditto;
+                    $this->error($data);
+                }
+            }
         }
 
         $copy = $this->getNewFolder();
@@ -696,7 +781,8 @@ class Client extends Model
 
         $data = json_decode($uploaded, true);
 
-        if (is_array($data) && array_key_exists('type',$data) && 'error' == $data['type']) {
+        if (is_array($data) && array_key_exists('type', $data) && 'error' == $data['type'])
+        {
             $data['error'] = "sdk_unknown";
             $ditto = $data;
             $data['error_description'] = $ditto;
@@ -720,21 +806,26 @@ class Client extends Model
             $params['redirect_uri'] = $redirectUri;
         }
 
-        $json = $connection->post(self::TOKEN_URI,$params);
+        $json = $connection->post(self::TOKEN_URI, $params);
 
-        $data = json_decode($json,true);
+        $data = json_decode($json, true);
 
-        if (null === $data) {
-            $data['error'] = "sdk_json_decode";
-            $data['error_description']  = "unable to decode or recursion level too deep";
-            $this->error($data);
-        } else if (array_key_exists('error',$data))
+        if (null === $data)
         {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description'] = "unable to decode or recursion level too deep";
             $this->error($data);
+        }
+        else
+        {
+            if (array_key_exists('error', $data))
+            {
+                $this->error($data);
+            }
         }
 
         $token = $this->getToken();
-        $this->setTokenData($token , $data);
+        $this->setTokenData($token, $data);
 
         return $token;
 
@@ -767,19 +858,24 @@ class Client extends Model
 
         $connection = $this->getConnection();
 
-        $json = $connection->post(self::TOKEN_URI,$params);
-        $data = json_decode($json,true);
+        $json = $connection->post(self::TOKEN_URI, $params);
+        $data = json_decode($json, true);
 
-        if (null === $data) {
-                    $data['error'] = "sdk_json_decode";
-            $data['error_description']  = "unable to decode or recursion level too deep";
-            $this->error($data);
-        } else if (array_key_exists('error',$data))
+        if (null === $data)
         {
+            $data['error'] = "sdk_json_decode";
+            $data['error_description'] = "unable to decode or recursion level too deep";
             $this->error($data);
         }
+        else
+        {
+            if (array_key_exists('error', $data))
+            {
+                $this->error($data);
+            }
+        }
 
-        $this->setTokenData($token,$data);
+        $this->setTokenData($token, $data);
 
         $this->setToken($token);
 
@@ -798,9 +894,10 @@ class Client extends Model
     /**
      * @param $token \Box\Model\Connection\Token\TokenInterface
      * @param $data
+     *
      * @return \Box\Model\Connection\Token\TokenInterface
      */
-    public function setTokenData($token , $data)
+    public function setTokenData($token, $data)
     {
         $token->setAccessToken($data['access_token']);
         $token->setExpiresIn($data['expires_in']);
@@ -812,6 +909,7 @@ class Client extends Model
 
     /**
      * @param $token \Box\Model\Connection\Token\TokenInterface|\Box\Model\Connection\Token\Token
+     *
      * @return mixed
      */
     public function destroyToken($token)
@@ -823,9 +921,9 @@ class Client extends Model
 
         $connection = $this->getConnection();
 
-        $json = $connection->post(self::REVOKE_URI,$params);
+        $json = $connection->post(self::REVOKE_URI, $params);
         // @todo add error handling for null data
-        $data = json_decode($json,true);
+        $data = json_decode($json, true);
 
         return $data;
     }
@@ -875,6 +973,7 @@ class Client extends Model
     /**
      * @param      $connection Connection
      * @param null|array $additionalHeaders
+     *
      * @return Connection
      * @throws Exception
      */
@@ -895,12 +994,14 @@ class Client extends Model
         // header opt will require a merge with other headers to not overwrite.
         // @todo refactor to allow additional headers with auth header
         $connection->setCurlOpts(array('CURLOPT_HTTPHEADER' => $headers));
+
         return $connection;
-        }
+    }
 
     public function setClientId($clientId = null)
     {
         $this->clientId = $clientId;
+
         return $this;
     }
 
@@ -912,6 +1013,7 @@ class Client extends Model
     public function setClientSecret($clientSecret = null)
     {
         $this->clientSecret = $clientSecret;
+
         return $this;
     }
 
@@ -923,6 +1025,7 @@ class Client extends Model
     public function setRedirectUri($redirectUri = null)
     {
         $this->redirectUri = $redirectUri;
+
         return $this;
     }
 
@@ -935,6 +1038,7 @@ class Client extends Model
     public function setAuthorizationCode($authorizationCode = null)
     {
         $this->authorizationCode = $authorizationCode;
+
         return $this;
     }
 
@@ -946,6 +1050,7 @@ class Client extends Model
     public function setToken($token = null)
     {
         $this->token = $token;
+
         return $this;
     }
 
@@ -957,13 +1062,15 @@ class Client extends Model
             $token = new $tokenClass();
             $this->token = $token;
         }
+
         return $this->token;
     }
 
     public function setTokenClass($tokenClass = null)
     {
-        $this->validateClass($tokenClass,'TokenInterface');
+        $this->validateClass($tokenClass, 'TokenInterface');
         $this->tokenClass = $tokenClass;
+
         return $this;
     }
 
@@ -974,7 +1081,7 @@ class Client extends Model
 
     public function setConnectionClass($connectionClass = null)
     {
-        $this->validateClass($connectionClass,'ConnectionInterface');
+        $this->validateClass($connectionClass, 'ConnectionInterface');
 
         $this->connectionClass = $connectionClass;
 
@@ -990,9 +1097,10 @@ class Client extends Model
     {
         if (!$connection instanceof ConnectionInterface)
         {
-            throw new Exception("Invalid Class",Exception::INVALID_CLASS);
+            throw new Exception("Invalid Class", Exception::INVALID_CLASS);
         }
         $this->connection = $connection;
+
         return $this;
     }
 
@@ -1010,8 +1118,9 @@ class Client extends Model
 
     public function setFileClass($fileClass = null)
     {
-        $this->validateClass($fileClass,'FileInterface');
+        $this->validateClass($fileClass, 'FileInterface');
         $this->fileClass = $fileClass;
+
         return $this;
     }
 
@@ -1022,12 +1131,15 @@ class Client extends Model
 
     /**
      * @todo determine best validation for this
+     *
      * @param null $files
+     *
      * @return $this
      */
     public function setFiles($files = null)
     {
         $this->files = $files;
+
         return $this;
     }
 
@@ -1038,8 +1150,9 @@ class Client extends Model
 
     public function setFolderClass($folderClass = null)
     {
-        $this->validateClass($folderClass,'FolderInterface');
+        $this->validateClass($folderClass, 'FolderInterface');
         $this->folderClass = $folderClass;
+
         return $this;
     }
 
@@ -1051,13 +1164,15 @@ class Client extends Model
     public function setFolders($folders = null)
     {
         $this->folders = $folders;
+
         return $this;
     }
 
     public function setCollaborationClass($collaborationClass = null)
     {
-        $this->validateClass($collaborationClass,'CollaborationInterface');
+        $this->validateClass($collaborationClass, 'CollaborationInterface');
         $this->collaborationClass = $collaborationClass;
+
         return $this;
     }
 
@@ -1068,8 +1183,9 @@ class Client extends Model
 
     public function setUserClass($userClass = null)
     {
-        $this->validateClass($userClass,'UserInterface');
+        $this->validateClass($userClass, 'UserInterface');
         $this->userClass = $userClass;
+
         return $this;
     }
 
@@ -1080,8 +1196,9 @@ class Client extends Model
 
     public function setGroupClass($groupClass = null)
     {
-        $this->validateClass($groupClass,'GroupInterface');
+        $this->validateClass($groupClass, 'GroupInterface');
         $this->groupClass = $groupClass;
+
         return $this;
     }
 
@@ -1092,11 +1209,13 @@ class Client extends Model
 
     /**
      * @param array $collaborations
+     *
      * @return \Box\Model\Client\Client $this
      */
     public function setCollaborations($collaborations = null)
     {
         $this->collaborations = $collaborations;
+
         return $this;
     }
 
@@ -1111,6 +1230,7 @@ class Client extends Model
     public function setDeviceId($deviceId = null)
     {
         $this->deviceId = $deviceId;
+
         return $this;
     }
 
@@ -1122,6 +1242,7 @@ class Client extends Model
     public function setDeviceName($deviceName = null)
     {
         $this->deviceName = $deviceName;
+
         return $this;
     }
 
@@ -1133,6 +1254,7 @@ class Client extends Model
     public function setState($state = null)
     {
         $this->state = $state;
+
         return $this;
     }
 
@@ -1143,11 +1265,13 @@ class Client extends Model
 
     /**
      * @param \Box\Model\Folder\Folder|\Box\Model\Folder\FolderInterface $root
+     *
      * @return \Box\Model\Client\Client
      */
     public function setRoot($root = null)
     {
         $this->root = $root;
+
         return $this;
     }
 
@@ -1161,6 +1285,7 @@ class Client extends Model
 
     /**
      * @param $uri
+     *
      * @return mixed
      */
     public function query($uri = null)
@@ -1170,27 +1295,36 @@ class Client extends Model
 
         $json = $connection->query($uri);
 
-        $data = json_decode($json , true);
+        $data = json_decode($json, true);
 
         if (null === $data)
         {
             $data['error'] = "sdk_json_decode";
             $data['error_description'] = "unable to decode or recursion level too deep";
             $this->error($data);
+
             return $data;
         }
-        else if (array_key_exists('error' , $data))
+        else
         {
-            $this->error($data);
-            return $data;
-        }
-        else if (array_key_exists('type' , $data) && 'error' == $data['type'])
-        {
-            $data['error'] = "sdk_unknown";
-            $ditto = $data;
-            $data['error_description'] = $ditto;
-            $this->error($data);
-            return $data;
+            if (array_key_exists('error', $data))
+            {
+                $this->error($data);
+
+                return $data;
+            }
+            else
+            {
+                if (array_key_exists('type', $data) && 'error' == $data['type'])
+                {
+                    $data['error'] = "sdk_unknown";
+                    $ditto = $data;
+                    $data['error_description'] = $ditto;
+                    $this->error($data);
+
+                    return $data;
+                }
+            }
         }
 
         return $data;
