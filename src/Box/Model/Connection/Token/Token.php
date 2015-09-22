@@ -17,6 +17,7 @@ class Token extends Model implements TokenInterface
     protected $grantType = "authorization_code";
     protected $expiresIn;
     protected $tokenType;
+    protected $restrictedTo = array();
 
     public function setExpiresIn($expiresIn = null)
     {
@@ -74,6 +75,24 @@ class Token extends Model implements TokenInterface
     public function getRefreshToken()
     {
         return $this->refreshToken;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRestrictedTo()
+    {
+        return $this->restrictedTo;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRestrictedTo($restrictedTo = null)
+    {
+        $this->restrictedTo = $restrictedTo;
+
+        return $this;
     }
 
     // all parameters must be url encoded

@@ -13,7 +13,7 @@ use Box\Model\Event\EventInterface;
 
 interface UserEventInterface extends EventInterface
 {
-    const URL = "https://api.box.com/2.0/events";
+    const URI = "https://api.box.com/2.0/events";
 
     /**
      * A folder or File was created
@@ -119,4 +119,6 @@ interface UserEventInterface extends EventInterface
      * When an admin role changes for a user
      */
     const CHANGE_ADMIN_ROLE = "CHANGE_ADMIN_ROLE";
+
+
 }

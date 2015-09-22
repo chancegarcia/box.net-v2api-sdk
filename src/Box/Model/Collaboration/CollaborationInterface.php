@@ -8,8 +8,11 @@
 
 namespace Box\Model\Collaboration;
 
-interface CollaborationInterface {
-    public function __construct($options = null);
+use Box\Model\ModelInterface;
+
+interface CollaborationInterface extends ModelInterface
+{
+    const URI = "https://api.box.com/2.0/collaborations";
+
     public function getId();
-    public function mapBoxToClass($aData);
 }

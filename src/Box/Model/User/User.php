@@ -9,13 +9,11 @@
 namespace Box\Model\User;
 
 use Box\Model\Model;
-use Box\Exception\Exception;
+use Box\Exception\BoxException;
 use Box\Model\User\UserInterface;
-class User extends Model implements UserInterface{
 
-    const URI = 'https://api.box.com/2.0/users';
-    const CURRENT_USER_URI = 'https://api.box.com/2.0/users/me';
-
+class User extends Model implements UserInterface
+{
     protected $type = "user";
     protected $id;
     protected $name;
@@ -42,6 +40,7 @@ class User extends Model implements UserInterface{
     public function setId($id = null)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -53,6 +52,7 @@ class User extends Model implements UserInterface{
     public function setAddress($address = null)
     {
         $this->address = $address;
+
         return $this;
     }
 
@@ -64,6 +64,7 @@ class User extends Model implements UserInterface{
     public function setAvatarUrl($avatarUrl = null)
     {
         $this->avatarUrl = $avatarUrl;
+
         return $this;
     }
 
@@ -75,6 +76,7 @@ class User extends Model implements UserInterface{
     public function setCanSeeManagedUsers($canSeeManagedUsers = null)
     {
         $this->canSeeManagedUsers = $canSeeManagedUsers;
+
         return $this;
     }
 
@@ -86,6 +88,7 @@ class User extends Model implements UserInterface{
     public function setCreatedAt($createdAt = null)
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 
@@ -97,6 +100,7 @@ class User extends Model implements UserInterface{
     public function setEnterprise($enterprise = null)
     {
         $this->enterprise = $enterprise;
+
         return $this;
     }
 
@@ -108,6 +112,7 @@ class User extends Model implements UserInterface{
     public function setIsExemptFromDeviceLimits($isExemptFromDeviceLimits = null)
     {
         $this->isExemptFromDeviceLimits = $isExemptFromDeviceLimits;
+
         return $this;
     }
 
@@ -119,6 +124,7 @@ class User extends Model implements UserInterface{
     public function setIsExemptFromLoginVerification($isExemptFromLoginVerification = null)
     {
         $this->isExemptFromLoginVerification = $isExemptFromLoginVerification;
+
         return $this;
     }
 
@@ -130,6 +136,7 @@ class User extends Model implements UserInterface{
     public function setIsSyncEnabled($isSyncEnabled = null)
     {
         $this->isSyncEnabled = $isSyncEnabled;
+
         return $this;
     }
 
@@ -141,6 +148,7 @@ class User extends Model implements UserInterface{
     public function setJobTitle($jobTitle = null)
     {
         $this->jobTitle = $jobTitle;
+
         return $this;
     }
 
@@ -152,6 +160,7 @@ class User extends Model implements UserInterface{
     public function setLanguage($language = null)
     {
         $this->language = $language;
+
         return $this;
     }
 
@@ -163,6 +172,7 @@ class User extends Model implements UserInterface{
     public function setLogin($login = null)
     {
         $this->login = $login;
+
         return $this;
     }
 
@@ -174,6 +184,7 @@ class User extends Model implements UserInterface{
     public function setMaxUploadSize($maxUploadSize = null)
     {
         $this->maxUploadSize = $maxUploadSize;
+
         return $this;
     }
 
@@ -185,6 +196,7 @@ class User extends Model implements UserInterface{
     public function setModifiedAt($modifiedAt = null)
     {
         $this->modifiedAt = $modifiedAt;
+
         return $this;
     }
 
@@ -196,6 +208,7 @@ class User extends Model implements UserInterface{
     public function setName($name = null)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -207,6 +220,7 @@ class User extends Model implements UserInterface{
     public function setPhone($phone = null)
     {
         $this->phone = $phone;
+
         return $this;
     }
 
@@ -218,6 +232,7 @@ class User extends Model implements UserInterface{
     public function setRole($role = null)
     {
         $this->role = $role;
+
         return $this;
     }
 
@@ -229,6 +244,7 @@ class User extends Model implements UserInterface{
     public function setSpaceAmount($spaceAmount = null)
     {
         $this->spaceAmount = $spaceAmount;
+
         return $this;
     }
 
@@ -240,6 +256,7 @@ class User extends Model implements UserInterface{
     public function setSpaceUsed($spaceUsed = null)
     {
         $this->spaceUsed = $spaceUsed;
+
         return $this;
     }
 
@@ -251,6 +268,7 @@ class User extends Model implements UserInterface{
     public function setStatus($status = null)
     {
         $this->status = $status;
+
         return $this;
     }
 
@@ -262,6 +280,7 @@ class User extends Model implements UserInterface{
     public function setTrackingCodes($trackingCodes = null)
     {
         $this->trackingCodes = $trackingCodes;
+
         return $this;
     }
 
@@ -273,6 +292,7 @@ class User extends Model implements UserInterface{
     public function setType($type = null)
     {
         $this->type = $type;
+
         return $this;
     }
 

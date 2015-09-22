@@ -8,10 +8,10 @@
 
 namespace Box\Model\Event\Collection;
 
+use Box\Collection\ArrayCollectionInterface;
+use Box\Model\ModelInterface;
 
-use Box\Model\Collection\CollectionInterface;
-
-interface EventCollectionInterface extends CollectionInterface
+interface EventCollectionInterface extends ModelInterface
 {
     /**
      * @return mixed
@@ -36,4 +36,15 @@ interface EventCollectionInterface extends CollectionInterface
      * @return EventCollectionInterface|EventCollection
      */
     public function setNextStreamPosition($nextStreamPosition = null);
+
+    /**
+     * @return ArrayCollectionInterface
+     */
+    public function getEntries();
+
+    /**
+     * @param ArrayCollectionInterface|array $entries
+     * @return EventCollectionInterface
+     */
+    public function setEntries($entries = null);
 }

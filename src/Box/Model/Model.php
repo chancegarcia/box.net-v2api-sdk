@@ -8,15 +8,15 @@
 
 namespace Box\Model;
 
-use Box\Exception\Exception;
+use Box\Exception\BoxException;
 
-class Model implements ModelInterface
+class Model extends BaseModel implements ModelInterface
 {
 
     // @todo add curl history on info/error/errno properties for child classes to access for recording
     // @todo add last curl info/error/errno properties as well
 
-    public function __construct($options = null)
+    public function __construct(array $options = null)
     {
 
         if (null !== $options)
@@ -58,7 +58,7 @@ class Model implements ModelInterface
      *
      * @param $data array containing error and error_description keys
      *
-     * @throws \Box\Exception\Exception
+     * @throws \Box\Exception\BoxException
      */
     public function error($data, $message = null)
     {
@@ -68,7 +68,7 @@ class Model implements ModelInterface
             $message = $error;
         }
 
-        $exception = new Exception($message);
+        $exception = new BoxException($message);
         $exception->setError($error);
         $exception->setErrorDescription($data['error_description']);
         throw $exception;
@@ -78,24 +78,24 @@ class Model implements ModelInterface
      * @param string $class
      * @param  string $classType
      *
-     * @throws \Box\Exception\Exception
+     * @throws \Box\Exception\BoxException
      * @return bool returns true if validation passes. Throws exception if unable to validate or validation doesn't pass
      */
     public function validateClass($class, $classType)
     {
         if (!is_string($class))
         {
-            throw new Exception("Please specify a class string to validate", Exception::INVALID_INPUT);
+            throw new BoxException("Please specify a class string to validate", BoxException::INVALID_INPUT);
         }
 
         if (!is_string($classType))
         {
-            throw new Exception("Unable to validate. Please specify a class type to validate", Exception::INVALID_CLASS_TYPE);
+            throw new BoxException("Unable to validate. Please specify a class type to validate", BoxException::INVALID_CLASS_TYPE);
         }
 
         if (!class_exists($class))
         {
-            throw new Exception("Unable to find class", Exception::UNKNOWN_CLASS);
+            throw new BoxException("Unable to find class", BoxException::UNKNOWN_CLASS);
         }
         else
         {
@@ -104,7 +104,7 @@ class Model implements ModelInterface
 
         if (!$oClass instanceof $classType)
         {
-            throw new Exception("Invalid Connection Class", Exception::INVALID_CLASS_TYPE);
+            throw new BoxException("Invalid Connection Class", BoxException::INVALID_CLASS_TYPE);
         }
 
         return true;
@@ -130,60 +130,11 @@ class Model implements ModelInterface
         return $query;
     }
 
-    public function toClassVar($str)
-    {
-        $aTokens = explode("_", $str);
-        $sFirst = array_shift($aTokens);
-        $aTokens = array_map('ucfirst', $aTokens);
-        array_unshift($aTokens, $sFirst);
-        $classVar = implode("", $aTokens);
-
-        return $classVar;
-    }
-
-    public function toBoxVar($str)
-    {
-        $aTokens = preg_split('/(?<=\\w)(?=[A-Z])/', $str);
-        $sFirst = array_shift($aTokens);
-        $aTokens = array_map('lcfirst', $aTokens);
-        array_unshift($aTokens, $sFirst);
-        $boxVar = implode("_", $aTokens);
-
-        return $boxVar;
-    }
-
-    /**
-     * this will bomb out if any properties are private
-     * @todo try using setter if found?
-     *
-     * @param $aData
-     *
-     * @return $this
-     */
-    public function mapBoxToClass($aData)
-    {
-        foreach ($aData as $k => $v)
-        {
-            $sClassProp = $this->toClassVar($k);
-            $sSetterMethod = "set" . ucfirst($sClassProp);
-            if (method_exists($this, $sSetterMethod))
-            {
-                $this->{$sSetterMethod}($v);
-            }
-            else
-            {
-                $this->{$sClassProp} = $v;
-            }
-        }
-
-        return $this;
-    }
-
     public function getNewClass($className = null, $classConstructorOptions = null)
     {
         if (null === $className)
         {
-            throw new Exception('undefined class name', Exception::INVALID_INPUT);
+            throw new BoxException('undefined class name', BoxException::INVALID_INPUT);
         }
 
         $sMethod = 'get' . ucfirst($className) . 'Class';

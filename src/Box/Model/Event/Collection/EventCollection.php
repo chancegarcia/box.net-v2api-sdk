@@ -9,12 +9,21 @@
 namespace Box\Model\Event\Collection;
 
 
-use Box\Model\Collection\Collection;
+use Box\Collection\ArrayCollection;
+use Box\Collection\ArrayCollectionInterface;
+use Box\Exception\BoxException;
+use Box\Model\Model;
+use Box\Model\ModelInterface;
 
-class EventCollection extends Collection implements EventCollectionInterface
+class EventCollection extends Model implements EventCollectionInterface
 {
     protected $chunkSize;
     protected $nextStreamPosition;
+
+    /**
+     * @var ArrayCollection
+     */
+    protected $entries;
 
     /**
      * {@inheritdoc}
@@ -51,4 +60,33 @@ class EventCollection extends Collection implements EventCollectionInterface
 
         return $this;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntries()
+    {
+        return $this->entries;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setEntries($entries = null)
+    {
+        if (is_array($entries))
+        {
+            $entries = new ArrayCollection($entries);
+        }
+        else if (!$entries instanceof ArrayCollectionInterface)
+        {
+            throw new BoxException('entries must be an array or instance of ArrayCollectionInterface');
+        }
+
+        $this->entries = $entries;
+
+        return $this;
+    }
+
+
 }

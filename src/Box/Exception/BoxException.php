@@ -7,12 +7,7 @@
 
 namespace Box\Exception;
 
-/**
- * Class Exception
- * @package Box\Exception
- * @deprecated Please start catching BoxException; this is still in use by the Client Class which is planned to be deprecated in the future
- */
-class Exception extends \Exception
+class BoxException extends \Exception
 {
 
     const INVALID_CLASS_TYPE = "Invalid Class Type";
@@ -23,6 +18,7 @@ class Exception extends \Exception
 
     protected $error;
     protected $errorDescription;
+    protected $context = array();
 
     public function setError($error = null)
     {
@@ -44,5 +40,10 @@ class Exception extends \Exception
     public function getErrorDescription()
     {
         return $this->errorDescription;
+    }
+
+    public function addContext($contextInformation = null)
+    {
+        $this->context[] = $contextInformation;
     }
 }

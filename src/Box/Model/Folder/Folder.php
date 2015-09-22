@@ -8,14 +8,11 @@
 
 namespace Box\Model\Folder;
 
-use Box\Exception\Exception;
+use Box\Exception\BoxException;
 use Box\Model\Model;
 
 class Folder extends Model implements FolderInterface
 {
-    CONST URI =  'https://api.box.com/2.0/folders';
-    CONST SHARED_ITEM_URI = "https://api.box.com/2.0/shared_items";
-
     protected $type = "folder";
     protected $id;
     protected $sequenceId;
@@ -43,7 +40,7 @@ class Folder extends Model implements FolderInterface
 
         if (!in_array($syncState, array("synced", "not_synced", "partially_synced")))
         {
-            throw new Exception("invalid sync state value given (" . var_export($syncState, true) . ").\n
+            throw new BoxException("invalid sync state value given (" . var_export($syncState, true) . ").\n
             Expecting one of the following values: synced, not_synced, partially_synced
             ");
         }
@@ -84,17 +81,17 @@ class Folder extends Model implements FolderInterface
         $selfId = $this->getId();
         if (!is_numeric($selfId))
         {
-            throw new Exception("Please set the folder Id to retrieve items for this folder.". Exception::MISSING_ID);
+            throw new BoxException("Please set the folder Id to retrieve items for this folder.". BoxException::MISSING_ID);
         }
 
         if (!is_numeric($limit))
         {
-            throw new Exception("Limit must be a valid integer", Exception::INVALID_INPUT);
+            throw new BoxException("Limit must be a valid integer", BoxException::INVALID_INPUT);
         }
 
         if (!is_numeric($offset))
         {
-            throw new Exception("Offset must be a valid integer", Exception::INVALID_INPUT);
+            throw new BoxException("Offset must be a valid integer", BoxException::INVALID_INPUT);
         }
 
         $uri = self::URI . "/" . $selfId . "/items" . "?limit=" . $limit . "&offset=" . $offset;
