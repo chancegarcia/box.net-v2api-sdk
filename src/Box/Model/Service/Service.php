@@ -298,6 +298,8 @@ class Service extends BaseModel implements ServiceInterface
     }
 
     /**
+     * this will attempt to retrieve from box and refresh the token if necessary then update the token storage
+     *
      * {@inheritdoc}
      * @throws \Box\Exception\BoxException
      */
@@ -312,7 +314,7 @@ class Service extends BaseModel implements ServiceInterface
             try
             {
                 $refreshedToken = $this->refreshToken();
-                $this->getTokenStorage()->storeToken($refreshedToken);
+                $this->getTokenStorage()->updateToken($refreshedToken);
                 $this->setToken($refreshedToken);
             }
             catch (BoxException $refreshException)
@@ -389,6 +391,7 @@ class Service extends BaseModel implements ServiceInterface
     }
 
     /**
+     * this does not update the token storage with the refreshed token; that action is handled by user or a wrapped method
      * {@inheritdoc}
      * @throws \Box\Exception\BoxException
      */

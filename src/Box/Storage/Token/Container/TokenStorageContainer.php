@@ -17,17 +17,15 @@ class TokenStorageContainer implements BaseTokenStorageInterface
     protected $token;
 
     /**
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function retrieveToken($retrievalWhereClause = null)
+    public function retrieveToken($retrievalUpdateClause = null)
     {
         return $this->token;
     }
 
     /**
-     * @param TokenInterface $token
-     *
-     * @return BaseTokenStorageInterface
+     * {@inheritdoc}
      */
     public function storeToken(TokenInterface $token = null)
     {
@@ -38,10 +36,7 @@ class TokenStorageContainer implements BaseTokenStorageInterface
 
 
     /**
-     * @param \Box\Model\Connection\Token\TokenInterface $token
-     * @param mixed $tokenUpdateClause update context such as a where clause
-     *
-     * @return mixed
+     * {@inheritdoc}
      */
     public function updateToken(TokenInterface $token, $tokenUpdateClause = null)
     {

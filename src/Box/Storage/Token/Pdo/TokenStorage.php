@@ -303,11 +303,17 @@ class TokenStorage implements TokenStorageInterface
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function updateToken(TokenInterface $token, $tokenUpdateClause = null)
     {
         // TODO: Implement updateToken() method.
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function retrieveToken($retrievalWhereClause = null)
     {
         // TODO: Implement retrieveToken() method.
