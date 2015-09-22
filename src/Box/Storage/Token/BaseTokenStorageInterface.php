@@ -18,7 +18,7 @@ interface BaseTokenStorageInterface
      *
      * @param \Box\Model\Connection\Token\TokenInterface $token
      *
-     * @return mixed
+     * @return BaseTokenStorageInterface
      */
     public function storeToken(TokenInterface $token);
 
@@ -26,14 +26,14 @@ interface BaseTokenStorageInterface
      * @param \Box\Model\Connection\Token\TokenInterface $token
      * @param mixed $tokenUpdateClause update context such as a where clause
      *
-     * @return mixed
+     * @return BaseTokenStorageInterface
      */
     public function updateToken(TokenInterface $token, $tokenUpdateClause = null);
 
     /**
      * @param mixed $retrievalWhereClause retrieval context such as a where clause
      *
-     * @return mixed
+     * @return BaseTokenStorageInterface
      */
     public function retrieveToken($retrievalWhereClause = null);
 }
