@@ -24,11 +24,26 @@ class AdminEvent extends Event implements AdminEventInterface
     protected $createdAfter;
     protected $createdBefore;
 
-
     public function __construct(array $options = array())
     {
         $this->streamType = self::STREAM_TYPE;
         return parent::__construct($options);
+    }
+
+    /**
+     * remove any attempt to map to the private property
+     *
+     * {@inheritdoc}
+     */
+    public function mapBoxToClass($aData)
+    {
+        // @todo need to refactor base model to explicitly take an array as the argument
+        if (is_array($aData) && array_key_exists('stream_type'))
+        {
+            unset($aData['stream_type']);
+        }
+
+        return parent::mapBoxToClass($aData);
     }
 
     /**

@@ -10,7 +10,7 @@
 
 namespace Box\Model\Connection;
 use Box\Model\Model;
-use Box\Exception\Exception;
+use Box\Exception\BoxException;
 use Box\Model\Connection\Token\TokenInterface;
 use Box\Model\Connection\ConnectionInterface;
 use Box\Model\Connection\Response\ResponseInterface;
@@ -24,7 +24,6 @@ use \CURLFile;
  */
 class Connection extends Model implements ConnectionInterface
 {
-
     protected $responseType = "code";
     protected $clientId;
     protected $clientSecret;
@@ -133,7 +132,7 @@ class Connection extends Model implements ConnectionInterface
 
     public function delete($uri)
     {
-        throw new Exception('stubbed method. please implement');
+        throw new BoxException('stubbed method. please implement');
     }
 
     public function put($uri, $params = array(), $nameValuePair = false)

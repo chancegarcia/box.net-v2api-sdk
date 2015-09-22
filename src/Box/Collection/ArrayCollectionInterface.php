@@ -6,14 +6,14 @@
  * Time: 12:20 PM
  */
 
-namespace Box\Model\Collection;
+namespace Box\Collection;
 
 use ArrayAccess;
 use Closure;
 use Countable;
 use IteratorAggregate;
 
-interface CollectionInterface extends Countable, IteratorAggregate, ArrayAccess
+interface ArrayCollectionInterface extends Countable, IteratorAggregate, ArrayAccess
 {
     /**
      * Adds an element at the end of the collection.
@@ -168,7 +168,7 @@ interface CollectionInterface extends Countable, IteratorAggregate, ArrayAccess
      *
      * @param Closure $p The predicate used for filtering.
      *
-     * @return Collection A collection with the results of the filter operation.
+     * @return ArrayCollection A collection with the results of the filter operation.
      */
     public function filter(Closure $p);
 
@@ -187,7 +187,7 @@ interface CollectionInterface extends Countable, IteratorAggregate, ArrayAccess
      *
      * @param Closure $func
      *
-     * @return Collection
+     * @return ArrayCollection
      */
     public function map(Closure $func);
 
@@ -215,9 +215,9 @@ interface CollectionInterface extends Countable, IteratorAggregate, ArrayAccess
     public function indexOf($element);
 
     /**
-     * Extracts a slice of $length elements starting at position $offset from the Collection.
+     * Extracts a slice of $length elements starting at position $offset from the ArrayCollection.
      *
-     * If $length is null it returns all elements from $offset to the end of the Collection.
+     * If $length is null it returns all elements from $offset to the end of the ArrayCollection.
      * Keys have to be preserved by this method. Calling this method will only return the
      * selected slice and NOT change the elements contained in the collection slice is called on.
      *

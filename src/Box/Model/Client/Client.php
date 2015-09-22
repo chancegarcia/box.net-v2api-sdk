@@ -19,13 +19,14 @@ use Box\Model\Folder\Folder;
 use Box\Model\Folder\FolderInterface;
 use Box\Model\Group\GroupInterface;
 use Box\Model\Model;
+use Box\Model\ModelInterface;
 use Box\Model\User\UserInterface;
 
 /**
  * Class Client
  * @package Box\Model
  */
-class Client extends Model
+class Client extends Model implements ModelInterface
 {
     CONST AUTH_URI = "https://www.box.com/api/oauth2/authorize";
     CONST TOKEN_URI = "https://www.box.com/api/oauth2/token";

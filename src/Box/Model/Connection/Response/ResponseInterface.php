@@ -8,7 +8,8 @@
 
 namespace Box\Model\Connection\Response;
 
-interface ResponseInterface
+use Box\Model\ModelInterface;
+
+interface ResponseInterface extends ModelInterface
 {
-    public function __construct($options = null);
 }

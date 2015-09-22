@@ -12,9 +12,12 @@
 namespace Box\Model\File;
 
 
-interface FileInterface
-{
-    public function __construct($options = null);
-    public function getId();
+use Box\Model\ModelInterface;
 
+interface FileInterface extends  ModelInterface
+{
+    const URI = "https://api.box.com/2.0/files";
+    const UPLOAD_URI = "https://upload.box.com/api/2.0/files/content";
+
+    public function getId();
 }

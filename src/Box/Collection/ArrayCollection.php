@@ -6,20 +6,20 @@
  * Time: 12:22 PM
  */
 
-namespace Box\Model\Collection;
+namespace Box\Collection;
 
 use Closure;
 
-class Collection implements CollectionInterface
+class ArrayCollection implements ArrayCollectionInterface
 {
     protected $entries = array();
 
     /**
-     * Initializes a new CollectionInterface compatible class.
+     * Initializes a new ArrayCollectionInterface compatible class.
      *
      * @param array $elements
      *
-     * @return CollectionInterface|Collection
+     * @return ArrayCollectionInterface|ArrayCollection
      */
     public function __construct(array $elements = array())
     {
@@ -46,7 +46,7 @@ class Collection implements CollectionInterface
     /**
      * @param array $elements
      *
-     * @return CollectionInterface|Collection
+     * @return ArrayCollectionInterface|ArrayCollection
      */
     public function setElements($elements = null)
     {
