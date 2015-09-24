@@ -8,6 +8,7 @@
 
 namespace Box\Model\Service;
 
+use Box\Exception\TokenStorageException;
 use Box\Model\BaseModel;
 use Box\Exception\BoxException;
 use Box\Model\Connection\Connection, Box\Model\Connection\ConnectionInterface;
@@ -321,7 +322,9 @@ class Service extends BaseModel implements ServiceInterface
      * this will attempt to retrieve from box and refresh the token if necessary then update the token storage
      *
      * {@inheritdoc}
-     * @throws \Box\Exception\BoxException
+     * @throws \Box\Exception\BoxException|\Box\Exception\TokenStorageException for TokenStorageException, we will set
+     *     previous token information here if it isn't set already from the TokenStorageException. then rethrow; Token
+     *     storage is expected to set all other context values for information.
      */
     public function getFromBox($uri = null, ModelInterface $class = null)
     {
@@ -331,12 +334,15 @@ class Service extends BaseModel implements ServiceInterface
         }
         catch (BoxException $be)
         {
+            $currentToken = clone $this->getToken();
             try
             {
                 $refreshedToken = $this->refreshToken();
                 $tokenStorageContext = $this->getTokenStorageContext();
                 $this->getTokenStorage()->updateToken($refreshedToken, $tokenStorageContext);
                 $this->setToken($refreshedToken);
+                // retry query
+                $boxData = $this->queryBox($uri);
             }
             catch (BoxException $refreshException)
             {
@@ -344,6 +350,16 @@ class Service extends BaseModel implements ServiceInterface
                 $finalException = new BoxException($refreshMessage, $refreshException->getCode(), $be);
                 $finalException->addContext($refreshException);
                 throw $finalException;
+            }
+            catch (TokenStorageException $tse)
+            {
+                // add some context if none already given and rethrow
+                if (!$tse->getPreviousToken() instanceof TokenInterface)
+                {
+                    $tse->setPreviousToken($currentToken);
+                }
+
+                throw $tse;
             }
         }
 
@@ -412,7 +428,8 @@ class Service extends BaseModel implements ServiceInterface
     }
 
     /**
-     * this does not update the token storage with the refreshed token; that action is handled by user or a wrapped method
+     * this does not update the token storage with the refreshed token; that action is handled by user or a wrapped
+     * method
      * {@inheritdoc}
      * @throws \Box\Exception\BoxException
      */
