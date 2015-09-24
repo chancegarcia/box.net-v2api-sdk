@@ -33,7 +33,7 @@ interface BaseTokenStorageInterface
     /**
      * @param mixed $retrievalWhereClause retrieval context such as a where clause
      *
-     * @return BaseTokenStorageInterface
+     * @return TokenInterface
      */
     public function retrieveToken($retrievalWhereClause = null);
 }
