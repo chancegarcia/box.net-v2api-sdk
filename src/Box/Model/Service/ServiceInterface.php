@@ -157,7 +157,8 @@ interface ServiceInterface extends BaseModelInterface
 
     /**
      * @param null $uri
-     * @param ModelInterface $class class to map the box data to; if none provided, original json return will be returned
+     * @param ModelInterface $class class to map the box data to; if none provided, original json return will be
+     *     returned
      *
      * @return ModelInterface|Model
      */
@@ -196,4 +197,16 @@ interface ServiceInterface extends BaseModelInterface
      * @return ServiceInterface
      */
     public function setTokenStorage(BaseTokenStorageInterface $tokenStorage = null);
+
+    /**
+     * @return mixed
+     */
+    public function getTokenStorageContext();
+
+    /**
+     * @param mixed $tokenStorageContext
+     *
+     * @return ServiceInterface
+     */
+    public function setTokenStorageContext($tokenStorageContext = null);
 }

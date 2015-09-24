@@ -18,7 +18,7 @@ interface BaseTokenStorageInterface
      *
      * @param \Box\Model\Connection\Token\TokenInterface $token
      *
-     * @return BaseTokenStorageInterface
+     * @return bool return value is success of storage
      */
     public function storeToken(TokenInterface $token);
 
@@ -26,7 +26,7 @@ interface BaseTokenStorageInterface
      * @param \Box\Model\Connection\Token\TokenInterface $token
      * @param mixed $tokenUpdateClause update context such as a where clause
      *
-     * @return BaseTokenStorageInterface
+     * @return bool return value is success of storage
      */
     public function updateToken(TokenInterface $token, $tokenUpdateClause = null);
 

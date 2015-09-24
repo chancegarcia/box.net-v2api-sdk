@@ -40,6 +40,8 @@ class Service extends BaseModel implements ServiceInterface
      */
     protected $tokenStorage;
 
+    protected $tokenStorageContext;
+
     protected $clientId;
     protected $clientSecret;
     protected $deviceId = null;
@@ -230,6 +232,24 @@ class Service extends BaseModel implements ServiceInterface
 
     /**
      * {@inheritdoc}
+     */
+    public function getTokenStorageContext()
+    {
+        return $this->tokenStorageContext;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setTokenStorageContext($tokenStorageContext = null)
+    {
+        $this->tokenStorageContext = $tokenStorageContext;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
      *
      * @throws \Box\Exception\BoxException
      */
@@ -314,7 +334,8 @@ class Service extends BaseModel implements ServiceInterface
             try
             {
                 $refreshedToken = $this->refreshToken();
-                $this->getTokenStorage()->updateToken($refreshedToken);
+                $tokenStorageContext = $this->getTokenStorageContext();
+                $this->getTokenStorage()->updateToken($refreshedToken, $tokenStorageContext);
                 $this->setToken($refreshedToken);
             }
             catch (BoxException $refreshException)
