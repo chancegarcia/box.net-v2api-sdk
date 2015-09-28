@@ -63,7 +63,10 @@ abstract class BaseModel implements BaseModelInterface
         return $this;
     }
 
-    public function isInt($number = 0)
+    /**
+     * {@inheritdoc}
+     */
+    public function isInt($number = null)
     {
         if (!is_numeric($number))
         {

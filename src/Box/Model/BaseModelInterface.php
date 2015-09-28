@@ -8,7 +8,6 @@
 
 namespace Box\Model;
 
-
 interface BaseModelInterface
 {
     public function toClassVar($str);
@@ -24,4 +23,13 @@ interface BaseModelInterface
      * @return $this
      */
     public function mapBoxToClass($aData);
+
+    /**
+     * validate integer value even if it is a string value, unlike is_int()
+     *
+     * @param mixed $number
+     *
+     * @return bool
+     */
+    public function isInt($number = null);
 }
