@@ -24,6 +24,36 @@ class EventCollection extends Model implements EventCollectionInterface
      * @var ArrayCollection
      */
     protected $entries;
+    protected $originalEntries;
+
+    public function __construct(array $options = null)
+    {
+        parent::__construct($options);
+
+        if (!$this->entries instanceof ArrayCollection)
+        {
+            $this->setOriginalEntries($this->entries);
+            // @todo set mapper for collections
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOriginalEntries()
+    {
+        return $this->originalEntries;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOriginalEntries($originalEntries = null)
+    {
+        $this->originalEntries = $originalEntries;
+
+        return $this;
+    }
 
     /**
      * {@inheritdoc}
