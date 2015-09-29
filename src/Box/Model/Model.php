@@ -21,14 +21,7 @@ class Model extends BaseModel implements ModelInterface
 
         if (null !== $options)
         {
-            foreach ($options as $k => $v)
-            {
-                $method = 'set' . ucfirst($this->toClassVar($k));
-                if (method_exists($this, $method))
-                {
-                    $this->$method($v);
-                }
-            }
+            $this->mapBoxToClass($options);
         }
 
         return $this;

@@ -44,7 +44,20 @@ interface EventCollectionInterface extends ModelInterface
 
     /**
      * @param ArrayCollectionInterface|array $entries
+     *
      * @return EventCollectionInterface
      */
     public function setEntries($entries = null);
+
+    /**
+     * @return mixed
+     */
+    public function getOriginalEntries();
+
+    /**
+     * @param mixed $originalEntries
+     *
+     * @return EventCollectionInterface
+     */
+    public function setOriginalEntries($originalEntries = null);
 }
