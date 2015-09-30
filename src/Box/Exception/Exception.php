@@ -7,6 +7,7 @@
 
 namespace Box\Exception;
 
+@trigger_error('The '.__NAMESPACE__.'\Exception class is deprecated. Please start catching BoxException; this is still in use by the Client Class which is planned to be deprecated in the future.', E_USER_DEPRECATED);
 /**
  * Class Exception
  * @package Box\Exception

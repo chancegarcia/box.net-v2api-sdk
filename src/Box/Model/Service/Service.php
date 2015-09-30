@@ -25,6 +25,7 @@ class Service extends BaseModel implements ServiceInterface
     protected $connection;
 
     /**
+     * separate connection object that contains the token and has set the auth headers {@see ConnectionFactory}
      * @var Connection|ConnectionInterface
      */
     protected $authorizedConnection;
