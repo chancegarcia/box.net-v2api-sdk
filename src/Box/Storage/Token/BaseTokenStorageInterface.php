@@ -8,7 +8,6 @@
 
 namespace Box\Storage\Token;
 
-
 use Box\Model\Connection\Token\TokenInterface;
 
 interface BaseTokenStorageInterface

@@ -17,7 +17,7 @@ use PDO;
  * @package Box\Storage\Pdo
  *
  * all string sql statements produced by this class auto-quote the columns and table
- * @todo finish this class
+ * @todo    finish this class
  */
 class TokenStorage implements TokenStorageInterface
 {
@@ -28,7 +28,10 @@ class TokenStorage implements TokenStorageInterface
     protected $pdo;
 
     protected $tokenTableName = 'box_token';
-    protected $tokenTableId = array('access_token', 'refresh_token');
+    protected $tokenTableId = array(
+        'access_token',
+        'refresh_token',
+    );
     protected $previousToken;
 
     /**
@@ -45,6 +48,7 @@ class TokenStorage implements TokenStorageInterface
     public function setPreviousToken(TokenInterface $previousToken = null)
     {
         $this->previousToken = $previousToken;
+
         return $this;
     }
 
@@ -63,12 +67,13 @@ class TokenStorage implements TokenStorageInterface
     protected $useCompositeKey = true;
     protected $tokenCompositeKeyMap = array(
         'access_token' => 'getAccessToken',
-        ''
+        '',
     );
     protected $additionalTokenTableData = array();
 
     /**
      * construct with pdo constructor arguments
+     *
      * @param null $dsn
      * @param null $username
      * @param null $password
@@ -309,10 +314,10 @@ class TokenStorage implements TokenStorageInterface
         $tokenMap = $this->getTokenMap();
 
         $first = true;
-        foreach ($tokenMap as $column =>$value)
+        foreach ($tokenMap as $column => $value)
         {
             $sql .= "`" . $this->getTokenTableName() . "`" . "`" . $column . "`"
-                                . " = " ;
+                    . " = ";
 
             if (false === $first)
             {
