@@ -14,7 +14,31 @@ use Box\Storage\Token\BaseTokenStorageInterface;
 
 class TokenStorageContainer implements BaseTokenStorageInterface
 {
+    /**
+     * @var TokenInterface|null
+     */
     protected $token;
+    /**
+     * @var TokenInterface|null
+     */
+    protected $previousToken;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPreviousToken()
+    {
+        return $this->previousToken;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPreviousToken(TokenInterface $previousToken = null)
+    {
+        $this->previousToken = $previousToken;
+        return $this;
+    }
 
     /**
      * {@inheritdoc}

@@ -8,7 +8,6 @@
 
 namespace Box\Storage\Token;
 
-
 use Box\Model\Connection\Token\TokenInterface;
 
 interface BaseTokenStorageInterface
@@ -36,4 +35,18 @@ interface BaseTokenStorageInterface
      * @return TokenInterface
      */
     public function retrieveToken($retrievalWhereClause = null);
+
+    /**
+     * @return TokenInterface
+     */
+    public function getPreviousToken();
+
+    /**
+     * store previous token for usage
+     *
+     * @param TokenInterface|null $previousToken
+     *
+     * @return BaseTokenStorageInterface
+     */
+    public function setPreviousToken(TokenInterface $previousToken = null);
 }

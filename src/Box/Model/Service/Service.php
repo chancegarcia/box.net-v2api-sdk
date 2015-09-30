@@ -338,6 +338,8 @@ class Service extends BaseModel implements ServiceInterface
             $currentToken = clone $this->getToken();
             try
             {
+                // set previous token information for token storage to use if needed
+                $this->getTokenStorage()->setPreviousToken($currentToken);
                 $refreshedToken = $this->refreshToken();
                 $tokenStorageContext = $this->getTokenStorageContext();
                 $this->getTokenStorage()->updateToken($refreshedToken, $tokenStorageContext);
@@ -347,6 +349,7 @@ class Service extends BaseModel implements ServiceInterface
             }
             catch (BoxException $refreshException)
             {
+                $this->getTokenStorage()->setPreviousToken(null);
                 $refreshMessage = "encountered exception during refresh token attempt" . $refreshException->getMessage();
                 $finalException = new BoxException($refreshMessage, $refreshException->getCode(), $be);
                 $finalException->addContext($refreshException);

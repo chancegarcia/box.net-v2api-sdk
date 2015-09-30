@@ -29,6 +29,25 @@ class TokenStorage implements TokenStorageInterface
 
     protected $tokenTableName = 'box_token';
     protected $tokenTableId = array('access_token', 'refresh_token');
+    protected $previousToken;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPreviousToken()
+    {
+        return $this->previousToken;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setPreviousToken(TokenInterface $previousToken = null)
+    {
+        $this->previousToken = $previousToken;
+        return $this;
+    }
+
     /**
      * map for persistence
      * @var array map contains the database column as the key and the token object getter method as the value.
