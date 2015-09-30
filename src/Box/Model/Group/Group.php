@@ -9,15 +9,12 @@
 namespace Box\Model\Group;
 
 use Box\Model\Model;
-use Box\Exception\Exception;
+use Box\Exception\BoxException;
+use Box\Exception\GroupException;
 use Box\Model\Group\GroupInterface;
 
 class Group extends Model implements GroupInterface
 {
-
-    const URI = "https://api.box.com/2.0/groups";
-    const MEMBERSHIP_URI = "https://api.box.com/2.0/group_memberships";
-
     protected $type = 'group';
     protected $id;
     protected $name;
@@ -29,17 +26,17 @@ class Group extends Model implements GroupInterface
         $selfId = $this->getId();
         if (!is_numeric($selfId))
         {
-            throw new Exception("Please set the folder Id to retrieve items for this folder.". Exception::MISSING_ID);
+            throw new BoxException("Please set the folder Id to retrieve items for this folder.". BoxException::MISSING_ID);
         }
 
         if (!is_numeric($limit))
         {
-            throw new Exception("Limit must be a valid integer", Exception::INVALID_INPUT);
+            throw new BoxException("Limit must be a valid integer", BoxException::INVALID_INPUT);
         }
 
         if (!is_numeric($offset))
         {
-            throw new Exception("Offset must be a valid integer", Exception::INVALID_INPUT);
+            throw new BoxException("Offset must be a valid integer", BoxException::INVALID_INPUT);
         }
 
         $uri = self::URI . "/" . $selfId . "/memberships" . "?offset=" . $offset . "&limit=" . $limit;
@@ -96,6 +93,7 @@ class Group extends Model implements GroupInterface
 
     /**
      * @param mixed $name
+     *
      * @throws GroupException
      * @return \Box\Model\Group\Group|\Box\Model\Group\GroupInterface
      */
@@ -108,7 +106,7 @@ class Group extends Model implements GroupInterface
         } else if (strlen($name) > 255) {
             throw new GroupException(
                     "Box only supports group names of 255 characters or less. Names that will not be supported are the name “none” or a null name.",
-                    GroupException::INVALID_NAME
+                GroupException::INVALID_NAME
             );
         }
 

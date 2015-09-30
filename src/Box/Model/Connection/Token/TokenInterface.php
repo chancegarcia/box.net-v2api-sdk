@@ -8,14 +8,37 @@
 
 namespace Box\Model\Connection\Token;
 
-interface TokenInterface
+use Box\Model\ModelInterface;
+
+interface TokenInterface extends ModelInterface
 {
-    public function __construct($options = null);
     public function getGrantType();
+
     public function getAccessToken();
-    public function setAccessToken($accessToken=null);
-    public function setRefreshToken($refreshToken=null);
-    public function setExpiresIn($expiresIn=null);
-    public function setTokenType($tokenType=null);
+
+    public function setAccessToken($accessToken = null);
+
     public function getRefreshToken();
+
+    public function setRefreshToken($refreshToken = null);
+
+    public function getExpiresIn();
+
+    public function setExpiresIn($expiresIn = null);
+
+    public function getTokenType();
+
+    public function setTokenType($tokenType = null);
+
+    /**
+     * @return array
+     */
+    public function getRestrictedTo();
+
+    /**
+     * @param array $restrictedTo
+     *
+     * @return TokenInterface
+     */
+    public function setRestrictedTo($restrictedTo = null);
 }

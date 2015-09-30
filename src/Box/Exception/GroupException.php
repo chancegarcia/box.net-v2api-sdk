@@ -6,9 +6,9 @@
  * @copyright   (C)Copyright 2014 chancegarcia.com
  */
 
-namespace Box\Model\Group;
+namespace Box\Exception;
 
-use Box\Exception\Exception;
-class GroupException extends Exception {
+class GroupException extends BoxException
+{
     const INVALID_NAME = "Invalid Group Name";
 }

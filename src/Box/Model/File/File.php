@@ -8,14 +8,12 @@
 
 namespace Box\Model\File;
 
-use Box\Exception\Exception;
+use Box\Exception\BoxException;
 use Box\Model\Model;
 use Box\Model\File\FileInterface;
-class File extends Model implements FileInterface {
 
-    const URI = "https://api.box.com/2.0/files";
-    const UPLOAD_URI = "https://upload.box.com/api/2.0/files/content";
-
+class File extends Model implements FileInterface
+{
     protected $id;
     protected $type;
     protected $sequenceId;
@@ -43,13 +41,6 @@ class File extends Model implements FileInterface {
     protected $commentCount;
     protected $permissions;
 
-    public function __construct($options = null)
-    {
-        parent::__construct($options);
-
-        return $this;
-    }
-
     public function getId()
     {
         return $this->id;
@@ -69,11 +60,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $commentCount
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setCommentCount($commentCount = null)
     {
         $this->commentCount = $commentCount;
+
         return $this;
     }
 
@@ -87,11 +80,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $contentCreatedAt
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setContentCreatedAt($contentCreatedAt = null)
     {
         $this->contentCreatedAt = $contentCreatedAt;
+
         return $this;
     }
 
@@ -105,11 +100,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $contentModifiedAt
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setContentModifiedAt($contentModifiedAt = null)
     {
         $this->contentModifiedAt = $contentModifiedAt;
+
         return $this;
     }
 
@@ -123,11 +120,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $createdAt
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setCreatedAt($createdAt = null)
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 
@@ -141,11 +140,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $createdBy
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setCreatedBy($createdBy = null)
     {
         $this->createdBy = $createdBy;
+
         return $this;
     }
 
@@ -159,11 +160,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $description
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setDescription($description = null)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -177,11 +180,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $etag
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setEtag($etag = null)
     {
         $this->etag = $etag;
+
         return $this;
     }
 
@@ -195,11 +200,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $itemStatus
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setItemStatus($itemStatus = null)
     {
         $this->itemStatus = $itemStatus;
+
         return $this;
     }
 
@@ -213,11 +220,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $modifiedAt
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setModifiedAt($modifiedAt = null)
     {
         $this->modifiedAt = $modifiedAt;
+
         return $this;
     }
 
@@ -231,11 +240,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $modifiedBy
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setModifiedBy($modifiedBy = null)
     {
         $this->modifiedBy = $modifiedBy;
+
         return $this;
     }
 
@@ -249,11 +260,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $name
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setName($name = null)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -267,11 +280,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $ownedBy
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setOwnedBy($ownedBy = null)
     {
         $this->ownedBy = $ownedBy;
+
         return $this;
     }
 
@@ -285,11 +300,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $parent
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setParent($parent = null)
     {
         $this->parent = $parent;
+
         return $this;
     }
 
@@ -303,11 +320,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $pathCollection
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setPathCollection($pathCollection = null)
     {
         $this->pathCollection = $pathCollection;
+
         return $this;
     }
 
@@ -321,11 +340,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $permissions
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setPermissions($permissions = null)
     {
         $this->permissions = $permissions;
+
         return $this;
     }
 
@@ -339,11 +360,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $purgedAt
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setPurgedAt($purgedAt = null)
     {
         $this->purgedAt = $purgedAt;
+
         return $this;
     }
 
@@ -357,11 +380,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $sequenceId
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setSequenceId($sequenceId = null)
     {
         $this->sequenceId = $sequenceId;
+
         return $this;
     }
 
@@ -375,11 +400,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $sha1
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setSha1($sha1 = null)
     {
         $this->sha1 = $sha1;
+
         return $this;
     }
 
@@ -393,11 +420,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $sharedLink
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setSharedLink($sharedLink = null)
     {
         $this->sharedLink = $sharedLink;
+
         return $this;
     }
 
@@ -411,11 +440,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $size
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setSize($size = null)
     {
         $this->size = $size;
+
         return $this;
     }
 
@@ -429,11 +460,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $trashedAt
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setTrashedAt($trashedAt = null)
     {
         $this->trashedAt = $trashedAt;
+
         return $this;
     }
 
@@ -447,11 +480,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $type
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setType($type = null)
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -465,11 +500,13 @@ class File extends Model implements FileInterface {
 
     /**
      * @param mixed $versionNumber
+     *
      * @return \Box\Model\File\File|\Box\Model\File\FileInterface
      */
     public function setVersionNumber($versionNumber = null)
     {
         $this->versionNumber = $versionNumber;
+
         return $this;
     }
 

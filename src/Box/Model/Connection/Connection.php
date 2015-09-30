@@ -10,11 +10,12 @@
 
 namespace Box\Model\Connection;
 use Box\Model\Model;
-use Box\Exception\Exception;
+use Box\Exception\BoxException;
 use Box\Model\Connection\Token\TokenInterface;
 use Box\Model\Connection\ConnectionInterface;
 use Box\Model\Connection\Response\ResponseInterface;
 use Box\Model\Connection\Response\Response;
+use \CURLFile;
 
 /**
  * Class Connection
@@ -23,7 +24,6 @@ use Box\Model\Connection\Response\Response;
  */
 class Connection extends Model implements ConnectionInterface
 {
-
     protected $responseType = "code";
     protected $clientId;
     protected $clientSecret;
@@ -132,7 +132,7 @@ class Connection extends Model implements ConnectionInterface
 
     public function delete($uri)
     {
-        throw new Exception('stubbed method. please implement');
+        throw new BoxException('stubbed method. please implement');
     }
 
     public function put($uri, $params = array(), $nameValuePair = false)
@@ -200,6 +200,36 @@ class Connection extends Model implements ConnectionInterface
         return $data;
     }
 
+    /**
+     * @param string $pathToFile
+     * @param string $mimeType
+     * @param string $filename name of the file/post name
+     * @return CURLFile
+     */
+    public function createCurlFile($pathToFile, $mimeType, $filename)
+    {
+        $curlFile = new CURLFile($pathToFile,$mimeType, $filename);
+        return $curlFile;
+    }
+
+    /**
+     * @param string $file file/path to file
+     * @return mixed
+     */
+    public function getMimeType($file)
+    {
+        $fInfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($fInfo, $file);
+
+        return $mimeType;
+    }
+
+    /**
+     * @param string     $uri
+     * @param string    $file file/path to file
+     * @param int $parentId
+     * @return array|mixed
+     */
     public function postFile($uri, $file, $parentId = 0)
     {
         // @todo allow Content-MD5 header to be set
@@ -207,8 +237,20 @@ class Connection extends Model implements ConnectionInterface
         // path to a file.  $files can be array (multiple) or string (one file).
         // Data will be posted in a series of POST vars named $file0, $file1...
         // $fileN
+
+        $pathInfo = pathinfo($file);
+        $filename = $file;
+        if (array_key_exists('filename', $pathInfo))
+        {
+            $filename = $pathInfo['filename'] . "." . $pathInfo['extension'];
+        }
+
+        $mimeType = $this->getMimeType($file);
+
+        $curlFile = $this->createCurlFile($file, $mimeType, $filename);
+
         $data=array(
-            'filename' => '@' . $file,
+            'file' => $curlFile,
             'parent_id' => $parentId
         );
 

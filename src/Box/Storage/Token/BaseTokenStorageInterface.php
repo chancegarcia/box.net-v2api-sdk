@@ -24,7 +24,7 @@ interface BaseTokenStorageInterface
 
     /**
      * @param \Box\Model\Connection\Token\TokenInterface $token
-     * @param mixed                                      $tokenUpdateClause update context such as a where clause
+     * @param mixed $tokenUpdateClause update context such as a where clause
      *
      * @return bool return value is success of storage
      */

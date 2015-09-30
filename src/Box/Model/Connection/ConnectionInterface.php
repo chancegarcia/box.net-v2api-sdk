@@ -9,10 +9,10 @@
 namespace Box\Model\Connection;
 
 use Box\Model\Connection\Token\TokenInterface;
+use Box\Model\ModelInterface;
 
-interface ConnectionInterface
+interface ConnectionInterface extends ModelInterface
 {
-    public function __construct($options = null);
     public function connect();
     public function query($uri);
     public function post($uri, $params = array());

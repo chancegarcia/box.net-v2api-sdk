@@ -8,12 +8,14 @@
 
 namespace Box\Model\Folder;
 
-interface FolderInterface
-{
-    public function __construct($options = null);
-    public function getId();
-    public function mapBoxToClass($aData);
-    public function getItems();
-    public function toArray($syncState = "synced");
+use Box\Model\ModelInterface;
 
+interface FolderInterface extends ModelInterface
+{
+    const URI =  'https://api.box.com/2.0/folders';
+    const SHARED_ITEM_URI = "https://api.box.com/2.0/shared_items";
+
+    public function getId();
+    public function getItems();
+    public function classArray($syncState = "synced");
 }
