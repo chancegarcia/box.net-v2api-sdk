@@ -364,7 +364,14 @@ class Service extends BaseModel implements ServiceInterface
             }
         }
 
-        $jsonData = json_decode($boxData, true);
+        if (!is_array($boxData))
+        {
+            $jsonData = json_decode($boxData, true);
+        }
+        else
+        {
+            $jsonData = $boxData;
+        }
         /**
          * API docs says error is thrown if folder does not exist or no access.
          * no example of error to parse by. Have to assume success until can modify

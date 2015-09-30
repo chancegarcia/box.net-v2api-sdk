@@ -21,13 +21,13 @@ abstract class AbstractFactory
         }
         $instance = null;
 
-        if (class_exists($class) && $class instanceof ModelInterface)
+        if (class_exists($class) && is_subclass_of($class, 'Box\Model\ModelInterface'))
         {
             $instance = new $class($options);
         }
         else
         {
-            if (class_exists($class) && !$class instanceof ModelInterface)
+            if (class_exists($class) && !is_subclass_of($class, 'Box\Model\ModelInterface'))
             {
                 throw new FactoryException('unable to instantiate with options, class ('
                                            . $class
