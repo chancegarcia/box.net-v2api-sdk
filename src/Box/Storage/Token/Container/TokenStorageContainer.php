@@ -8,7 +8,6 @@
 
 namespace Box\Storage\Token\Container;
 
-
 use Box\Model\Connection\Token\TokenInterface;
 use Box\Storage\Token\BaseTokenStorageInterface;
 
@@ -37,6 +36,7 @@ class TokenStorageContainer implements BaseTokenStorageInterface
     public function setPreviousToken(TokenInterface $previousToken = null)
     {
         $this->previousToken = $previousToken;
+
         return $this;
     }
 
@@ -57,7 +57,6 @@ class TokenStorageContainer implements BaseTokenStorageInterface
 
         return $this;
     }
-
 
     /**
      * {@inheritdoc}
