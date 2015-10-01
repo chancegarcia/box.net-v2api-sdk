@@ -72,13 +72,26 @@ abstract class BaseModel implements BaseModelInterface
         {
             return false;
         }
-        else if (is_string($number) && false !== strpos($number, "."))
+        else
         {
-            return false;
-        }
-        else if (!is_int($number))
-        {
-            return false;
+            if (is_string($number) && false !== strpos($number, "."))
+            {
+                return false;
+            }
+            else
+            {
+                if (!is_int($number) && !is_string($number))
+                {
+                    return false;
+                }
+                else
+                {
+                    if (is_string($number) && !is_int((int)$number))
+                    {
+                        return false;
+                    }
+                }
+            }
         }
 
         return true;
