@@ -8,7 +8,6 @@
 
 namespace Box\Model\Service;
 
-
 use Box\Model\BaseModelInterface;
 use Box\Model\Connection\Connection;
 use Box\Model\Connection\ConnectionInterface;
@@ -17,6 +16,10 @@ use Box\Model\Connection\Token\TokenInterface;
 use Box\Model\Model;
 use Box\Model\ModelInterface;
 use Box\Storage\Token\BaseTokenStorageInterface;
+use OutOfBoundsException;
+use RuntimeException;
+use InvalidArgumentException;
+use BadMethodCallException;
 
 /**
  * basic service interface expects a valid authorized token;
@@ -47,6 +50,7 @@ interface ServiceInterface extends BaseModelInterface
 
     /**
      * @return Connection|ConnectionInterface
+     * @throws RuntimeException
      */
     public function getAuthorizedConnection();
 
@@ -132,7 +136,7 @@ interface ServiceInterface extends BaseModelInterface
     /**
      * used to throw exceptions that need to contain error information returned from Box
      *
-     * @param $data array containing error and error_description keys
+     * @param $data    array containing error and error_description keys
      * @param $message string exception message
      *
      */
@@ -150,19 +154,31 @@ interface ServiceInterface extends BaseModelInterface
 
     /**
      * @param string $uri
+     * @param string $returnType valid types are:
+     *                           'original' (the return from the connection query {@see Connection::query()}),
+     *                           'decoded' (normal json decode of the connection query [json_decode(original)]),
+     *                           'flat' (associative array json decode of the connection query [json_decode(original,
+     *                           true)])
      *
      * @return ServiceInterface|Service
+     *
+     * @throws BadMethodCallException
      */
-    public function queryBox($uri = null);
+    public function queryBox($uri = null, $returnType = 'decoded');
 
     /**
-     * @param null $uri
-     * @param ModelInterface $class class to map the box data to; if none provided, original json return will be
-     *     returned
+     * @param null $uri             box uri to query
+     * @param string $type          valid types are:
+     *                              'original' (the return from the connection query {@see Connection::query()}),
+     *                              'decoded' (normal json decode of the connection query [json_decode(original)]),
+     *                              'flat' (associative array json decode of the connection query
+     *                              [json_decode(original, true)])
+     * @param ModelInterface $class class to map the box data to, the mapped data is the decoded results of the the box
+     *                              query {@see queryBox()}; if none provided, the specified type will be returned
      *
      * @return ModelInterface|Model
      */
-    public function getFromBox($uri = null, ModelInterface $class = null);
+    public function getFromBox($uri = null, $type = 'original', ModelInterface $class = null);
 
     /**
      * refreshes the token and returns new token; it is up to the application to persist the new token data
@@ -209,4 +225,36 @@ interface ServiceInterface extends BaseModelInterface
      * @return ServiceInterface
      */
     public function setTokenStorageContext($tokenStorageContext = null);
+
+    /**
+     * @param string $type
+     *
+     * @return mixed
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
+     */
+    public function getLastResult($type = 'decoded');
+
+    /**
+     * @return string
+     */
+    public function getDefaultReturnType();
+
+    /**
+     * @param string $defaultReturnType
+     *
+     * @return ServiceInterface
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
+     */
+    public function setDefaultReturnType($defaultReturnType = 'decoded');
+
+    /**
+     * @param string $type
+     *
+     * @return ServiceInterface
+     * @throws OutOfBoundsException
+     * @throws InvalidArgumentException
+     */
+    public function validateReturnType($type = null);
 }
