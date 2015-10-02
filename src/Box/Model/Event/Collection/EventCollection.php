@@ -21,7 +21,7 @@ class EventCollection extends Model implements EventCollectionInterface
     protected $nextStreamPosition;
 
     /**
-     * @var ArrayCollection
+     * @var ArrayCollectionInterface
      */
     protected $entries;
     protected $originalEntries;
