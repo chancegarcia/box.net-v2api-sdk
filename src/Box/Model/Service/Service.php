@@ -15,6 +15,10 @@ use Box\Model\Connection\Connection, Box\Model\Connection\ConnectionInterface;
 use Box\Model\Connection\Token\Token, Box\Model\Connection\Token\TokenInterface;
 use Box\Model\ModelInterface;
 use Box\Storage\Token\BaseTokenStorageInterface;
+use OutOfBoundsException;
+use RuntimeException;
+use InvalidArgumentException;
+use BadMethodCallException;
 
 class Service extends BaseModel implements ServiceInterface
 {
@@ -49,6 +53,48 @@ class Service extends BaseModel implements ServiceInterface
     protected $deviceId = null;
     protected $deviceName = null;
 
+    protected $lastResultOriginal;
+    protected $lastResultDecoded;
+    protected $lastResultFlat;
+    protected $defaultReturnType = 'decoded';
+    private $allowedReturnTypes = array(
+        'decoded',
+        'original',
+        'flat',
+    );
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultReturnType()
+    {
+        return $this->defaultReturnType;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultReturnType($defaultReturnType = 'decoded')
+    {
+        $this->validateReturnType($defaultReturnType);
+
+        $this->defaultReturnType = $defaultReturnType;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLastResult($type = 'decoded')
+    {
+        $this->validateReturnType($type);
+
+        $prop = "lastResult" . ucfirst($type);
+
+        return $this->{$prop};
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -56,7 +102,7 @@ class Service extends BaseModel implements ServiceInterface
     {
         if (!$this->authorizedConnection instanceof ConnectionInterface)
         {
-            throw new \RuntimeException("ConnectionInterface not found");
+            throw new RuntimeException("ConnectionInterface not found");
         }
 
         $headers = $this->getConnectionHeaders();
@@ -271,47 +317,47 @@ class Service extends BaseModel implements ServiceInterface
 
     /**
      * {@inheritdoc}
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
-    public function queryBox($uri = null)
+    final public function queryBox($uri = null, $returnType = 'decoded')
     {
+        $this->validateReturnType($returnType);
+
         if (false === is_string($uri))
         {
-            throw new \BadMethodCallException("please provide a URI");
+            throw new BadMethodCallException("please provide a URI");
         }
 
         $connection = $this->getAuthorizedConnection();
 
         $json = $connection->query($uri);
+        $this->lastResultOriginal = $json;
+        $this->lastResultDecoded = json_decode($json);
+        $this->lastResultFlat = json_decode($json, true);
 
-        $data = json_decode($json, true);
+        $data = $this->getLastResult($returnType);
 
-        if (null === $data)
+        if (null === $this->lastResultFlat)
         {
-            $data['error'] = "sdk_json_decode";
-            $data['error_description'] = "unable to decode or recursion level too deep";
-            $this->error($data);
-
-            return $data;
+            $errorData = array();
+            $errorData['error'] = "sdk_json_decode";
+            $errorData['error_description'] = "unable to decode or recursion level too deep";
+            $this->error($errorData);
         }
         else
         {
-            if (array_key_exists('error', $data))
+            if (array_key_exists('error', $this->lastResultFlat))
             {
-                $this->error($data);
-
-                return $data;
+                $this->error($this->lastResultFlat);
             }
             else
             {
-                if (array_key_exists('type', $data) && 'error' == $data['type'])
+                if (array_key_exists('type', $this->lastResultFlat) && 'error' == $this->lastResultFlat['type'])
                 {
-                    $data['error'] = "sdk_unknown";
-                    $ditto = $data;
-                    $data['error_description'] = $ditto;
-                    $this->error($data);
-
-                    return $data;
+                    $errorData['error'] = "sdk_unknown";
+                    $ditto = $errorData;
+                    $errorData['error_description'] = $ditto;
+                    $this->error($errorData);
                 }
             }
         }
@@ -327,11 +373,13 @@ class Service extends BaseModel implements ServiceInterface
      *     previous token information here if it isn't set already from the TokenStorageException. then rethrow; Token
      *     storage is expected to set all other context values for information.
      */
-    public function getFromBox($uri = null, ModelInterface $class = null)
+    final public function getFromBox($uri = null, $type = 'original', ModelInterface $class = null)
     {
+        $this->validateReturnType($type);
+
         try
         {
-            $boxData = $this->queryBox($uri);
+            $boxData = $this->queryBox($uri, $type);
         }
         catch (BoxException $be)
         {
@@ -345,7 +393,7 @@ class Service extends BaseModel implements ServiceInterface
                 $this->getTokenStorage()->updateToken($refreshedToken, $tokenStorageContext);
                 $this->setToken($refreshedToken);
                 // retry query
-                $boxData = $this->queryBox($uri);
+                $boxData = $this->queryBox($uri, $type);
             }
             catch (BoxException $refreshException)
             {
@@ -367,37 +415,26 @@ class Service extends BaseModel implements ServiceInterface
             }
         }
 
-        if (!is_array($boxData))
-        {
-            $jsonData = json_decode($boxData, true);
-        }
-        else
-        {
-            $jsonData = $boxData;
-        }
-        /**
-         * API docs says error is thrown if folder does not exist or no access.
-         * no example of error to parse by. Have to assume success until can modify
-         */
+        $errorCheck = $this->getLastResult('flat');
 
         /**
          * error decoding json data
          */
-        if (null === $jsonData)
+        if (null === $errorCheck)
         {
-            $boxData['error'] = "unable to decode json data";
-            $boxData['error_description'] = 'try refreshing the token';
-            $this->error($boxData);
+            $errorData['error'] = "unable to decode json data";
+            $errorData['error_description'] = 'try refreshing the token';
+            $this->error($errorData);
         }
 
         $returnData = null;
         if ($class instanceof ModelInterface)
         {
-            $returnData = $class->mapBoxToClass($jsonData);
+            $returnData = $class->mapBoxToClass($this->getLastResult('decoded'));
         }
         else
         {
-            $returnData = $jsonData;
+            $returnData = $boxData;
         }
 
         return $returnData;
@@ -468,19 +505,21 @@ class Service extends BaseModel implements ServiceInterface
         $connection = $this->getConnection();
 
         $json = $connection->post(self::TOKEN_URI, $params);
-        $data = json_decode($json, true);
+        // need to handle stdclass vs forced array?
+        $errorCheck = json_decode($json, true);
+        $data = json_decode($json, $this->isFlatResultOnly());
 
-        if (null === $data)
+        if (null === $errorCheck)
         {
-            $data['error'] = "sdk_json_decode";
-            $data['error_description'] = "unable to decode or recursion level too deep";
-            $this->error($data);
+            $errorCheck['error'] = "sdk_json_decode";
+            $errorCheck['error_description'] = "unable to decode or recursion level too deep";
+            $this->error($errorCheck);
         }
         else
         {
-            if (array_key_exists('error', $data))
+            if (array_key_exists('error', $errorCheck))
             {
-                $this->error($data);
+                $this->error($errorCheck);
             }
         }
 
@@ -519,8 +558,27 @@ class Service extends BaseModel implements ServiceInterface
         $json = $connection->post(self::REVOKE_URI, $params);
         // @todo add error handling for null data
         // @todo remove token from storage
-        $data = json_decode($json, true);
+        $data = json_decode($json, $this->isFlatResultOnly());
 
         return $data;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validateReturnType($type = null)
+    {
+        if (!is_string($type))
+        {
+            throw new InvalidArgumentException('string type expected');
+        }
+
+        if (!in_array($type, $this->allowedReturnTypes))
+        {
+            $validTypes = explode(",", $this->allowedReturnTypes);
+            throw new OutOfBoundsException($type . " is not a valid result type. valid types: " . $validTypes);
+        }
+
+        return $this;
     }
 }

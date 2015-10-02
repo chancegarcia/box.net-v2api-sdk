@@ -20,7 +20,6 @@ use Box\Model\ModelInterface;
  * @package Box\Model\Service
  *
  * can use the @method for letting IDEs know that they will get back and EventInterface
- * @method EventInterface getFromBox($uri = null, ModelInterface $class = null)
  */
 class UserEventService extends Service implements UserEventServiceInterface
 {
@@ -38,9 +37,6 @@ class UserEventService extends Service implements UserEventServiceInterface
     protected $streamType = "all";
     protected $streamPosition = 0;
     protected $limit = self::LIMIT_DEFAULT;
-
-    protected $originalEventsData;
-    protected $returnOriginal = false;
 
     /**
      * {@inheritdoc}
@@ -134,49 +130,25 @@ class UserEventService extends Service implements UserEventServiceInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getOriginalEventsData()
+    public function getEvents($type = 'decoded', EventCollectionInterface $eventCollection = null)
     {
-        return $this->originalEventsData;
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function returnOriginal()
-    {
-        return $this->returnOriginal;
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setReturnOriginal($returnOriginal = null)
-    {
-        $this->returnOriginal = $returnOriginal;
-
-        return $this;
-    }
-
-    public function getEvents(EventCollectionInterface $eventCollection = null)
-    {
         $uri = $this->getEventsUri();
 
-        $eventsData = $this->getFromBox($uri);
+        $eventsData = $this->getFromBox($uri, $type);
 
-        $this->originalEventsData = $eventsData;
+        $this->originalEventsData = $this->getLastResult('original');
 
         $returnData = null;
 
-        if (true === $this->returnOriginal())
+        if ($eventCollection instanceof ModelInterface)
         {
-            $returnData = $eventsData;
+            $returnData = $eventCollection->mapBoxToClass($eventsData);
         }
         else
         {
-            $returnData = $eventCollection->mapBoxToClass($eventsData);
+            $returnData = $this->getLastResult($type);
         }
 
         return $returnData;

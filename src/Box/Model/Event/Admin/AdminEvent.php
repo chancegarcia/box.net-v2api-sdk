@@ -42,6 +42,10 @@ class AdminEvent extends Event implements AdminEventInterface
         {
             unset($aData['stream_type']);
         }
+        else if (is_object($aData))
+        {
+            unset($aData->stream_type);
+        }
 
         return parent::mapBoxToClass($aData);
     }

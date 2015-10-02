@@ -19,7 +19,6 @@ use Box\Model\ModelInterface;
  * @package Box\Model\Service\Event
  *
  * use magic method doc for IDEs to know they're getting a specific ModelInterface
- * @method UserEventInterface getFromBox($uri = null, ModelInterface $class = null)
  */
 interface UserEventServiceInterface extends ServiceInterface
 {
@@ -66,23 +65,6 @@ interface UserEventServiceInterface extends ServiceInterface
      */
     public function setStreamPosition($streamPosition = null);
 
-    public function getEvents(EventCollectionInterface $eventCollection = null);
+    public function getEvents($type = 'decoded', EventCollectionInterface $eventCollection = null);
     public function getEventsUri();
-
-    /**
-     * @return mixed
-     */
-    public function getOriginalEventsData();
-
-    /**
-     * @return boolean
-     */
-    public function returnOriginal();
-
-    /**
-     * @param boolean $returnOriginal
-     *
-     * @return UserEventServiceInterface
-     */
-    public function setReturnOriginal($returnOriginal = null);
 }
