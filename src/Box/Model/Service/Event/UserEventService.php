@@ -132,13 +132,9 @@ class UserEventService extends Service implements UserEventServiceInterface
 
     public function getEvents($type = 'decoded', EventCollectionInterface $eventCollection = null)
     {
-
-
         $uri = $this->getEventsUri();
 
         $eventsData = $this->getFromBox($uri, $type);
-
-        $this->originalEventsData = $this->getLastResult('original');
 
         $returnData = null;
 
