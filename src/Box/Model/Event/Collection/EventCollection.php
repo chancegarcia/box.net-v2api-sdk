@@ -26,17 +26,6 @@ class EventCollection extends Model implements EventCollectionInterface
     protected $entries;
     protected $originalEntries;
 
-    public function __construct(array $options = null)
-    {
-        parent::__construct($options);
-
-        if (!$this->entries instanceof ArrayCollection)
-        {
-            $this->setOriginalEntries($this->entries);
-            // @todo set mapper for collections
-        }
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -106,6 +95,7 @@ class EventCollection extends Model implements EventCollectionInterface
     {
         if (is_array($entries))
         {
+            $this->originalEntries = $entries;
             $entries = new ArrayCollection($entries);
         }
         else if (!$entries instanceof ArrayCollectionInterface)
