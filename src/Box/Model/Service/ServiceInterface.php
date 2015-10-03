@@ -20,6 +20,7 @@ use OutOfBoundsException;
 use RuntimeException;
 use InvalidArgumentException;
 use BadMethodCallException;
+use stdClass;
 
 /**
  * basic service interface expects a valid authorized token;
@@ -189,18 +190,18 @@ interface ServiceInterface extends BaseModelInterface
 
     /**
      * @param $token TokenInterface|Token
-     * @param $data
+     * @param $data array|stdClass data must be a flat result or stdClass
      *
      * @return TokenInterface|Token
      */
-    public function setTokenData(Token $token, $data);
+    public function setTokenData(TokenInterface $token, $data);
 
     /**
      * @param $token TokenInterface|Token
      *
      * @return mixed
      */
-    public function destroyToken(Token $token);
+    public function destroyToken(TokenInterface $token);
 
     /**
      * @return BaseTokenStorageInterface

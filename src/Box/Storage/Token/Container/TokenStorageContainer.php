@@ -65,4 +65,16 @@ class TokenStorageContainer implements BaseTokenStorageInterface
     {
         $this->token = $token;
     }
+
+    /**
+     * remove token from storage
+     *
+     * @param \Box\Model\Connection\Token\TokenInterface $token
+     * @param null $tokenContext
+     *
+     */
+    public function removeToken(TokenInterface $token, $tokenContext = null)
+    {
+        $this->token = null;
+    }
 }

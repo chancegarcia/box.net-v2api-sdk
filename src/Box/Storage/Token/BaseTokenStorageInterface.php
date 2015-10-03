@@ -49,4 +49,13 @@ interface BaseTokenStorageInterface
      * @return BaseTokenStorageInterface
      */
     public function setPreviousToken(TokenInterface $previousToken = null);
+
+    /**
+     * remove token from storage
+     *
+     * @param \Box\Model\Connection\Token\TokenInterface $token
+     * @param null $tokenContext
+     *
+     */
+    public function removeToken(TokenInterface $token, $tokenContext = null);
 }
