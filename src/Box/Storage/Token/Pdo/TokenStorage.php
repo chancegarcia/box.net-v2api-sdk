@@ -342,4 +342,16 @@ class TokenStorage implements TokenStorageInterface
     {
         // TODO: Implement retrieveToken() method.
     }
+
+    /**
+     * remove token from storage
+     *
+     * @param \Box\Model\Connection\Token\TokenInterface $token
+     * @param null $tokenContext
+     *
+     */
+    public function removeToken(TokenInterface $token, $tokenContext = null)
+    {
+        // TODO: Implement removeToken() method.
+    }
 }

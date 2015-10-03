@@ -19,6 +19,7 @@ use OutOfBoundsException;
 use RuntimeException;
 use InvalidArgumentException;
 use BadMethodCallException;
+use stdClass;
 
 class Service extends BaseModel implements ServiceInterface
 {
@@ -398,7 +399,8 @@ class Service extends BaseModel implements ServiceInterface
             catch (BoxException $refreshException)
             {
                 $this->getTokenStorage()->setPreviousToken(null);
-                $refreshMessage = "encountered exception during refresh token attempt" . $refreshException->getMessage();
+                $refreshMessage =
+                    "encountered exception during refresh token attempt" . $refreshException->getMessage();
                 $finalException = new BoxException($refreshMessage, $refreshException->getCode(), $be);
                 $finalException->addContext($refreshException);
                 throw $finalException;
@@ -506,8 +508,12 @@ class Service extends BaseModel implements ServiceInterface
 
         $json = $connection->post(self::TOKEN_URI, $params);
         // need to handle stdclass vs forced array?
-        $errorCheck = json_decode($json, true);
-        $data = json_decode($json, $this->isFlatResultOnly());
+        $this->lastResultOriginal = $json;
+        $this->lastResultDecoded = json_decode($json);
+        $this->lastResultFlat = json_decode($json, true);
+
+        $data = $this->getLastResult($this->getDefaultReturnType());
+        $errorCheck = $this->getLastResult('flat');
 
         if (null === $errorCheck)
         {
@@ -533,12 +539,31 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function setTokenData(Token $token, $data)
+    public function setTokenData(TokenInterface $token, $data)
     {
-        $token->setAccessToken($data['access_token']);
-        $token->setExpiresIn($data['expires_in']);
-        $token->setTokenType($data['token_type']);
-        $token->setRefreshToken($data['refresh_token']);
+        if (is_array($data))
+        {
+            $token->setAccessToken($data['access_token']);
+            $token->setExpiresIn($data['expires_in']);
+            $token->setTokenType($data['token_type']);
+            $token->setRefreshToken($data['refresh_token']);
+        }
+        else
+        {
+            if ($data instanceof stdClass)
+            {
+                $token->setAccessToken($data->access_token);
+                $token->setRefreshToken($data->refresh_token);
+                $token->setExpiresIn($data->expires_in);
+                $token->setTokenType($data->token_type);
+            }
+            else
+            {
+                throw new RuntimeException('unexpected token data. unable to set. given ('
+                                           . var_export($data, true)
+                                           . ')');
+            }
+        }
 
         return $token;
     }
@@ -546,8 +571,9 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function destroyToken(Token $token)
+    public function destroyToken(TokenInterface $token, $returnType = 'decoded')
     {
+        $this->validateReturnType($returnType);
         $params['client_id'] = $this->getClientId();
         $params['client_secret'] = $this->getClientSecret();
         // The access_token or refresh_token to be destroyed. Only one is required, though both will be destroyed.
@@ -557,8 +583,14 @@ class Service extends BaseModel implements ServiceInterface
 
         $json = $connection->post(self::REVOKE_URI, $params);
         // @todo add error handling for null data
-        // @todo remove token from storage
-        $data = json_decode($json, $this->isFlatResultOnly());
+        $this->lastResultOriginal = $json;
+        $this->lastResultDecoded = json_decode($json);
+        $this->lastResultFlat = json_decode($json, true);
+
+        $data = $this->getLastResult($returnType);
+
+        // remove token from storage
+        $this->getTokenStorage()->removeToken($token, $this->getTokenStorageContext());
 
         return $data;
     }
