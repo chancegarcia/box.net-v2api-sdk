@@ -18,7 +18,7 @@ interface FileServiceInterface extends ServiceInterface
      * @param FileInterface $file
      * @param SharedLinkInterface $sharedLink shared link object used to set box permissions
      *
-     * @return string
+     * @return FileInterface
      */
     public function createSharedLink(FileInterface $file = null, SharedLinkInterface $sharedLink = null);
 
