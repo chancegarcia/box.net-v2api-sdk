@@ -118,6 +118,7 @@ class Model extends BaseModel implements ModelInterface
                 $pleaseUpgradeTo54[ $k ] = urlencode($v);
             }
             $query = http_build_query($pleaseUpgradeTo54, $numericPrefix, '&');
+            @trigger_error('upgrade to at least php 5.4.0; this will be deprecated in the future', E_USER_DEPRECATED);
         }
 
         return $query;

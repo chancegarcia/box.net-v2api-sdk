@@ -12,6 +12,7 @@
 namespace Box\Model\File;
 
 
+use Box\Model\Item\SharedLink\SharedLinkInterface;
 use Box\Model\ModelInterface;
 
 interface FileInterface extends  ModelInterface
@@ -20,4 +21,11 @@ interface FileInterface extends  ModelInterface
     const UPLOAD_URI = "https://upload.box.com/api/2.0/files/content";
 
     public function getId();
+
+    /**
+     * @return mixed|SharedLinkInterface
+     */
+    public function getSharedLink();
+
+    public function setSharedLink($sharedLink = null);
 }
