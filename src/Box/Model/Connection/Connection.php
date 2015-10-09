@@ -135,6 +135,14 @@ class Connection extends Model implements ConnectionInterface
         throw new BoxException('stubbed method. please implement');
     }
 
+    /**
+     * @param $uri
+     * @param array|string $params      array will be deprecated in the future; json encoded string will become the only valid value
+     * @param bool|false $nameValuePair this will be deprecated/fully removed in the future since params as a json encoded
+     *                                  string will be the expected value
+     *
+     * @return mixed
+     */
     public function put($uri, $params = array(), $nameValuePair = false)
     {
         $ch = $this->initCurl();
@@ -145,11 +153,15 @@ class Connection extends Model implements ConnectionInterface
         if ($nameValuePair)
         {
             $params = json_encode($params);
+            @trigger_error('the `nameValuePair` switch will be deprecated in the future; all values will be json encoded values',
+                           E_USER_DEPRECATED);
         }
 
         if (is_array($params))
         {
             $postParams = $this->buildQuery($params);
+            @trigger_error('the `params` value as an array will be deprecated in the future. Please provide a json encoded string',
+                           E_USER_DEPRECATED);
         }
         else
         {
@@ -166,9 +178,13 @@ class Connection extends Model implements ConnectionInterface
 
     /**
      * POST
+     *
      * @param              $uri
-     * @param array|string $params will convert array to string
-     * @param bool         $nameValuePair
+     * @param array|string $params      will convert array to string; array will be deprecated in the future; json
+     *                                  encoded string will become the only valid value
+     * @param bool|false $nameValuePair this will be deprecated/fully removed in the future since params as a json
+     *                                  encoded string will be the expected value
+     *
      * @return mixed
      */
     public function post($uri, $params = array(), $nameValuePair = false)
@@ -182,11 +198,15 @@ class Connection extends Model implements ConnectionInterface
         if ($nameValuePair)
         {
             $params = json_encode($params);
+            @trigger_error('the `nameValuePair` switch will be deprecated in the future; all values will be json encoded values',
+                           E_USER_DEPRECATED);
         }
 
         if (is_array($params))
         {
             $postParams = $this->buildQuery($params);
+            @trigger_error('the `params` value as an array will be deprecated in the future. Please provide a json encoded string',
+                           E_USER_DEPRECATED);
         }
         else
         {

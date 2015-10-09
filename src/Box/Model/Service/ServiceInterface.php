@@ -154,6 +154,34 @@ interface ServiceInterface extends BaseModelInterface
     public function getConnectionHeaders();
 
     /**
+     * @param $returnType
+     * @param $json
+     * @param $errorData
+     *
+     * @return mixed
+     * @throws \Box\Exception\BoxException
+     */
+    public function getFinalConnectionResult($returnType, $json, $errorData = array());
+
+    /**
+     * @param null $uri
+     * @param array $params      name/value array pairs that will be json_encoded to send to box
+     * @param string $returnType valid types are:
+     *                           'original' (the return from the connection query {@see Connection::query()}),
+     *                           'decoded' (normal json decode of the connection query [json_decode(original)]),
+     *                           'flat' (associative array json decode of the connection query [json_decode(original,
+     *                           true)])
+     *
+     * @return string|array|stdClass
+     *
+     * @throws BadMethodCallException
+     */
+    public function putIntoBox($uri = null, $params = array(), $returnType = 'decoded');
+
+    /**
+     *
+     * use box connection object to send a query to box
+     *
      * @param string $uri
      * @param string $returnType valid types are:
      *                           'original' (the return from the connection query {@see Connection::query()}),
@@ -161,13 +189,15 @@ interface ServiceInterface extends BaseModelInterface
      *                           'flat' (associative array json decode of the connection query [json_decode(original,
      *                           true)])
      *
-     * @return ServiceInterface|Service
+     * @return string|array|stdClass
      *
      * @throws BadMethodCallException
      */
     public function queryBox($uri = null, $returnType = 'decoded');
 
     /**
+     * query box and map return values to a given class
+     *
      * @param null $uri             box uri to query
      * @param string $type          valid types are:
      *                              'original' (the return from the connection query {@see Connection::query()}),
@@ -182,6 +212,24 @@ interface ServiceInterface extends BaseModelInterface
     public function getFromBox($uri = null, $type = 'original', ModelInterface $class = null);
 
     /**
+     * @param null $uri             box uri to query
+     * @param array $params         array of params to be converted to json encoded string
+     * @param string $type          valid types are:
+     *                              'original' (the return from the connection query {@see Connection::query()}),
+     *                              'decoded' (normal json decode of the connection query [json_decode(original)]),
+     *                              'flat' (associative array json decode of the connection query
+     *                              [json_decode(original, true)])
+     * @param ModelInterface $class class to map the box data to, the mapped data is the decoded results of the the box
+     *                              query {@see queryBox()}; if none provided, the specified type will be returned
+     *
+     * @return ModelInterface|stdClass|array|string
+     * @throws \Box\Exception\BoxException
+     * @throws \Box\Exception\TokenStorageException
+     * @throws \Exception
+     */
+    public function sendUpdateToBox($uri = null, $params = array(), $type = 'original', ModelInterface $class = null);
+
+    /**
      * refreshes the token and returns new token; it is up to the application to persist the new token data
      *
      * @return Token|TokenInterface
@@ -190,7 +238,7 @@ interface ServiceInterface extends BaseModelInterface
 
     /**
      * @param $token TokenInterface|Token
-     * @param $data array|stdClass data must be a flat result or stdClass
+     * @param $data  array|stdClass data must be a flat result or stdClass
      *
      * @return TokenInterface|Token
      */

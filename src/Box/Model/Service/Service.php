@@ -318,6 +318,30 @@ class Service extends BaseModel implements ServiceInterface
 
     /**
      * {@inheritdoc}
+     */
+    final public function putIntoBox($uri = null, $params = array(), $returnType = 'decoded')
+    {
+        $this->validateReturnType($returnType);
+
+        if (false === is_string($uri))
+        {
+            throw new BadMethodCallException("please provide a URI");
+        }
+
+        $connection = $this->getAuthorizedConnection();
+
+        if (!is_string($params))
+        {
+            $params = json_encode($params);
+        }
+
+        $json = $this->getAuthorizedConnection()->put($uri, $params);
+
+        return $this->getFinalConnectionResult($json, $returnType);
+    }
+
+    /**
+     * {@inheritdoc}
      * @throws BadMethodCallException
      */
     final public function queryBox($uri = null, $returnType = 'decoded')
@@ -332,38 +356,78 @@ class Service extends BaseModel implements ServiceInterface
         $connection = $this->getAuthorizedConnection();
 
         $json = $connection->query($uri);
-        $this->lastResultOriginal = $json;
-        $this->lastResultDecoded = json_decode($json);
-        $this->lastResultFlat = json_decode($json, true);
 
-        $data = $this->getLastResult($returnType);
+        return $this->getFinalConnectionResult($returnType, $json);
+    }
 
-        if (null === $this->lastResultFlat)
+    /**
+     * {@inheritdoc}
+     */
+    final public function sendUpdateToBox($uri = null, $params = array(), $type = 'original', ModelInterface $class = null)
+    {
+        $this->validateReturnType($type);
+        try
         {
-            $errorData = array();
-            $errorData['error'] = "sdk_json_decode";
-            $errorData['error_description'] = "unable to decode or recursion level too deep";
+            $boxData = $this->putIntoBox($uri, $params, $type);
+        }
+        catch (BoxException $be)
+        {
+            $currentToken = clone $this->getToken();
+            try
+            {
+                // set previous token information for token storage to use if needed
+                $this->getTokenStorage()->setPreviousToken($currentToken);
+                $refreshedToken = $this->refreshToken();
+                $tokenStorageContext = $this->getTokenStorageContext();
+                $this->getTokenStorage()->updateToken($refreshedToken, $tokenStorageContext);
+                $this->setToken($refreshedToken);
+                // retry query
+                $boxData = $this->putIntoBox($uri, $params, $type);
+            }
+            catch (BoxException $refreshException)
+            {
+                $this->getTokenStorage()->setPreviousToken(null);
+                $refreshMessage =
+                    "encountered exception during refresh token attempt" . $refreshException->getMessage();
+                $finalException = new BoxException($refreshMessage, $refreshException->getCode(), $be);
+                $finalException->addContext($refreshException);
+                throw $finalException;
+            }
+            catch (TokenStorageException $tse)
+            {
+                // add some context if none already given and rethrow
+                if (!$tse->getPreviousToken() instanceof TokenInterface)
+                {
+                    $tse->setPreviousToken($currentToken);
+                }
+
+                throw $tse;
+            }
+        }
+
+        $errorCheck = $this->getLastResult('flat');
+
+        /**
+         * error decoding json data
+         */
+        if (null === $errorCheck)
+        {
+            $errorData['error'] = "unable to decode json data";
+            $errorData['error_description'] = 'try refreshing the token';
             $this->error($errorData);
+        }
+
+        $returnData = null;
+        if ($class instanceof ModelInterface)
+        {
+            $returnData = $class->mapBoxToClass($this->getLastResult('decoded'));
         }
         else
         {
-            if (array_key_exists('error', $this->lastResultFlat))
-            {
-                $this->error($this->lastResultFlat);
-            }
-            else
-            {
-                if (array_key_exists('type', $this->lastResultFlat) && 'error' == $this->lastResultFlat['type'])
-                {
-                    $errorData['error'] = "sdk_unknown";
-                    $ditto = $errorData;
-                    $errorData['error_description'] = $ditto;
-                    $this->error($errorData);
-                }
-            }
+            $returnData = $boxData;
         }
 
-        return $data;
+        return $returnData;
     }
 
     /**
@@ -612,5 +676,49 @@ class Service extends BaseModel implements ServiceInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @param $returnType
+     * @param $json
+     * @param $errorData
+     *
+     * @return mixed
+     * @throws \Box\Exception\BoxException
+     */
+    public function getFinalConnectionResult($returnType, $json, $errorData = array())
+    {
+        $this->lastResultOriginal = $json;
+        $this->lastResultDecoded = json_decode($json);
+        $this->lastResultFlat = json_decode($json, true);
+
+        $data = $this->getLastResult($returnType);
+
+        if (null === $this->lastResultFlat)
+        {
+            $errorData = array();
+            $errorData['error'] = "sdk_json_decode";
+            $errorData['error_description'] = "unable to decode or recursion level too deep";
+            $this->error($errorData);
+        }
+        else
+        {
+            if (array_key_exists('error', $this->lastResultFlat))
+            {
+                $this->error($this->lastResultFlat);
+            }
+            else
+            {
+                if (array_key_exists('type', $this->lastResultFlat) && 'error' == $this->lastResultFlat['type'])
+                {
+                    $errorData['error'] = "sdk_unknown";
+                    $ditto = $errorData;
+                    $errorData['error_description'] = $ditto;
+                    $this->error($errorData);
+                }
+            }
+        }
+
+        return $data;
     }
 }

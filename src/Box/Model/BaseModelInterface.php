@@ -10,6 +10,11 @@ namespace Box\Model;
 
 interface BaseModelInterface
 {
+    /**
+     * @param $str
+     *
+     * @return mixed
+     */
     public function toClassVar($str);
 
     public function toBoxVar($str);
