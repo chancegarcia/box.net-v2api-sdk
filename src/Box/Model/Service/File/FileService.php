@@ -22,7 +22,9 @@ class FileService extends Service implements FileServiceInterface
     {
         $uri = $file::URI . "/" . $file->getId();
 
-        $params = $sharedLink->classArray();
+        $params = array(
+            'shared_link' => $sharedLink->classArray()
+        );
 
         $updatedFile = $this->createNewFile();
 
