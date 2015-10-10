@@ -328,8 +328,6 @@ class Service extends BaseModel implements ServiceInterface
             throw new BadMethodCallException("please provide a URI");
         }
 
-        $connection = $this->getAuthorizedConnection();
-
         if (!is_string($params))
         {
             $params = json_encode($params);
