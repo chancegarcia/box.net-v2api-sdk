@@ -355,7 +355,7 @@ class Service extends BaseModel implements ServiceInterface
 
         $json = $connection->query($uri);
 
-        return $this->getFinalConnectionResult($returnType, $json);
+        return $this->getFinalConnectionResult($json, $returnType);
     }
 
     /**
@@ -677,15 +677,19 @@ class Service extends BaseModel implements ServiceInterface
     }
 
     /**
-     * @param $returnType
-     * @param $json
-     * @param $errorData
-     *
-     * @return mixed
+     * {@inheritdoc}
      * @throws \Box\Exception\BoxException
+     * @throws BadMethodCallException
      */
-    public function getFinalConnectionResult($returnType, $json, $errorData = array())
+    public function getFinalConnectionResult($json = null, $returnType = 'decoded', $errorData = array())
     {
+        if (!is_string($json))
+        {
+            throw new BadMethodCallException('expecting json string. received: ' . gettype($json));
+        }
+
+        $this->validateReturnType($returnType);
+
         $this->lastResultOriginal = $json;
         $this->lastResultDecoded = json_decode($json);
         $this->lastResultFlat = json_decode($json, true);
