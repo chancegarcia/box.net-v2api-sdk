@@ -37,4 +37,13 @@ interface BaseModelInterface
      * @return bool
      */
     public function isInt($number = null);
+
+    /**
+     * recursively remove empty elements from an array (trim is applied to string values)
+     *
+     * @param array $haystack
+     *
+     * @return array
+     */
+    public function removeEmpty(array $haystack = array());
 }
