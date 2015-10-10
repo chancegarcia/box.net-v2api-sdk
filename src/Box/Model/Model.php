@@ -1,8 +1,8 @@
 <?php
 /**
- * @package     Box
- * @subpackage  Box_Model
- * @author      Chance Garcia
+ * @package        Box
+ * @subpackage     Box_Model
+ * @author         Chance Garcia
  * @copyright   (C)Copyright 2013 chancegarcia.com
  */
 
@@ -47,6 +47,18 @@ class Model extends BaseModel implements ModelInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function toBoxArray()
+    {
+        $arr = $this->classArray();
+
+        $finalArray = $this->removeEmpty($arr);
+
+        return $finalArray;
+    }
+
+    /**
      * used to throw exceptions that need to contain error information returned from Box
      *
      * @param $data array containing error and error_description keys
@@ -83,7 +95,8 @@ class Model extends BaseModel implements ModelInterface
 
         if (!is_string($classType))
         {
-            throw new BoxException("Unable to validate. Please specify a class type to validate", BoxException::INVALID_CLASS_TYPE);
+            throw new BoxException("Unable to validate. Please specify a class type to validate",
+                                   BoxException::INVALID_CLASS_TYPE);
         }
 
         if (!class_exists($class))

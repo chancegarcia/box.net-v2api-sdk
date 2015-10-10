@@ -8,7 +8,6 @@
 
 namespace Box\Model;
 
-
 abstract class BaseModel implements BaseModelInterface
 {
     public function toClassVar($str)
@@ -95,5 +94,31 @@ abstract class BaseModel implements BaseModelInterface
         }
 
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeEmpty(array $haystack = array())
+    {
+        foreach ($haystack as $k => $v)
+        {
+            if (is_array($v))
+            {
+                $haystack[$k] = $this->removeEmpty($v);
+            }
+
+            if (is_string($v))
+            {
+                $v = trim($v);
+            }
+
+            if (empty($v))
+            {
+                unset($haystack[$k]);
+            }
+        }
+
+        return $haystack;
     }
 }
