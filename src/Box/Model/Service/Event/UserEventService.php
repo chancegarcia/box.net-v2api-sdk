@@ -120,9 +120,9 @@ class UserEventService extends Service implements UserEventServiceInterface
      */
     public function setStreamPosition($streamPosition = null)
     {
-        if(!$this->isInt($streamPosition))
+        if("now"!== $streamPosition && !$this->isInt($streamPosition))
         {
-            throw new BoxException('limit must be a valid integer value, (' . var_export($streamPosition, true) . ') given');
+            throw new BoxException('limit must be a valid integer value or "now", (' . var_export($streamPosition, true) . ') given');
         }
 
         $this->streamPosition = $streamPosition;
