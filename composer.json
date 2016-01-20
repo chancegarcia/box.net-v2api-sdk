@@ -1,0 +1,21 @@
+{
+    "name": "chancegarcia/box-api-v2-sdk",
+    "license": "GPL-2.0",
+    "description": "Interact with the box.com API using PHP",
+    "keywords": [
+        "box.com"
+    ],
+    "homepage": "https://github.com/chancegarcia/box.net-v2api-sdk",
+    "autoload": {
+        "psr-4": { "Box\\": "src/Box"}
+    },
+    "require": {
+        "psr/log": "^1.0"
+    },
+    "authors": [
+        {
+            "name": "chance garcia",
+            "email": "develop@chancegarcia.com"
+        }
+    ]
+}
