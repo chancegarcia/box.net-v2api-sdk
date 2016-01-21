@@ -20,6 +20,7 @@ use RuntimeException;
 use InvalidArgumentException;
 use BadMethodCallException;
 use stdClass;
+use Psr\Log\LoggerInterface;
 
 class Service extends BaseModel implements ServiceInterface
 {
@@ -309,10 +310,23 @@ class Service extends BaseModel implements ServiceInterface
         {
             $message = $error;
         }
+        $errorDescription = $data['error_description'];
 
         $exception = new BoxException($message);
         $exception->setError($error);
-        $exception->setErrorDescription($data['error_description']);
+        $exception->setErrorDescription($errorDescription);
+
+        if ($this->getLogger() instanceof LoggerInterface)
+        {
+            $this->getLogger()->error($message,
+                                      array(
+                                          __METHOD__ . ":" . __LINE__,
+                                          $error,
+                                          $errorDescription,
+                                          $exception->getTraceAsString(),
+                                      ));
+        }
+
         throw $exception;
     }
 
@@ -334,6 +348,14 @@ class Service extends BaseModel implements ServiceInterface
         }
 
         $json = $this->getAuthorizedConnection()->put($uri, $params);
+        if ($this->getLogger() instanceof LoggerInterface)
+        {
+            $this->getLogger()->debug('raw return: ' . $json,
+                                      array(
+                                          __METHOD__ . ":" . __LINE__,
+                                          var_export($json, true)
+                                      ));
+        }
 
         return $this->getFinalConnectionResult($json, $returnType);
     }
@@ -354,6 +376,14 @@ class Service extends BaseModel implements ServiceInterface
         $connection = $this->getAuthorizedConnection();
 
         $json = $connection->query($uri);
+        if ($this->getLogger() instanceof LoggerInterface)
+        {
+            $this->getLogger()->debug('raw return: ' . $json,
+                                      array(
+                                          __METHOD__ . ":" . __LINE__,
+                                          var_export($json, true)
+                                      ));
+        }
 
         return $this->getFinalConnectionResult($json, $returnType);
     }
@@ -361,7 +391,11 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    final public function sendUpdateToBox($uri = null, $params = array(), $type = 'original', ModelInterface $class = null)
+    final public function sendUpdateToBox($uri = null,
+                                          $params = array(),
+                                          $type = 'original',
+                                          ModelInterface $class = null
+    )
     {
         $this->validateReturnType($type);
         try
@@ -371,16 +405,39 @@ class Service extends BaseModel implements ServiceInterface
         catch (BoxException $be)
         {
             $currentToken = clone $this->getToken();
+            if ($this->getLogger() instanceof LoggerInterface)
+            {
+                $this->getLogger()->debug('currentToken: ' . var_export($currentToken, true),
+                                          array(
+                                              __METHOD__ . ":" . __LINE__,
+                                              $be->getTraceAsString()
+                                          ));
+            }
+
             try
             {
                 // set previous token information for token storage to use if needed
                 $this->getTokenStorage()->setPreviousToken($currentToken);
                 $refreshedToken = $this->refreshToken();
                 $tokenStorageContext = $this->getTokenStorageContext();
+                if ($this->getLogger() instanceof LoggerInterface)
+                {
+                    $this->getLogger()->debug('token storage context' . var_export($tokenStorageContext, true),
+                                              array(
+                                                  __METHOD__ . ":" . __LINE__,
+                                              ));
+                }
                 $this->getTokenStorage()->updateToken($refreshedToken, $tokenStorageContext);
                 $this->setToken($refreshedToken);
                 // retry query
                 $boxData = $this->putIntoBox($uri, $params, $type);
+                if ($this->getLogger() instanceof LoggerInterface)
+                {
+                    $this->getLogger()->debug('retry put return: ' . var_export($boxData, true),
+                                              array(
+                                                  __METHOD__ . ":" . __LINE__,
+                                              ));
+                }
             }
             catch (BoxException $refreshException)
             {
@@ -389,6 +446,14 @@ class Service extends BaseModel implements ServiceInterface
                     "encountered exception during refresh token attempt" . $refreshException->getMessage();
                 $finalException = new BoxException($refreshMessage, $refreshException->getCode(), $be);
                 $finalException->addContext($refreshException);
+                if ($this->getLogger() instanceof LoggerInterface)
+                {
+                    $this->getLogger()->error($refreshMessage,
+                                              array(
+                                                  __METHOD__ . ":" . __LINE__,
+                                                  $finalException->getTraceAsString(),
+                                              ));
+                }
                 throw $finalException;
             }
             catch (TokenStorageException $tse)
@@ -399,8 +464,26 @@ class Service extends BaseModel implements ServiceInterface
                     $tse->setPreviousToken($currentToken);
                 }
 
+                if ($this->getLogger() instanceof LoggerInterface)
+                {
+                    $this->getLogger()->error("token storage exception: " . $tse->getMessage(),
+                                              array(
+                                                  __METHOD__ . ":" . __LINE__,
+                                                  $tse->getTraceAsString(),
+                                                  var_export($tse, true),
+                                              ));
+                }
+
                 throw $tse;
             }
+        }
+
+        if ($this->getLogger() instanceof LoggerInterface)
+        {
+            $this->getLogger()->debug('final box data: ' . var_export($boxData, true),
+                                      array(
+                                          __METHOD__ . ":" . __LINE__,
+                                      ));
         }
 
         $errorCheck = $this->getLastResult('flat');
@@ -423,6 +506,14 @@ class Service extends BaseModel implements ServiceInterface
         else
         {
             $returnData = $boxData;
+        }
+
+        if ($this->getLogger() instanceof LoggerInterface)
+        {
+            $this->getLogger()->debug('return data: ' . var_export($returnData, true),
+                                      array(
+                                          __METHOD__ . ":" . __LINE__,
+                                      ));
         }
 
         return $returnData;
@@ -447,16 +538,39 @@ class Service extends BaseModel implements ServiceInterface
         catch (BoxException $be)
         {
             $currentToken = clone $this->getToken();
+            if ($this->getLogger() instanceof LoggerInterface)
+            {
+                $this->getLogger()->debug('currentToken: ' . var_export($currentToken, true),
+                                          array(
+                                              __METHOD__ . ":" . __LINE__,
+                                              $be->getTraceAsString()
+                                          ));
+            }
+
             try
             {
                 // set previous token information for token storage to use if needed
                 $this->getTokenStorage()->setPreviousToken($currentToken);
                 $refreshedToken = $this->refreshToken();
                 $tokenStorageContext = $this->getTokenStorageContext();
+                if ($this->getLogger() instanceof LoggerInterface)
+                {
+                    $this->getLogger()->debug('token storage context' . var_export($tokenStorageContext, true),
+                                              array(
+                                                  __METHOD__ . ":" . __LINE__,
+                                              ));
+                }
                 $this->getTokenStorage()->updateToken($refreshedToken, $tokenStorageContext);
                 $this->setToken($refreshedToken);
                 // retry query
                 $boxData = $this->queryBox($uri, $type);
+                if ($this->getLogger() instanceof LoggerInterface)
+                {
+                    $this->getLogger()->debug('retry query return: ' . var_export($boxData, true),
+                                              array(
+                                                  __METHOD__ . ":" . __LINE__,
+                                              ));
+                }
             }
             catch (BoxException $refreshException)
             {
@@ -465,6 +579,14 @@ class Service extends BaseModel implements ServiceInterface
                     "encountered exception during refresh token attempt" . $refreshException->getMessage();
                 $finalException = new BoxException($refreshMessage, $refreshException->getCode(), $be);
                 $finalException->addContext($refreshException);
+                if ($this->getLogger() instanceof LoggerInterface)
+                {
+                    $this->getLogger()->error($refreshMessage,
+                                              array(
+                                                  __METHOD__ . ":" . __LINE__,
+                                                  $finalException->getTraceAsString(),
+                                              ));
+                }
                 throw $finalException;
             }
             catch (TokenStorageException $tse)
@@ -475,8 +597,26 @@ class Service extends BaseModel implements ServiceInterface
                     $tse->setPreviousToken($currentToken);
                 }
 
+                if ($this->getLogger() instanceof LoggerInterface)
+                {
+                    $this->getLogger()->error("token storage exception: " . $tse->getMessage(),
+                                              array(
+                                                  __METHOD__ . ":" . __LINE__,
+                                                  $tse->getTraceAsString(),
+                                                  var_export($tse, true),
+                                              ));
+                }
+
                 throw $tse;
             }
+        }
+
+        if ($this->getLogger() instanceof LoggerInterface)
+        {
+            $this->getLogger()->debug('final box data: ' . var_export($boxData, true),
+                                      array(
+                                          __METHOD__ . ":" . __LINE__,
+                                      ));
         }
 
         $errorCheck = $this->getLastResult('flat');
@@ -501,6 +641,14 @@ class Service extends BaseModel implements ServiceInterface
             $returnData = $boxData;
         }
 
+        if ($this->getLogger() instanceof LoggerInterface)
+        {
+            $this->getLogger()->debug('return data: ' . var_export($returnData, true),
+                                      array(
+                                          __METHOD__ . ":" . __LINE__,
+                                      ));
+        }
+
         return $returnData;
     }
 
@@ -522,6 +670,14 @@ class Service extends BaseModel implements ServiceInterface
         if (is_array($additionalConnectionHeaders))
         {
             $headers = array_merge($headers, $additionalConnectionHeaders);
+        }
+
+        if ($this->getLogger() instanceof LoggerInterface)
+        {
+            $this->getLogger()->debug('connection headers: ' . var_export($headers, true),
+                                      array(
+                                          __METHOD__ . ":" . __LINE__,
+                                      ));
         }
 
         return $headers;
@@ -567,8 +723,22 @@ class Service extends BaseModel implements ServiceInterface
         }
 
         $connection = $this->getConnection();
+        if ($this->getLogger() instanceof LoggerInterface)
+        {
+            $this->getLogger()->debug('refresh token params: ' . var_export($params, true),
+                                      array(
+                                          __METHOD__ . ":" . __LINE__,
+                                      ));
+        }
 
         $json = $connection->post(self::TOKEN_URI, $params);
+        if ($this->getLogger() instanceof LoggerInterface)
+        {
+            $this->getLogger()->debug('raw refresh return: ' . var_export($json, true),
+                                      array(
+                                          __METHOD__ . ":" . __LINE__,
+                                      ));
+        }
         // need to handle stdclass vs forced array?
         $this->lastResultOriginal = $json;
         $this->lastResultDecoded = json_decode($json);
@@ -603,6 +773,14 @@ class Service extends BaseModel implements ServiceInterface
      */
     public function setTokenData(TokenInterface $token, $data)
     {
+        if ($this->getLogger() instanceof LoggerInterface)
+        {
+            $this->getLogger()->debug('token data: ' . var_export($data, true),
+                                      array(
+                                          __METHOD__ . ":" . __LINE__,
+                                      ));
+        }
+
         if (is_array($data))
         {
             $token->setAccessToken($data['access_token']);

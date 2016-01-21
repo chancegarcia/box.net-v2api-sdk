@@ -8,8 +8,31 @@
 
 namespace Box\Model;
 
-abstract class BaseModel implements BaseModelInterface
+use Box\Logger\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+
+abstract class BaseModel implements BaseModelInterface, LoggerAwareInterface
 {
+    protected $logger;
+
+    /**
+     * @return LoggerInterface
+     */
+    public function getLogger()
+    {
+        return $this->logger;
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @return BaseModelInterface
+     */
+    public function setLogger(LoggerInterface $logger = null)
+    {
+        $this->logger = $logger;
+        return $this;
+    }
+
     public function toClassVar($str)
     {
         $aTokens = explode("_", $str);
@@ -42,7 +65,10 @@ abstract class BaseModel implements BaseModelInterface
      */
     public function mapBoxToClass($aData)
     {
-
+        if ($this->getLogger() instanceof LoggerInterface)
+        {
+            $this->getLogger()->debug('map data: ' . var_export($aData, true), array(__METHOD__ . ":" . __LINE__));
+        }
         // check if value is object or array and map
         // or maybe have a map array of properties/keys that call new classes to map to
         foreach ($aData as $k => $v)
