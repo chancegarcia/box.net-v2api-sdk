@@ -1,12 +1,21 @@
 box.net-v2api-sdk
 =================
 
-Requires at least 5.3.0
+Requires at least 5.6.10
 
 php sdk for use with box.net v2 api (http://developers.box.com/)
 
-This is my first time building a separate library/module. It is intended to follow the coding standards of ZF2
-but initial use will be in another framework.
+Copyright (C) 2013  Chance Garcia
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
 tasks:
 - [ ] Client class

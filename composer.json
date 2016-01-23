@@ -10,6 +10,7 @@
         "psr-4": { "Box\\": "src/Box"}
     },
     "require": {
+        "php": ">=5.6.10",
         "psr/log": "^1.0"
     },
     "authors": [
