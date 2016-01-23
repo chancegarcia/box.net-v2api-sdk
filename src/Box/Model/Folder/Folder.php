@@ -3,7 +3,19 @@
  * @package     Box
  * @subpackage  Box_Folder
  * @author      Chance Garcia
- * @copyright   (C)Copyright 2013 chancegarcia.com
+ * @copyright   (C)Copyright 2013 Chance Garcia, chancegarcia.com
+ *
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
  */
 
 namespace Box\Model\Folder;
@@ -38,7 +50,13 @@ class Folder extends Model implements FolderInterface
     {
         $aFolder = parent::classArray();
 
-        if (!in_array($syncState, array("synced", "not_synced", "partially_synced")))
+        if (!in_array($syncState,
+                      array(
+                          "synced",
+                          "not_synced",
+                          "partially_synced"
+                      ))
+        )
         {
             throw new BoxException("invalid sync state value given (" . var_export($syncState, true) . ").\n
             Expecting one of the following values: synced, not_synced, partially_synced
@@ -81,7 +99,8 @@ class Folder extends Model implements FolderInterface
         $selfId = $this->getId();
         if (!is_numeric($selfId))
         {
-            throw new BoxException("Please set the folder Id to retrieve items for this folder.". BoxException::MISSING_ID);
+            throw new BoxException("Please set the folder Id to retrieve items for this folder."
+                                   . BoxException::MISSING_ID);
         }
 
         if (!is_numeric($limit))

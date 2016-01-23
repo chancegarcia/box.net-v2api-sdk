@@ -4,6 +4,8 @@
  * User: chance
  * Date: 9/18/15
  * Time: 12:20 PM
+ * @package     Box
+ * @subpackage  Box_Collection
  */
 
 namespace Box\Collection;
@@ -104,8 +106,8 @@ interface ArrayCollectionInterface extends Countable, IteratorAggregate, ArrayAc
     /**
      * Sets an element in the collection at the specified key/index.
      *
-     * @param string|integer $key   The key/index of the element to set.
-     * @param mixed          $value The element to set.
+     * @param string|integer $key The key/index of the element to set.
+     * @param mixed $value The element to set.
      *
      * @return void
      */
@@ -221,7 +223,7 @@ interface ArrayCollectionInterface extends Countable, IteratorAggregate, ArrayAc
      * Keys have to be preserved by this method. Calling this method will only return the
      * selected slice and NOT change the elements contained in the collection slice is called on.
      *
-     * @param int      $offset The offset to start from.
+     * @param int $offset The offset to start from.
      * @param int|null $length The maximum number of elements to return, or null for no limit.
      *
      * @return array

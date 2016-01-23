@@ -4,6 +4,8 @@
  * User: chance
  * Date: 9/18/15
  * Time: 12:22 PM
+ * @package     Box
+ * @subpackage  Box_Collection
  */
 
 namespace Box\Collection;
@@ -100,7 +102,8 @@ class ArrayCollection implements ArrayCollectionInterface
      */
     public function remove($key)
     {
-        if ( ! isset($this->entries[$key]) && ! array_key_exists($key, $this->entries)) {
+        if (!isset($this->entries[$key]) && !array_key_exists($key, $this->entries))
+        {
             return null;
         }
 
@@ -117,7 +120,8 @@ class ArrayCollection implements ArrayCollectionInterface
     {
         $key = array_search($element, $this->entries, true);
 
-        if ($key === false) {
+        if ($key === false)
+        {
             return false;
         }
 
@@ -153,7 +157,8 @@ class ArrayCollection implements ArrayCollectionInterface
      */
     public function offsetSet($offset, $value)
     {
-        if ( ! isset($offset)) {
+        if (!isset($offset))
+        {
             return $this->add($value);
         }
 
@@ -191,8 +196,10 @@ class ArrayCollection implements ArrayCollectionInterface
      */
     public function exists(Closure $p)
     {
-        foreach ($this->entries as $key => $element) {
-            if ($p($key, $element)) {
+        foreach ($this->entries as $key => $element)
+        {
+            if ($p($key, $element))
+            {
                 return true;
             }
         }
@@ -297,8 +304,10 @@ class ArrayCollection implements ArrayCollectionInterface
      */
     public function forAll(Closure $p)
     {
-        foreach ($this->entries as $key => $element) {
-            if ( ! $p($key, $element)) {
+        foreach ($this->entries as $key => $element)
+        {
+            if (!$p($key, $element))
+            {
                 return false;
             }
         }
@@ -313,15 +322,22 @@ class ArrayCollection implements ArrayCollectionInterface
     {
         $matches = $noMatches = array();
 
-        foreach ($this->entries as $key => $element) {
-            if ($p($key, $element)) {
+        foreach ($this->entries as $key => $element)
+        {
+            if ($p($key, $element))
+            {
                 $matches[$key] = $element;
-            } else {
+            }
+            else
+            {
                 $noMatches[$key] = $element;
             }
         }
 
-        return array(new static($matches), new static($noMatches));
+        return array(
+            new static($matches),
+            new static($noMatches)
+        );
     }
 
     /**

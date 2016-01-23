@@ -4,6 +4,21 @@
  * User: chance
  * Date: 9/18/15
  * Time: 2:58 PM
+ * @package     Box
+ * @subpackage  Box_Model
+ * @author      Chance Garcia
+ * @copyright   (C)Copyright 2013 Chance Garcia, chancegarcia.com
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
  */
 
 namespace Box\Model\Service;
@@ -170,7 +185,7 @@ interface ServiceInterface extends BaseModelInterface
 
     /**
      * @param null $uri
-     * @param array $params      name/value array pairs that will be json_encoded to send to box
+     * @param array $params name/value array pairs that will be json_encoded to send to box
      * @param string $returnType valid types are:
      *                           'original' (the return from the connection query {@see Connection::query()}),
      *                           'decoded' (normal json decode of the connection query [json_decode(original)]),
@@ -203,8 +218,8 @@ interface ServiceInterface extends BaseModelInterface
     /**
      * query box and map return values to a given class
      *
-     * @param null $uri             box uri to query
-     * @param string $type          valid types are:
+     * @param null $uri box uri to query
+     * @param string $type valid types are:
      *                              'original' (the return from the connection query {@see Connection::query()}),
      *                              'decoded' (normal json decode of the connection query [json_decode(original)]),
      *                              'flat' (associative array json decode of the connection query
@@ -217,9 +232,9 @@ interface ServiceInterface extends BaseModelInterface
     public function getFromBox($uri = null, $type = 'original', ModelInterface $class = null);
 
     /**
-     * @param null $uri             box uri to query
-     * @param array $params         array of params to be converted to json encoded string
-     * @param string $type          valid types are:
+     * @param null $uri box uri to query
+     * @param array $params array of params to be converted to json encoded string
+     * @param string $type valid types are:
      *                              'original' (the return from the connection query {@see Connection::query()}),
      *                              'decoded' (normal json decode of the connection query [json_decode(original)]),
      *                              'flat' (associative array json decode of the connection query

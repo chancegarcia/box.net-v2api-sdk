@@ -4,10 +4,24 @@
  * User: chance
  * Date: 9/18/15
  * Time: 12:24 PM
+ * @package     Box
+ * @subpackage  Box_Model
+ * @author      Chance Garcia
+ * @copyright   (C)Copyright 2013 Chance Garcia, chancegarcia.com
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
  */
 
 namespace Box\Model\Event\Collection;
-
 
 use Box\Collection\ArrayCollection;
 use Box\Collection\ArrayCollectionInterface;
@@ -98,15 +112,17 @@ class EventCollection extends Model implements EventCollectionInterface
             $this->originalEntries = $entries;
             $entries = new ArrayCollection($entries);
         }
-        else if (!$entries instanceof ArrayCollectionInterface)
+        else
         {
-            throw new BoxException('entries must be an array or instance of ArrayCollectionInterface');
+            if (!$entries instanceof ArrayCollectionInterface)
+            {
+                throw new BoxException('entries must be an array or instance of ArrayCollectionInterface');
+            }
         }
 
         $this->entries = $entries;
 
         return $this;
     }
-
 
 }
