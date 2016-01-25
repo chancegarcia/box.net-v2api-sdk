@@ -5,7 +5,7 @@ Requires at least 5.6.10
 
 php sdk for use with box.net v2 api (http://developers.box.com/)
 
-Copyright (C) 2013  Chance Garcia
+Copyright (C) 2013-2016  Chance Garcia
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,6 +18,12 @@ Copyright (C) 2013  Chance Garcia
     GNU General Public License for more details.
 
 tasks:
+- [ ] v0.5.0
+  - [ ] Add deprecation notice that the Client class will be removed. exact version removal undetermined
+  - [ ] Add deprecation notice that the `Collection` class will be removed in v0.6.0
+- [ ] v0.6.0
+  - go to full composer dependency mode
+  - add composer `doctrine/collections` requirement
 - [ ] Client class
     - Note: token information as well as client id and secret are set from outside source/storage
     - [x] get access token given authorization code
@@ -71,4 +77,3 @@ tasks:
 - [ ] Unit Tests
     - [ ] Regression for current implementation
     - [ ] TDD for future implementation
-
