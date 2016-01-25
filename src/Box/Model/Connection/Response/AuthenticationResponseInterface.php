@@ -21,6 +21,6 @@ namespace Box\Model\Connection\Response;
 
 use Box\Model\ModelInterface;
 
-interface ResponseInterface extends ModelInterface
+interface AuthenticationResponseInterface extends ModelInterface
 {
 }

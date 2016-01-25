@@ -24,8 +24,8 @@ use Box\Model\Model;
 use Box\Exception\BoxException;
 use Box\Model\Connection\Token\TokenInterface;
 use Box\Model\Connection\ConnectionInterface;
-use Box\Model\Connection\Response\ResponseInterface;
-use Box\Model\Connection\Response\Response;
+use Box\Model\Connection\Response\AuthenticationResponseInterface;
+use Box\Model\Connection\Response\AuthenticationResponse;
 use \CURLFile;
 
 /**
@@ -42,8 +42,8 @@ class Connection extends Model implements ConnectionInterface
     protected $state;
     protected $requestType = "GET";
 
-    protected $response;
-    protected $responseClass='Box\Model\Connection\Response';
+    protected $authenticationResponse;
+    protected $authenticationResponseClass='Box\Model\Connection\AuthenticationResponse';
 
     /**
      * @var array array of options with the options as the key and the option values as the value
@@ -74,6 +74,8 @@ class Connection extends Model implements ConnectionInterface
     {
         curl_setopt($ch , CURLOPT_RETURNTRANSFER , true);
         curl_setopt($ch , CURLOPT_SSL_VERIFYPEER , false);
+        curl_setopt($ch, CURLOPT_VERBOSE, true);
+        curl_setopt($ch, CURLOPT_HEADER, true);
         return $ch;
     }
 
@@ -83,8 +85,32 @@ class Connection extends Model implements ConnectionInterface
      */
     public function getCurlData($ch)
     {
-        $data = curl_exec($ch);
-        return $data;
+        $response = curl_exec($ch);
+
+        // Then, after your curl_exec call:
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $headers = substr($response, 0, $header_size);
+        $body = substr($response, $header_size);
+        $aHeaders = $this->createResponseHeaders($headers);
+
+        /*
+         * if we're importing symfony/http-foundation, then we need to turn the headers into an array
+         * which means the string parser must split each line
+         * then loop through the lines and split at :
+         * when splitting at :, we need to see if the key already exists, if so, then it needs to make that value of the key-value pair into an array so that nothing is replaced (HeaderBag constructor uses HeaderBag::set() with default replace parameter)
+         */
+
+        return $response;
+    }
+
+    public function createResponseHeaders(array $sHeaders = array(), $replace = true)
+    {
+        $finalHeaders = array();
+        $aHeaders = implode("\n", $sHeaders);
+        foreach ($aHeaders as $headerLineKey => $headerLineValue)
+        {
+            $a = $headerLineValue;
+        }
     }
 
     public function initAdditionalCurlOpts($ch)
@@ -321,16 +347,16 @@ class Connection extends Model implements ConnectionInterface
         return $this->curlOpts;
     }
 
-    public function setResponseClass($responseClass = null)
+    public function setAuthenticationResponseClass($authenticationResponseClass = null)
     {
-        $this->validateClass($responseClass,'ResponseInterface');
-        $this->responseClass = $responseClass;
+        $this->validateClass($authenticationResponseClass,'AuthenticationResponseInterface');
+        $this->authenticationResponseClass = $authenticationResponseClass;
         return $this;
     }
 
-    public function getResponseClass()
+    public function getAuthenticationResponseClass()
     {
-        return $this->responseClass;
+        return $this->authenticationResponseClass;
     }
 
     public function setClientId($clientId = null)
@@ -377,15 +403,15 @@ class Connection extends Model implements ConnectionInterface
         return $this->requestType;
     }
 
-    public function setResponse($response = null)
+    public function setAuthenticationResponse($authenticationResponse = null)
     {
-        $this->response = $response;
+        $this->authenticationResponse = $authenticationResponse;
         return $this;
     }
 
-    public function getResponse()
+    public function getAuthenticationResponse()
     {
-        return $this->response;
+        return $this->authenticationResponse;
     }
 
     public function setResponseType($responseType = null)

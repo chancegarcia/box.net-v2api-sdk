@@ -321,21 +321,35 @@ class Service extends BaseModel implements ServiceInterface
     public function error($data, $message = null)
     {
         $error = $data['error'];
+        unset($data['error']);
         if (null === $message || !is_string($message))
         {
             $message = $error;
         }
         $errorDescription = $data['error_description'];
+        unset($data['error_description']);
 
         $exception = new BoxException($message);
         $exception->setError($error);
         $exception->setErrorDescription($errorDescription);
+
+        if (array_key_exists('code', $data))
+        {
+            $code = $data['code'];
+            $exception->setBoxCode($code);
+        }
+
+        foreach ($data as $k => $v)
+        {
+            $exception->addContext($v, $k);
+        }
 
         if ($this->getLogger() instanceof LoggerInterface)
         {
             $this->getLogger()->error($message,
                                       array(
                                           __METHOD__ . ":" . __LINE__,
+                                          $data,
                                           $error,
                                           $errorDescription,
                                           $exception->getTraceAsString(),
@@ -419,13 +433,35 @@ class Service extends BaseModel implements ServiceInterface
         }
         catch (BoxException $be)
         {
+            if ($this->getLogger() instanceof LoggerInterface)
+            {
+                $this->getLogger()->error('box exception caught',
+                                          array(
+                                              __METHOD__ . ":" . __LINE__,
+                                              $be->getTraceAsString(),
+                                              $be->getBoxCode(),
+                                              $be->getError(),
+                                              $be->getErrorDescription(),
+                                              implode("\n", $be->getContext()),
+                                          ));
+            }
+
+            $boxCode = $be->getBoxCode();
+
+            // need to really check for not invalid auth type error
+            // "invalid_token" code ?
+            if ("trashed" === $boxCode)
+            {
+                throw $be;
+            }
+
+            // refactor out to "tryRefresh"
             $currentToken = clone $this->getToken();
             if ($this->getLogger() instanceof LoggerInterface)
             {
                 $this->getLogger()->debug('currentToken: ' . var_export($currentToken, true),
                                           array(
                                               __METHOD__ . ":" . __LINE__,
-                                              $be->getTraceAsString()
                                           ));
             }
 
@@ -437,7 +473,7 @@ class Service extends BaseModel implements ServiceInterface
                 $tokenStorageContext = $this->getTokenStorageContext();
                 if ($this->getLogger() instanceof LoggerInterface)
                 {
-                    $this->getLogger()->debug('token storage context' . var_export($tokenStorageContext, true),
+                    $this->getLogger()->debug('token storage context: ' . var_export($tokenStorageContext, true),
                                               array(
                                                   __METHOD__ . ":" . __LINE__,
                                               ));
@@ -458,15 +494,20 @@ class Service extends BaseModel implements ServiceInterface
             {
                 $this->getTokenStorage()->setPreviousToken(null);
                 $refreshMessage =
-                    "encountered exception during refresh token attempt" . $refreshException->getMessage();
+                    "encountered exception during refresh token attempt: " . $refreshException->getMessage();
                 $finalException = new BoxException($refreshMessage, $refreshException->getCode(), $be);
                 $finalException->addContext($refreshException);
+                $finalException->addContext($be);
                 if ($this->getLogger() instanceof LoggerInterface)
                 {
                     $this->getLogger()->error($refreshMessage,
                                               array(
                                                   __METHOD__ . ":" . __LINE__,
                                                   $finalException->getTraceAsString(),
+                                                  $refreshException->getBoxCode(),
+                                                  $refreshException->getError(),
+                                                  $refreshException->getErrorDescription(),
+                                                  implode("\n", $refreshException->getContext()),
                                               ));
                 }
                 throw $finalException;
@@ -552,13 +593,29 @@ class Service extends BaseModel implements ServiceInterface
         }
         catch (BoxException $be)
         {
+            if ($this->getLogger() instanceof LoggerInterface)
+            {
+                $this->getLogger()->error('box exception caught',
+                                          array(
+                                              __METHOD__ . ":" . __LINE__,
+                                              $be->getTraceAsString(),
+                                              $be->getBoxCode(),
+                                              $be->getError(),
+                                              $be->getErrorDescription(),
+                                              implode("\n", $be->getContext()),
+                                          ));
+            }
+
+            $boxCode = $be->getBoxCode();
+
             $currentToken = clone $this->getToken();
             if ($this->getLogger() instanceof LoggerInterface)
             {
                 $this->getLogger()->debug('currentToken: ' . var_export($currentToken, true),
                                           array(
                                               __METHOD__ . ":" . __LINE__,
-                                              $be->getTraceAsString()
+                                              $be->getTraceAsString(),
+                                              "box code: " . var_export($boxCode, true),
                                           ));
             }
 
@@ -906,9 +963,17 @@ class Service extends BaseModel implements ServiceInterface
             {
                 if (array_key_exists('type', $this->lastResultFlat) && 'error' == $this->lastResultFlat['type'])
                 {
+
                     $errorData['error'] = "sdk_unknown";
                     $ditto = $errorData;
                     $errorData['error_description'] = $ditto;
+                    $errorData['result_data'] = $this->lastResultOriginal;
+
+                    if (array_key_exists('code', $this->lastResultFlat))
+                    {
+                        $errorData['code'] = $this->lastResultFlat['code'];
+                    }
+
                     $this->error($errorData);
                 }
             }

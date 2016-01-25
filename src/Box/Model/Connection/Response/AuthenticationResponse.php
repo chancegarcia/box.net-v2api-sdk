@@ -20,9 +20,9 @@
 namespace Box\Model\Connection\Response;
 
 use Box\Model\Model;
-use Box\Model\Connection\Response\ResponseInterface;
+use Box\Model\Connection\Response\AuthenticationResponseInterface;
 
-class Response extends Model implements ResponseInterface
+class AuthenticationResponse extends Model implements AuthenticationResponseInterface
 {
     protected $responseType;
     protected $accessToken;
