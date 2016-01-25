@@ -103,10 +103,10 @@ class Connection extends Model implements ConnectionInterface
         return $response;
     }
 
-    public function createResponseHeaders(array $sHeaders = array(), $replace = true)
+    public function createResponseHeaders($sHeaders = '', $replace = true)
     {
         $finalHeaders = array();
-        $aHeaders = implode("\n", $sHeaders);
+        $aHeaders = explode("\n", $sHeaders);
         foreach ($aHeaders as $headerLineKey => $headerLineValue)
         {
             $a = $headerLineValue;

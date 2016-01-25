@@ -18,12 +18,18 @@ Copyright (C) 2013-2016  Chance Garcia
     GNU General Public License for more details.
 
 tasks:
+- [ ] v0.4.0
+  - [ ] refactor `Connection::getCurlData` to return an HTTP Response object (use symfony/http-foundation)
+    - [ ] method to turn curl header string into header array to set in Response object
+    - [ ] method to determine status code given header string or array
+    - [ ] Existing calls in the `Client` class must still only analyse the body response
+  - [ ] `Service` class final methods analyze the Response object to determine error/response handling such as refresh token attempt
 - [ ] v0.5.0
   - [ ] Add deprecation notice that the Client class will be removed. exact version removal undetermined
   - [ ] Add deprecation notice that the `Collection` class will be removed in v0.6.0
 - [ ] v0.6.0
-  - go to full composer dependency mode
-  - add composer `doctrine/collections` requirement
+  - [ ] go to full composer dependency mode
+  - [ ] add composer `doctrine/collections` requirement
 - [ ] Client class
     - Note: token information as well as client id and secret are set from outside source/storage
     - [x] get access token given authorization code
