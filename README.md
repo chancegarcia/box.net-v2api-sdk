@@ -34,10 +34,21 @@ tasks:
   - [ ] `Service` class final methods analyze the Response object to determine error/response handling such as refresh token attempt
 - [ ] v0.5.0
   - [ ] Add deprecation notice that the Client class will be removed. exact version removal undetermined
-  - [ ] Add deprecation notice that the `Collection` class will be removed in v0.6.0
+  - [ ] Add deprecation notice that the `Collection` class will be removed in v0.6.0 in favor of using `doctrine/collections`
+  - [ ] methods to set `CURLOPT_SSL_VERIFYPEER` in `Connection` class
+    - [ ] add deprecation notice that default value will be true in later release to allow time for migration from current behavior (false)
+  - [ ] refactor
+    - [ ] support PSR-7 (HTTP Messages)
+      - [PSR-7](http://www.php-fig.org/psr/psr-7/)
+      - [GitHub](https://github.com/php-fig/http-message)
+      - [PSR-7 Example](https://mwop.net/blog/2015-01-26-psr-7-by-example.html)
+      - [RFC 7231 Section 6](http://tools.ietf.org/html/rfc7231#section-6)
 - [ ] v0.6.0
   - [ ] go to full composer dependency mode
   - [ ] add composer `doctrine/collections` requirement
+  - [ ] implement `Retry-After` response header handling in abstract `Service`
+  
+tasks for version less than 0.4.0
 - [ ] Client class
     - Note: token information as well as client id and secret are set from outside source/storage
     - [x] get access token given authorization code

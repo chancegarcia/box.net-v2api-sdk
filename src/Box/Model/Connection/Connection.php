@@ -32,6 +32,8 @@
  */
 
 namespace Box\Model\Connection;
+use Box\Http\Response\BoxResponse;
+use Box\Http\Response\BoxResponseInterface;
 use Box\Model\Model;
 use Box\Exception\BoxException;
 use Box\Model\Connection\Token\TokenInterface;
@@ -39,6 +41,7 @@ use Box\Model\Connection\ConnectionInterface;
 use Box\Model\Connection\Response\AuthenticationResponseInterface;
 use Box\Model\Connection\Response\AuthenticationResponse;
 use \CURLFile;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class Connection
@@ -84,45 +87,43 @@ class Connection extends Model implements ConnectionInterface
      */
     public function initCurlOpts($ch)
     {
+        // get full response with headers
+        // http://stackoverflow.com/questions/9183178/php-curl-retrieving-response-headers-and-body-in-a-single-request
         curl_setopt($ch , CURLOPT_RETURNTRANSFER , true);
-        curl_setopt($ch , CURLOPT_SSL_VERIFYPEER , false);
         curl_setopt($ch, CURLOPT_VERBOSE, true);
         curl_setopt($ch, CURLOPT_HEADER, true);
+
+        curl_setopt($ch , CURLOPT_SSL_VERIFYPEER , false);
         return $ch;
     }
 
     /**
      * @param $ch
-     * @return mixed
+     * @return BoxResponseInterface
      */
     public function getCurlData($ch)
     {
-        $response = curl_exec($ch);
-
-        // Then, after your curl_exec call:
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $headers = substr($response, 0, $header_size);
-        $body = substr($response, $header_size);
-        $aHeaders = $this->createResponseHeaders($headers);
-
-        /*
-         * if we're importing symfony/http-foundation, then we need to turn the headers into an array
-         * which means the string parser must split each line
-         * then loop through the lines and split at :
-         * when splitting at :, we need to see if the key already exists, if so, then it needs to make that value of the key-value pair into an array so that nothing is replaced (HeaderBag constructor uses HeaderBag::set() with default replace parameter)
-         */
-
-        return $response;
-    }
-
-    public function createResponseHeaders($sHeaders = '', $replace = true)
-    {
-        $finalHeaders = array();
-        $aHeaders = explode("\n", $sHeaders);
-        foreach ($aHeaders as $headerLineKey => $headerLineValue)
-        {
-            $a = $headerLineValue;
+        if ($this->getLogger() instanceof LoggerInterface) {
+            $this->getLogger()->debug('before curl_exec curl opts', array(
+                __METHOD__ . ":" . __LINE__,
+                var_export(curl_getinfo($ch), true),
+            ));
         }
+        $sResponse = curl_exec($ch);
+        if ($this->getLogger() instanceof LoggerInterface) {
+            $this->getLogger()->debug('curl_exec response: ' . $sResponse, array(
+                __METHOD__ . ":" . __LINE__,
+            ));
+        }
+
+        // split curl result into header and body
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $header = substr($sResponse, 0, $header_size);
+        $body = substr($sResponse, $header_size);
+
+        $oResponse = new BoxResponse($body, $header);
+
+        return $oResponse;
     }
 
     public function initAdditionalCurlOpts($ch)
@@ -165,7 +166,7 @@ class Connection extends Model implements ConnectionInterface
     /**
      * GET
      * @param $uri
-     * @return mixed
+     * @return BoxResponseInterface
      */
     public function query($uri)
     {
@@ -186,11 +187,11 @@ class Connection extends Model implements ConnectionInterface
 
     /**
      * @param $uri
-     * @param array|string $params      array will be deprecated in the future; json encoded string will become the only valid value
+     * @param array|string $params array will be deprecated in the future; json encoded string will become the only valid value
      * @param bool|false $nameValuePair this will be deprecated/fully removed in the future since params as a json encoded
      *                                  string will be the expected value
      *
-     * @return mixed
+     * @return BoxResponseInterface
      */
     public function put($uri, $params = array(), $nameValuePair = false)
     {
@@ -229,12 +230,12 @@ class Connection extends Model implements ConnectionInterface
      * POST
      *
      * @param              $uri
-     * @param array|string $params      will convert array to string; array will be deprecated in the future; json
+     * @param array|string $params will convert array to string; array will be deprecated in the future; json
      *                                  encoded string will become the only valid value
      * @param bool|false $nameValuePair this will be deprecated/fully removed in the future since params as a json
      *                                  encoded string will be the expected value
      *
-     * @return mixed
+     * @return BoxResponseInterface
      */
     public function post($uri, $params = array(), $nameValuePair = false)
     {
@@ -294,15 +295,15 @@ class Connection extends Model implements ConnectionInterface
     }
 
     /**
-     * @param string     $uri
-     * @param string    $file file/path to file
+     * @param string $uri
+     * @param string $file file/path to file
      * @param int $parentId
-     * @return array|mixed
+     * @return array|BoxResponseInterface
      */
     public function postFile($uri, $file, $parentId = 0)
     {
         // @todo allow Content-MD5 header to be set
-        //Post 1-n files, each element of $files array assumed to be absolute
+        // Post 1-n files, each element of $files array assumed to be absolute
         // path to a file.  $files can be array (multiple) or string (one file).
         // Data will be posted in a series of POST vars named $file0, $file1...
         // $fileN
