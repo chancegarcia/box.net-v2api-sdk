@@ -310,7 +310,9 @@ class Client extends Model implements ModelInterface
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection, $aSharedLinkHeader);
 
-        $data = $connection->query($uri);
+        $response = $connection->query($uri);
+
+        $data = $response->getContent();
 
         $jsonData = json_decode($data, true);
         /**
@@ -358,7 +360,9 @@ class Client extends Model implements ModelInterface
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $data = $connection->query($uri);
+        $response = $connection->query($uri);
+
+        $data = $response->getContent();
 
         $jsonData = json_decode($data, true);
         /**
@@ -427,7 +431,9 @@ class Client extends Model implements ModelInterface
             'parent' => array('id' => $parentFolderId)
         );
 
-        $data = $connection->post($uri, $params, true);
+        $response = $connection->post($uri, $params, true);
+
+        $data = $response->getContent();
 
         $jsonData = json_decode($data, true);
 
@@ -478,7 +484,9 @@ class Client extends Model implements ModelInterface
 
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
-        $json = $connection->put($uri, $params, true);
+        $response = $connection->put($uri, $params, true);
+
+        $json = $response->getContent();
 
         $data = json_decode($json, true);
 
@@ -525,7 +533,9 @@ class Client extends Model implements ModelInterface
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $json = $connection->query($uri);
+        $response = $connection->query($uri);
+
+        $json = $response->getContent();
 
         $data = json_decode($json, true);
 
@@ -603,7 +613,9 @@ class Client extends Model implements ModelInterface
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $json = $connection->post($uri, $params, true);
+        $response = $connection->post($uri, $params, true);
+
+        $json = $response->getContent();
 
         $data = json_decode($json, true);
 
@@ -672,7 +684,9 @@ class Client extends Model implements ModelInterface
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $json = $connection->put($uri, $params, true);
+        $response = $connection->put($uri, $params, true);
+
+        $json = $response->getContent();
 
         $data = json_decode($json, true);
 
@@ -752,7 +766,9 @@ class Client extends Model implements ModelInterface
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $json = $connection->post($uri, $params, true);
+        $response = $connection->post($uri, $params, true);
+
+        $json = $response->getContent();
 
         $data = json_decode($json, true);
 
@@ -801,7 +817,9 @@ class Client extends Model implements ModelInterface
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $uploaded = $connection->postFile($uri, $file);
+        $response = $connection->postFile($uri, $file);
+
+        $uploaded = $response->getContent();
 
         $data = json_decode($uploaded, true);
 
@@ -830,7 +848,8 @@ class Client extends Model implements ModelInterface
             $params['redirect_uri'] = $redirectUri;
         }
 
-        $json = $connection->post(self::TOKEN_URI, $params);
+        $response = $connection->post(self::TOKEN_URI, $params);
+        $json = $response->getContent();
 
         $data = json_decode($json, true);
 
@@ -882,7 +901,9 @@ class Client extends Model implements ModelInterface
 
         $connection = $this->getConnection();
 
-        $json = $connection->post(self::TOKEN_URI, $params);
+        $response = $connection->post(self::TOKEN_URI, $params);
+        $json = $response->getContent();
+
         $data = json_decode($json, true);
 
         if (null === $data)
@@ -945,7 +966,8 @@ class Client extends Model implements ModelInterface
 
         $connection = $this->getConnection();
 
-        $json = $connection->post(self::REVOKE_URI, $params);
+        $response = $connection->post(self::REVOKE_URI, $params);
+        $json = $response->getContent();
         // @todo add error handling for null data
         $data = json_decode($json, true);
 
@@ -1317,7 +1339,9 @@ class Client extends Model implements ModelInterface
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
-        $json = $connection->query($uri);
+        $response = $connection->query($uri);
+
+        $json = $response->getContent();
 
         $data = json_decode($json, true);
 
