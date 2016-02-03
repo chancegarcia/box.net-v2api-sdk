@@ -27,10 +27,10 @@ Copyright (C) 2013-2016  Chance Garcia
 
 tasks:
 - [ ] v0.4.0
-  - [ ] refactor `Connection::getCurlData` to return an HTTP Response object (use symfony/http-foundation)
-    - [ ] method to turn curl header string into header array to set in Response object
-    - [ ] method to determine status code given header string or array
-    - [ ] Existing calls in the `Client` class must still only analyse the body response
+  - [x] refactor `Connection::getCurlData` to return an HTTP Response object (use symfony/http-foundation)
+    - [x] method to turn curl header string into header array to set in Response object
+    - [x] method to determine status code given header string
+    - [x] Existing calls in the `Client` class must still only analyse the body response
   - [ ] `Service` class final methods analyze the Response object to determine error/response handling such as refresh token attempt
 - [ ] v0.5.0
   - [ ] Add deprecation notice that the Client class will be removed. exact version removal undetermined
