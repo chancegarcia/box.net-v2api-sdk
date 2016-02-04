@@ -1,6 +1,6 @@
 {
     "name": "chancegarcia/box-api-v2-sdk",
-    "license": "GPL-2.0",
+    "license": "MIT",
     "description": "Interact with the box.com API using PHP",
     "keywords": [
         "box.com"
