@@ -31,19 +31,99 @@
 
 namespace Box\Model\Connection;
 
-use Box\Model\Connection\Token\TokenInterface;
+use Box\Exception\BoxException;
+use Box\Http\Response\BoxResponseInterface;
 use Box\Model\ModelInterface;
+use CURLFile;
 
 interface ConnectionInterface extends ModelInterface
 {
     public function connect();
+
+    /**
+     * GET
+     * @param string $uri
+     * @return BoxResponseInterface
+     */
     public function query($uri);
-    public function post($uri, $params = array());
+
+    /**
+     * POST
+     *
+     * @param              $uri
+     * @param array|string $params will convert array to string; array will be deprecated in the future; json
+     *                                  encoded string will become the only valid value
+     * @param bool|false $nameValuePair this will be deprecated/fully removed in the future since params as a json
+     *                                  encoded string will be the expected value
+     *
+     * @return BoxResponseInterface
+     */
+    public function post($uri, $params = array(), $nameValuePair = false);
+
+    /**
+     * @param resource $ch
+     * @return resource
+     * @throws BoxException
+     */
     public function initAdditionalCurlOpts($ch);
+
+    /**
+     * @param array $curlOpts
+     * @return ConnectionInterface
+     */
     public function setCurlOpts($curlOpts = null);
+
+    /**
+     * @return array
+     */
     public function getCurlOpts();
+
+    /**
+     * @return resource
+     */
     public function initCurl();
+
+    /**
+     * @param resource $ch
+     * @return resource
+     */
     public function initCurlOpts($ch);
+
+    /**
+     * @param resource $ch
+     * @return BoxResponseInterface
+     */
     public function getCurlData($ch);
+
+    /**
+     * @param $uri
+     * @param array|string $params array will be deprecated in the future; json encoded string will become the only valid value
+     * @param bool|false $nameValuePair this will be deprecated/fully removed in the future since params as a json encoded
+     *                                  string will be the expected value
+     *
+     * @return BoxResponseInterface
+     */
     public function put($uri, $params = array());
+
+    /**
+     * @param string $pathToFile
+     * @param string $mimeType
+     * @param string $filename name of the file/post name
+     * @return CURLFile
+     */
+    public function createCurlFile($pathToFile, $mimeType, $filename);
+
+    /**
+     * @param string $file file/path to file
+     * @return mixed
+     */
+    public function getMimeType($file);
+
+    /**
+     * @param string $uri
+     * @param string $file file/path to file
+     * @param int $parentId
+     * @return array|BoxResponseInterface
+     */
+    public function postFile($uri, $file, $parentId = 0);
 }

@@ -32,14 +32,10 @@
  */
 
 namespace Box\Model\Connection;
+
 use Box\Http\Response\BoxResponse;
-use Box\Http\Response\BoxResponseInterface;
 use Box\Model\Model;
 use Box\Exception\BoxException;
-use Box\Model\Connection\Token\TokenInterface;
-use Box\Model\Connection\ConnectionInterface;
-use Box\Model\Connection\Response\AuthenticationResponseInterface;
-use Box\Model\Connection\Response\AuthenticationResponse;
 use \CURLFile;
 use Psr\Log\LoggerInterface;
 
@@ -69,11 +65,11 @@ class Connection extends Model implements ConnectionInterface
     // may need to store the tokens
     public function connect()
     {
-
+        throw new BoxException('method not yet implemented');
     }
 
     /**
-     * @return resource
+     * {@inheritdoc}
      */
     public function initCurl()
     {
@@ -83,7 +79,7 @@ class Connection extends Model implements ConnectionInterface
     }
 
     /**
-     * @param $ch
+     * {@inheritdoc}
      */
     public function initCurlOpts($ch)
     {
@@ -98,8 +94,7 @@ class Connection extends Model implements ConnectionInterface
     }
 
     /**
-     * @param $ch
-     * @return BoxResponseInterface
+     * {@inheritdoc}
      */
     public function getCurlData($ch)
     {
@@ -126,6 +121,9 @@ class Connection extends Model implements ConnectionInterface
         return $oResponse;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function initAdditionalCurlOpts($ch)
     {
         $opts = $this->getCurlOpts();
@@ -164,9 +162,7 @@ class Connection extends Model implements ConnectionInterface
     }
 
     /**
-     * GET
-     * @param $uri
-     * @return BoxResponseInterface
+     * {@inheritdoc}
      */
     public function query($uri)
     {
@@ -182,16 +178,14 @@ class Connection extends Model implements ConnectionInterface
 
     public function delete($uri)
     {
+        if ($this->getLogger() instanceof LoggerInterface) {
+            $this->getLogger()->debug("delete uri: " . $uri, array(__METHOD__ . ":" . __LINE__));
+        }
         throw new BoxException('stubbed method. please implement');
     }
 
     /**
-     * @param $uri
-     * @param array|string $params array will be deprecated in the future; json encoded string will become the only valid value
-     * @param bool|false $nameValuePair this will be deprecated/fully removed in the future since params as a json encoded
-     *                                  string will be the expected value
-     *
-     * @return BoxResponseInterface
+     * {@inheritdoc}
      */
     public function put($uri, $params = array(), $nameValuePair = false)
     {
@@ -227,15 +221,7 @@ class Connection extends Model implements ConnectionInterface
     }
 
     /**
-     * POST
-     *
-     * @param              $uri
-     * @param array|string $params will convert array to string; array will be deprecated in the future; json
-     *                                  encoded string will become the only valid value
-     * @param bool|false $nameValuePair this will be deprecated/fully removed in the future since params as a json
-     *                                  encoded string will be the expected value
-     *
-     * @return BoxResponseInterface
+     * {@inheritdoc}
      */
     public function post($uri, $params = array(), $nameValuePair = false)
     {
@@ -271,10 +257,7 @@ class Connection extends Model implements ConnectionInterface
     }
 
     /**
-     * @param string $pathToFile
-     * @param string $mimeType
-     * @param string $filename name of the file/post name
-     * @return CURLFile
+     * {@inheritdoc}
      */
     public function createCurlFile($pathToFile, $mimeType, $filename)
     {
@@ -283,8 +266,7 @@ class Connection extends Model implements ConnectionInterface
     }
 
     /**
-     * @param string $file file/path to file
-     * @return mixed
+     * {@inheritdoc}
      */
     public function getMimeType($file)
     {
@@ -295,10 +277,7 @@ class Connection extends Model implements ConnectionInterface
     }
 
     /**
-     * @param string $uri
-     * @param string $file file/path to file
-     * @param int $parentId
-     * @return array|BoxResponseInterface
+     * {@inheritdoc}
      */
     public function postFile($uri, $file, $parentId = 0)
     {
@@ -339,8 +318,7 @@ class Connection extends Model implements ConnectionInterface
     }
 
     /**
-     * @param array $curlOpts
-     * @return Connection|ConnectionInterface
+     * {@inheritdoc}
      */
     public function setCurlOpts($curlOpts = null)
     {
@@ -353,7 +331,7 @@ class Connection extends Model implements ConnectionInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getCurlOpts()
     {

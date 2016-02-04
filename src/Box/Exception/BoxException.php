@@ -45,62 +45,48 @@ class BoxException extends \Exception
     protected $context = array();
     protected $boxCode;
 
-    public function setError($error = null)
-    {
+    public function setError($error = null) {
         $this->error = $error;
+
         return $this;
     }
 
-    public function getError()
-    {
+    public function getError() {
         return $this->error;
     }
 
-    public function setErrorDescription($errorDescription = null)
-    {
+    public function setErrorDescription($errorDescription = null) {
         $this->errorDescription = $errorDescription;
+
         return $this;
     }
 
-    public function getErrorDescription()
-    {
+    public function getErrorDescription() {
         return $this->errorDescription;
     }
 
-    public function addContext($contextInformation = null, $key = null)
-    {
-        if (is_string($key))
-        {
+    public function addContext($contextInformation = null, $key = null) {
+        if (is_string($key)) {
             $finalKey = $key;
             // if we have duplicate key for some reason, make it unique
-            if (array_key_exists($key, $this->context))
-            {
-                do
-                {
-                    $finalKey = uniqid($key . "_");
-                }
-                while (array_key_exists($finalKey, $this->context));
+            if (array_key_exists($key, $this->context)) {
+                do {
+                    $finalKey = uniqid($key."_");
+                } while (array_key_exists($finalKey, $this->context));
             }
 
             $this->context[$finalKey] = $contextInformation;
-        }
-        else
-        {
+        } else {
             $this->context[] = $contextInformation;
         }
     }
 
-    public function getContext($key = null)
-    {
+    public function getContext($key = null) {
         // make sure we have a key value and avoid false negative; allow null to returned on non-existent key
-        if (!is_null($key))
-        {
-            if (array_key_exists($key, $this->context))
-            {
+        if (!is_null($key)) {
+            if (array_key_exists($key, $this->context)) {
                 return $this->context[$key];
-            }
-            else
-            {
+            } else {
                 return null;
             }
         }
@@ -112,8 +98,7 @@ class BoxException extends \Exception
     /**
      * @return mixed
      */
-    public function getBoxCode()
-    {
+    public function getBoxCode() {
         return $this->boxCode;
     }
 
@@ -121,9 +106,9 @@ class BoxException extends \Exception
      * @param mixed $boxCode
      * @return BoxException
      */
-    public function setBoxCode($boxCode = null)
-    {
+    public function setBoxCode($boxCode = null) {
         $this->boxCode = $boxCode;
+
         return $this;
     }
 }

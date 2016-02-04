@@ -35,6 +35,7 @@
 
 namespace Box\Model\Service;
 
+use Box\Http\Response\BoxResponseInterface;
 use Box\Model\BaseModelInterface;
 use Box\Model\Connection\Connection;
 use Box\Model\Connection\ConnectionInterface;
@@ -181,17 +182,32 @@ interface ServiceInterface extends BaseModelInterface
     public function getConnectionHeaders();
 
     /**
-     * @param string $json
+     * Handle BoxResponse by throwing an exception on error or returning the JSON return content
+     *
+     * @param BoxResponseInterface $response
+     * @param string $returnType valid types are:
+     *                           'original' (the return from the connection query {@see Connection::query()}),
+     *                           'decoded' (normal json decode of the connection query [json_decode(original)]),
+     *                           'flat' (associative array json decode of the connection query [json_decode(original,
+     *                           true)])
+     *
+     * @return mixed
+     * @throws \Box\Exception\BoxException
+     * @throws BadMethodCallException
+     */
+    public function handleBoxResponse(BoxResponseInterface $response = null, $returnType = 'decoded');
+
+    /**
+     * @param null $json
      * @param string $returnType valid types are:
      *                           'original' (the return from the connection query {@see Connection::query()}),
      *                           'decoded' (normal json decode of the connection query [json_decode(original)]),
      *                           'flat' (associative array json decode of the connection query [json_decode(original,
      *                           true)])
      * @param array $errorData
-     *
      * @return mixed
-     * @throws \Box\Exception\BoxException
-     * @throws BadMethodCallException
+     *
+     * @deprecated
      */
     public function getFinalConnectionResult($json = null, $returnType = 'decoded', $errorData = array());
 
@@ -234,8 +250,8 @@ interface ServiceInterface extends BaseModelInterface
      * @param string $type valid types are:
      *                              'original' (the return from the connection query {@see Connection::query()}),
      *                              'decoded' (normal json decode of the connection query [json_decode(original)]),
-     *                              'flat' (associative array json decode of the connection query
-     *                              [json_decode(original, true)])
+     *                              'flat' (associative array json decode of the connection query [json_decode(original, true)])
+     *                              'mapped' map json data to provided ModelInterface
      * @param ModelInterface $class class to map the box data to, the mapped data is the decoded results of the the box
      *                              query {@see queryBox()}; if none provided, the specified type will be returned
      *
