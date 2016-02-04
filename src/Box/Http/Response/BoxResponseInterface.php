@@ -20,6 +20,7 @@
 namespace Box\Http\Response;
 
 use Box\Http\Response\Header\ResponseHeaderInterface;
+use Zend\Stdlib\ResponseInterface;
 
 interface BoxResponseInterface
 {
@@ -44,4 +45,94 @@ interface BoxResponseInterface
     public function getHeader($name);
 
     public function getHeaderLine($name);
+
+    // making interface entries for httpfoundation Response class that we extend and use
+
+    /**
+     * Retrieves the status code for the current web response.
+     *
+     * @return int Status code
+     */
+    public function getStatusCode();
+
+    /**
+     * Sets the HTTP protocol version (1.0 or 1.1).
+     *
+     * @param string $version The HTTP protocol version
+     *
+     * @return ResponseInterface
+     */
+    public function setProtocolVersion($version);
+
+    // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+    /**
+     * Is response invalid?
+     *
+     * @return bool
+     */
+    public function isInvalid();
+
+    /**
+     * Is response informative?
+     *
+     * @return bool
+     */
+    public function isInformational();
+
+    /**
+     * Is response successful?
+     *
+     * @return bool
+     */
+    public function isSuccessful();
+
+    /**
+     * Is the response a redirect?
+     *
+     * @return bool
+     */
+    public function isRedirection();
+
+    /**
+     * Is there a client error?
+     *
+     * @return bool
+     */
+
+    public function isClientError();
+
+    /**
+     * Was there a server side error?
+     *
+     * @return bool
+     */
+    public function isServerError();
+
+    /**
+     * Is the response OK?
+     *
+     * @return bool
+     */
+    public function isOk();
+
+    /**
+     * Is the response forbidden?
+     *
+     * @return bool
+     */
+    public function isForbidden();
+
+    /**
+     * Is the response a not found error?
+     *
+     * @return bool
+     */
+    public function isNotFound();
+
+    /**
+     * Is the response empty?
+     *
+     * @return bool
+     */
+    public function isEmpty();
 }

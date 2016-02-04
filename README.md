@@ -31,8 +31,13 @@ tasks:
     - [x] method to turn curl header string into header array to set in Response object
     - [x] method to determine status code given header string
     - [x] Existing calls in the `Client` class must still only analyse the body response
-  - [ ] `Service` class final methods analyze the Response object to determine error/response handling such as refresh token attempt
+  - [x] `Service` class final methods analyze the Response object to determine error/response handling such as refresh token attempt
+    - [x] Deprecate `Service::getFinalConnectionResult` and add warning of removal in v0.5.0
+- [ ] v0.4.1
+  - [ ] refactor `Service::getFromBox` to accept type `mapped`
+  - [ ] refactor `Service::sendUpdateToBox` to accept type `mapped`
 - [ ] v0.5.0
+  - [ ] Remove `Service::getFinalConnectionResult`
   - [ ] Add deprecation notice that the Client class will be removed. exact version removal undetermined
   - [ ] Add deprecation notice that the `Collection` class will be removed in v0.6.0 in favor of using `doctrine/collections`
   - [ ] methods to set `CURLOPT_SSL_VERIFYPEER` in `Connection` class

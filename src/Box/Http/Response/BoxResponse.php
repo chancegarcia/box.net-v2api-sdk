@@ -31,8 +31,7 @@ class BoxResponse extends Response implements BoxResponseInterface
      */
     protected $responseHeader;
 
-    public function __construct($content = '', $header = '')
-    {
+    public function __construct($content = '', $header = '') {
         $this->responseHeader = new ResponseHeader($header);
 
         $statusLine = $this->responseHeader->getStatusLine();
@@ -50,24 +49,21 @@ class BoxResponse extends Response implements BoxResponseInterface
     /**
      * {@inheritdoc}
      */
-    public function getResponseHeader()
-    {
+    public function getResponseHeader() {
         return $this->responseHeader;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setResponseHeader(ResponseHeaderInterface $responseHeader = null)
-    {
+    public function setResponseHeader(ResponseHeaderInterface $responseHeader = null) {
         $this->responseHeader = $responseHeader;
 
         return $this;
     }
 
 
-    public function hasHeader($name)
-    {
+    public function hasHeader($name) {
         $headerLines = $this->getResponseHeader()->getHeaderLines();
 
         $normalizedHeaderLineKeys = array_map('strtolower', array_keys($headerLines));
@@ -75,8 +71,7 @@ class BoxResponse extends Response implements BoxResponseInterface
         return in_array(strtolower($name), $normalizedHeaderLineKeys);
     }
 
-    public function getHeader($name)
-    {
+    public function getHeader($name) {
         $headerLine = $this->getHeaderLine($name);
         if ("" === $headerLine) {
             $header = array();
@@ -91,8 +86,7 @@ class BoxResponse extends Response implements BoxResponseInterface
         return $header;
     }
 
-    public function getHeaderLine($name)
-    {
+    public function getHeaderLine($name) {
         if (!$this->hasHeader($name)) {
             return "";
         }
