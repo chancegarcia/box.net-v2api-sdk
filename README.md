@@ -36,6 +36,7 @@ tasks:
 - [ ] v0.4.1
   - [ ] refactor `Service::getFromBox` to accept type `mapped`
   - [ ] refactor `Service::sendUpdateToBox` to accept type `mapped`
+  - [ ] add handling for 409 `item_name_in_use` error
 - [ ] v0.5.0
   - [ ] Remove `Service::getFinalConnectionResult`
   - [ ] Add deprecation notice that the Client class will be removed. exact version removal undetermined
