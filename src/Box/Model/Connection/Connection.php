@@ -114,7 +114,7 @@ class Connection extends Model implements ConnectionInterface
         // split curl result into header and body
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $header = substr($sResponse, 0, $header_size);
-        $body = substr($sResponse, $header_size);
+        $body = substr($sResponse, $header_size) ?: "";
 
         $oResponse = new BoxResponse($body, $header);
 

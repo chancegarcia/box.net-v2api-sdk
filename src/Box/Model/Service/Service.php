@@ -638,13 +638,15 @@ class Service extends BaseModel implements ServiceInterface
                 ));
         }
 
-        $json = $connection->post(self::TOKEN_URI, $params);
+        $response = $connection->post(self::TOKEN_URI, $params);
+        $json = $response->getContent();
         if ($this->getLogger() instanceof LoggerInterface) {
             $this->getLogger()->debug('raw refresh return: ' . var_export($json, true),
                 array(
                     __METHOD__ . ":" . __LINE__,
                 ));
         }
+
         // need to handle stdclass vs forced array?
         $this->lastResultOriginal = $json;
         $this->lastResultDecoded = json_decode($json);
@@ -714,7 +716,8 @@ class Service extends BaseModel implements ServiceInterface
 
         $connection = $this->getConnection();
 
-        $json = $connection->post(self::REVOKE_URI, $params);
+        $response = $connection->post(self::REVOKE_URI, $params);
+        $json = $response->getContent();
         // @todo add error handling for null data
         $this->lastResultOriginal = $json;
         $this->lastResultDecoded = json_decode($json);
