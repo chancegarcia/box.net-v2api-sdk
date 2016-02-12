@@ -424,8 +424,14 @@ class Service extends BaseModel implements ServiceInterface
                 $params,
                 $type,
             );
-            $boxData = $this->refreshConnection(array($this, 'putIntoBox'), $callBackParams, $bre);
 
+            switch($bre->getCode()) {
+                case 401:
+                    $boxData = $this->refreshConnection(array($this, 'putIntoBox'), $callBackParams, $bre);
+                    break;
+                default:
+                    throw $bre;
+            }
         } catch (BoxException $be) {
             if ($this->getLogger() instanceof LoggerInterface) {
                 $this->getLogger()->error('box exception caught',
@@ -507,8 +513,14 @@ class Service extends BaseModel implements ServiceInterface
                 $uri,
                 $type,
             );
-            $boxData = $this->refreshConnection(array($this, 'queryBox'), $callBackParams, $bre);
 
+            switch($bre->getCode()) {
+                case 401:
+                    $boxData = $this->refreshConnection(array($this, 'queryBox'), $callBackParams, $bre);
+                    break;
+                default:
+                    throw $bre;
+            }
         } catch (BoxException $be) {
             if ($this->getLogger() instanceof LoggerInterface) {
                 $this->getLogger()->error('box exception caught',
