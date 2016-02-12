@@ -97,14 +97,16 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getDefaultReturnType() {
+    public function getDefaultReturnType()
+    {
         return $this->defaultReturnType;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDefaultReturnType($defaultReturnType = 'decoded') {
+    public function setDefaultReturnType($defaultReturnType = 'decoded')
+    {
         $this->validateReturnType($defaultReturnType);
 
         $this->defaultReturnType = $defaultReturnType;
@@ -115,7 +117,8 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getLastResult($type = 'decoded') {
+    public function getLastResult($type = 'decoded')
+    {
         $this->validateReturnType($type);
 
         $prop = "lastResult" . ucfirst($type);
@@ -126,7 +129,8 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getAuthorizedConnection() {
+    public function getAuthorizedConnection()
+    {
         if (!$this->authorizedConnection instanceof ConnectionInterface) {
             throw new RuntimeException("ConnectionInterface not found");
         }
@@ -141,7 +145,8 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function setAuthorizedConnection($authorizedConnection = null) {
+    public function setAuthorizedConnection($authorizedConnection = null)
+    {
         $this->authorizedConnection = $authorizedConnection;
 
         return $this;
@@ -150,7 +155,8 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getConnection() {
+    public function getConnection()
+    {
         if (!$this->connection instanceof ConnectionInterface) {
             throw new \RuntimeException("ConnectionInterface not found");
         }
@@ -163,7 +169,8 @@ class Service extends BaseModel implements ServiceInterface
      *
      * @return ServiceInterface|Service
      */
-    public function setConnection($connection = null) {
+    public function setConnection($connection = null)
+    {
         $this->connection = $connection;
 
         return $this;
@@ -172,14 +179,16 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getAdditionalConnectionHeaders() {
+    public function getAdditionalConnectionHeaders()
+    {
         return $this->additionalConnectionHeaders;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setAdditionalConnectionHeaders($additionalConnectionHeaders = null) {
+    public function setAdditionalConnectionHeaders($additionalConnectionHeaders = null)
+    {
         $this->additionalConnectionHeaders = $additionalConnectionHeaders;
 
         return $this;
@@ -188,7 +197,8 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getToken() {
+    public function getToken()
+    {
         if (!$this->token instanceof TokenInterface) {
             throw new \RuntimeException('TokenInterface not found');
         }
@@ -199,7 +209,8 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function setToken($token = null) {
+    public function setToken($token = null)
+    {
         $this->token = $token;
 
         return $this;
@@ -208,14 +219,16 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getClientId() {
+    public function getClientId()
+    {
         return $this->clientId;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setClientId($clientId = null) {
+    public function setClientId($clientId = null)
+    {
         $this->clientId = $clientId;
 
         return $this;
@@ -224,14 +237,16 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getClientSecret() {
+    public function getClientSecret()
+    {
         return $this->clientSecret;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setClientSecret($clientSecret = null) {
+    public function setClientSecret($clientSecret = null)
+    {
         $this->clientSecret = $clientSecret;
 
         return $this;
@@ -240,14 +255,16 @@ class Service extends BaseModel implements ServiceInterface
     /**
      *{@inheritdoc}
      */
-    public function getDeviceId() {
+    public function getDeviceId()
+    {
         return $this->deviceId;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDeviceId($deviceId = null) {
+    public function setDeviceId($deviceId = null)
+    {
         $this->deviceId = $deviceId;
 
         return $this;
@@ -256,14 +273,16 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getDeviceName() {
+    public function getDeviceName()
+    {
         return $this->deviceName;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDeviceName($deviceName = null) {
+    public function setDeviceName($deviceName = null)
+    {
         $this->deviceName = $deviceName;
 
         return $this;
@@ -272,14 +291,16 @@ class Service extends BaseModel implements ServiceInterface
     /**
      *{@inheritdoc}
      */
-    public function getTokenStorage() {
+    public function getTokenStorage()
+    {
         return $this->tokenStorage;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setTokenStorage(BaseTokenStorageInterface $tokenStorage = null) {
+    public function setTokenStorage(BaseTokenStorageInterface $tokenStorage = null)
+    {
         $this->tokenStorage = $tokenStorage;
 
         return $this;
@@ -288,14 +309,16 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getTokenStorageContext() {
+    public function getTokenStorageContext()
+    {
         return $this->tokenStorageContext;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setTokenStorageContext($tokenStorageContext = null) {
+    public function setTokenStorageContext($tokenStorageContext = null)
+    {
         $this->tokenStorageContext = $tokenStorageContext;
 
         return $this;
@@ -306,7 +329,8 @@ class Service extends BaseModel implements ServiceInterface
      *
      * @throws \Box\Exception\BoxException
      */
-    public function error($data, $message = null) {
+    public function error($data, $message = null)
+    {
         $error = $data['error'];
         unset($data['error']);
         if (null === $message || !is_string($message)) {
@@ -345,7 +369,8 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    final public function putIntoBox($uri = null, $params = array(), $returnType = 'decoded') {
+    final public function putIntoBox($uri = null, $params = array(), $returnType = 'decoded')
+    {
         $this->validateReturnType($returnType);
 
         if (false === is_string($uri)) {
@@ -372,7 +397,8 @@ class Service extends BaseModel implements ServiceInterface
      * {@inheritdoc}
      * @throws BadMethodCallException
      */
-    final public function queryBox($uri = null, $returnType = 'decoded') {
+    final public function queryBox($uri = null, $returnType = 'decoded')
+    {
         $this->validateReturnType($returnType);
 
         if (false === is_string($uri)) {
@@ -425,7 +451,7 @@ class Service extends BaseModel implements ServiceInterface
                 $type,
             );
 
-            switch($bre->getCode()) {
+            switch ($bre->getCode()) {
                 case 401:
                     $boxData = $this->refreshConnection(array($this, 'putIntoBox'), $callBackParams, $bre);
                     break;
@@ -491,7 +517,8 @@ class Service extends BaseModel implements ServiceInterface
      *     previous token information here if it isn't set already from the TokenStorageException. then rethrow; Token
      *     storage is expected to set all other context values for information.
      */
-    final public function getFromBox($uri = null, $type = 'original', ModelInterface $class = null) {
+    final public function getFromBox($uri = null, $type = 'original', ModelInterface $class = null)
+    {
         $this->validateReturnType($type);
 
         try {
@@ -514,7 +541,7 @@ class Service extends BaseModel implements ServiceInterface
                 $type,
             );
 
-            switch($bre->getCode()) {
+            switch ($bre->getCode()) {
                 case 401:
                     $boxData = $this->refreshConnection(array($this, 'queryBox'), $callBackParams, $bre);
                     break;
@@ -584,7 +611,8 @@ class Service extends BaseModel implements ServiceInterface
      * {@inheritdoc}
      * @throws \Box\Exception\BoxException
      */
-    public function getConnectionHeaders() {
+    public function getConnectionHeaders()
+    {
         $headers = array($this->getAuthorizationHeader());
 
         $additionalConnectionHeaders = $this->getAdditionalConnectionHeaders();
@@ -610,7 +638,8 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function getAuthorizationHeader() {
+    public function getAuthorizationHeader()
+    {
         $token = $this->getToken();
 
         $header = "Authorization: Bearer " . $token->getAccessToken();
@@ -624,7 +653,8 @@ class Service extends BaseModel implements ServiceInterface
      * {@inheritdoc}
      * @throws \Box\Exception\BoxException
      */
-    public function refreshToken() {
+    public function refreshToken()
+    {
         $token = $this->getToken();
 
         $params['refresh_token'] = $token->getRefreshToken();
@@ -687,7 +717,8 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function setTokenData(TokenInterface $token, $data) {
+    public function setTokenData(TokenInterface $token, $data)
+    {
         if ($this->getLogger() instanceof LoggerInterface) {
             $this->getLogger()->debug('token data: ' . var_export($data, true),
                 array(
@@ -719,7 +750,8 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function destroyToken(TokenInterface $token, $returnType = 'decoded') {
+    public function destroyToken(TokenInterface $token, $returnType = 'decoded')
+    {
         $this->validateReturnType($returnType);
         $params['client_id'] = $this->getClientId();
         $params['client_secret'] = $this->getClientSecret();
@@ -746,7 +778,8 @@ class Service extends BaseModel implements ServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function validateReturnType($type = null) {
+    public function validateReturnType($type = null)
+    {
         if (!is_string($type)) {
             throw new InvalidArgumentException('string type expected');
         }
@@ -759,15 +792,18 @@ class Service extends BaseModel implements ServiceInterface
         return $this;
     }
 
-    public function getFinalConnectionResult($json = null, $returnType = 'decoded', $errorData = array()) {
+    public function getFinalConnectionResult($json = null, $returnType = 'decoded', $errorData = array())
+    {
         @trigger_error('The ' . __NAMESPACE__ . __METHOD__
             . ' method will be removed', E_USER_DEPRECATED);
         return $this->handleBoxResponse($json, $returnType);
     }
+
     /**
      * {@inheritdoc}
      */
-    public function handleBoxResponse(BoxResponseInterface $response = null, $returnType = 'decoded') {
+    public function handleBoxResponse(BoxResponseInterface $response = null, $returnType = 'decoded')
+    {
         if (!$response instanceof BoxResponseInterface) {
             throw new BadMethodCallException("expecting instance of Box\\Http\\BoxResponseInterface. received: " . gettype($response));
         }
@@ -780,38 +816,7 @@ class Service extends BaseModel implements ServiceInterface
 
         $json = $response->getContent();
 
-        $this->validateReturnType($returnType);
-
-        $this->lastResultOriginal = $json;
-        $this->lastResultDecoded = json_decode($json);
-        $this->lastResultFlat = json_decode($json, true);
-
-        $data = $this->getLastResult($returnType);
-
-        if (null === $this->lastResultFlat) {
-            $errorData = array();
-            $errorData['error'] = "sdk_json_decode";
-            $errorData['error_description'] = "unable to decode or recursion level too deep";
-            $this->error($errorData);
-        } else {
-            if (array_key_exists('error', $this->lastResultFlat)) {
-                $this->error($this->lastResultFlat);
-            } else {
-                if (array_key_exists('type', $this->lastResultFlat) && 'error' == $this->lastResultFlat['type']) {
-
-                    $errorData['error'] = "sdk_unknown";
-                    $ditto = $errorData;
-                    $errorData['error_description'] = $ditto;
-                    $errorData['result_data'] = $this->lastResultOriginal;
-
-                    if (array_key_exists('code', $this->lastResultFlat)) {
-                        $errorData['code'] = $this->lastResultFlat['code'];
-                    }
-
-                    $this->error($errorData);
-                }
-            }
-        }
+        $data = $this->handleResponseContent($returnType, $json);
 
         return $data;
     }
@@ -824,7 +829,8 @@ class Service extends BaseModel implements ServiceInterface
      * @throws BoxException
      * @throws TokenStorageException
      */
-    public function refreshConnection($callback, $params, $be = null) {
+    public function refreshConnection($callback, $params, $be = null)
+    {
         $currentToken = clone $this->getToken();
         if ($this->getLogger() instanceof LoggerInterface) {
             $this->getLogger()->debug('currentToken: ' . var_export($currentToken, true),
@@ -900,5 +906,50 @@ class Service extends BaseModel implements ServiceInterface
         }
 
         return $boxData;
+    }
+
+    /**
+     * @param $returnType
+     * @param $json
+     * @return mixed
+     * @throws BoxException
+     */
+    public function handleResponseContent($returnType, $json)
+    {
+        $this->validateReturnType($returnType);
+
+        $this->lastResultOriginal = $json;
+        $this->lastResultDecoded = json_decode($json);
+        $this->lastResultFlat = json_decode($json, true);
+
+        $data = $this->getLastResult($returnType);
+        $errorData = array();
+
+        if (null === $this->lastResultFlat) {
+
+            $errorData['error'] = "sdk_json_decode";
+            $errorData['error_description'] = "unable to decode or recursion level too deep";
+            $this->error($errorData);
+        } else {
+            if (array_key_exists('error', $this->lastResultFlat)) {
+                $this->error($this->lastResultFlat);
+            } else {
+                if (array_key_exists('type', $this->lastResultFlat) && 'error' == $this->lastResultFlat['type']) {
+
+                    $errorData['error'] = "sdk_unknown";
+                    $ditto = $errorData;
+                    $errorData['error_description'] = $ditto;
+                    $errorData['result_data'] = $this->lastResultOriginal;
+
+                    if (array_key_exists('code', $this->lastResultFlat)) {
+                        $errorData['code'] = $this->lastResultFlat['code'];
+                    }
+
+                    $this->error($errorData);
+                }
+            }
+        }
+
+        return $data;
     }
 }
