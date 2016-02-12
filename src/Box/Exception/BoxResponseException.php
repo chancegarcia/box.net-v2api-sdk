@@ -75,7 +75,7 @@ class BoxResponseException extends BoxException
     }
 
     /**
-     * @return mixed
+     * @return null|BoxResponseInterface
      */
     public function getResponse() {
         return $this->response;
