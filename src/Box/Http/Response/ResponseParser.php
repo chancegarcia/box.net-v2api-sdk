@@ -87,11 +87,14 @@ class ResponseParser
                 $finalHeaders[] = $headerLineValue;
             } else {
                 // rest of the lines are headers
-                list($key, $value) = array_map("trim", explode(":", $headerLineValue));
-                if (true === $replace || !array_key_exists($key, $finalHeaders)) {
-                    $finalHeaders[$key] = $value;
-                } else {
-                    $finalHeaders[$key] = array_merge((array) $finalHeaders[$key], (array) $value);
+                $aLine = explode(":", $headerLineValue);
+                if (2 === count($aLine)) {
+                    list($key, $value) = array_map("trim", $aLine);
+                    if (true === $replace || !array_key_exists($key, $finalHeaders)) {
+                        $finalHeaders[$key] = $value;
+                    } else {
+                        $finalHeaders[$key] = array_merge((array)$finalHeaders[$key], (array)$value);
+                    }
                 }
             }
         }

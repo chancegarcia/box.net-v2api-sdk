@@ -83,10 +83,11 @@ class Connection extends Model implements ConnectionInterface
      */
     public function initCurlOpts($ch)
     {
+        // figure out how to log to verbose output to file. maybe make a box logger? or do output buffer capture?
+        //curl_setopt($ch, CURLOPT_VERBOSE, true);
         // get full response with headers
         // http://stackoverflow.com/questions/9183178/php-curl-retrieving-response-headers-and-body-in-a-single-request
         curl_setopt($ch , CURLOPT_RETURNTRANSFER , true);
-        curl_setopt($ch, CURLOPT_VERBOSE, true);
         curl_setopt($ch, CURLOPT_HEADER, true);
 
         curl_setopt($ch , CURLOPT_SSL_VERIFYPEER , false);
