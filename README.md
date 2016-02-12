@@ -26,7 +26,7 @@ Copyright (C) 2013-2016  Chance Garcia
     SOFTWARE.
 
 tasks:
-- [ ] v0.4.0
+- [x] v0.4.0
   - [x] refactor `Connection::getCurlData` to return an HTTP Response object (use symfony/http-foundation)
     - [x] method to turn curl header string into header array to set in Response object
     - [x] method to determine status code given header string
@@ -36,11 +36,14 @@ tasks:
 - [ ] v0.4.1
   - [ ] refactor `Service::getFromBox` to accept type `mapped`
   - [ ] refactor `Service::sendUpdateToBox` to accept type `mapped`
-  - [ ] add handling for 409 `item_name_in_use` error
+  - [ ] add [Error class](https://box-content.readme.io/reference#errors)
+    - [ ] add handling for 409 `item_name_in_use` error
+    - [ ] factory to create errors
 - [ ] v0.5.0
   - [ ] Remove `Service::getFinalConnectionResult`
   - [ ] Add deprecation notice that the Client class will be removed. exact version removal undetermined
   - [ ] Add deprecation notice that the `Collection` class will be removed in v0.6.0 in favor of using `doctrine/collections`
+  - [ ] use factories to create class returns instead passing class to map
   - [ ] methods to set `CURLOPT_SSL_VERIFYPEER` in `Connection` class
     - [ ] add deprecation notice that default value will be true in later release to allow time for migration from current behavior (false)
   - [ ] refactor
