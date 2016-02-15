@@ -33,14 +33,14 @@ tasks:
     - [x] Existing calls in the `Client` class must still only analyse the body response
   - [x] `Service` class final methods analyze the Response object to determine error/response handling such as refresh token attempt
     - [x] Deprecate `Service::getFinalConnectionResult` and add warning of removal in v0.5.0
-- [ ] v0.4.1
+- [ ] v0.4.5
   - [ ] refactor `Service::getFromBox` to accept type `mapped`
   - [ ] refactor `Service::sendUpdateToBox` to accept type `mapped`
   - [ ] add [Error class](https://box-content.readme.io/reference#errors)
     - [ ] add handling for 409 `item_name_in_use` error
     - [ ] factory to create errors
+  - [ ] Fix `StatusLine` parsing (reason phrase `Not Found` shows up as `Not`)
 - [ ] v0.5.0
-  - [ ] Remove `Service::getFinalConnectionResult`
   - [ ] Add deprecation notice that the Client class will be removed. exact version removal undetermined
   - [ ] Add deprecation notice that the `Collection` class will be removed in v0.6.0 in favor of using `doctrine/collections`
   - [ ] use factories to create class returns instead passing class to map
@@ -55,6 +55,8 @@ tasks:
 - [ ] v0.6.0
   - [ ] go to full composer dependency mode
   - [ ] add composer `doctrine/collections` requirement
+  - [ ] use existing [OAuth2 for Box](https://github.com/stevenmaguire/oauth2-box) client library for our authentication
+  - [ ] implement traits for mapping and logging in `BaseModel`, `Model` classes
   - [ ] implement `Retry-After` response header handling in abstract `Service`
   
 tasks for version less than 0.4.0
