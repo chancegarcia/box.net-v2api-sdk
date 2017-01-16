@@ -1,0 +1,29 @@
+{
+    "name": "chancegarcia/box-api-v2-sdk",
+    "license": "MIT",
+    "description": "PHP SDK to interact with the box.com API",
+    "keywords": [
+        "box.com",
+        "API",
+        "PHP",
+        "SDK",
+        "box.com API v2"
+    ],
+    "homepage": "https://github.com/chancegarcia/box.net-v2api-sdk",
+    "autoload": {
+        "psr-4": {
+            "Box\\": "src/Box"
+        }
+    },
+    "require": {
+        "php": ">=5.6.10",
+        "symfony/http-foundation": "~2.8.0",
+        "psr/log": "^1.0"
+    },
+    "authors": [
+        {
+            "name": "chance garcia",
+            "email": "develop@chancegarcia.com"
+        }
+    ]
+}
