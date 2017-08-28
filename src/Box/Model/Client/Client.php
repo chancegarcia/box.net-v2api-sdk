@@ -623,13 +623,13 @@ class Client extends Model implements ModelInterface
         {
             $data['error'] = "sdk_json_decode";
             $data['error_description'] = "unable to decode or recursion level too deep";
-            $this->error($data);
+            $this->error($data, null, $response);
         }
         else
         {
             if (array_key_exists('error', $data))
             {
-                $this->error($data);
+                $this->error($data, null, $response);
             }
             else
             {
@@ -638,7 +638,7 @@ class Client extends Model implements ModelInterface
                     $data['error'] = "sdk_unknown";
                     $ditto = $data;
                     $data['error_description'] = $ditto;
-                    $this->error($data);
+                    $this->error($data, null, $response);
                 }
             }
         }
@@ -741,6 +741,8 @@ class Client extends Model implements ModelInterface
         }
 
         $uri = Folder::URI . '/' . $originalFolder->getId() . '/copy';
+        $this->debug("copy uri: " . $uri, [__METHOD__, __LINE__]);
+        $this->debug("initial parent: " . var_export($parent, true), [__METHOD__, __LINE__]);
 
         if (is_array($parent))
         {
@@ -763,26 +765,33 @@ class Client extends Model implements ModelInterface
             $params['name'] = $name;
         }
 
+        $this->debug("params: " . var_export($params, true), [__METHOD__, __LINE__]);
+
         $connection = $this->getConnection();
         $connection = $this->setConnectionAuthHeader($connection);
 
         $response = $connection->post($uri, $params, true);
+        $this->debug("response header: " . var_export($response->getResponseHeader(), true), [__METHOD__, __LINE__]);
 
         $json = $response->getContent();
+        $this->debug("response content (json expected): " . var_export($json, true), [__METHOD__, __LINE__]);
 
         $data = json_decode($json, true);
+        $originalDecodeData = $data;
+        $this->debug("original decoded data: " . var_export($originalDecodeData, true), [__METHOD__, __LINE__]);
 
         if (null === $data)
         {
+
             $data['error'] = "sdk_json_decode";
             $data['error_description'] = "unable to decode or recursion level too deep";
-            $this->error($data);
+            $this->error($data, null, $response);
         }
         else
         {
             if (array_key_exists('error', $data))
             {
-                $this->error($data);
+                $this->error($data, null, $response);
             }
             else
             {
@@ -791,7 +800,7 @@ class Client extends Model implements ModelInterface
                     $data['error'] = "sdk_unknown";
                     $ditto = $data;
                     $data['error_description'] = $ditto;
-                    $this->error($data);
+                    $this->error($data, null, $response);
                 }
             }
         }
@@ -1378,7 +1387,7 @@ class Client extends Model implements ModelInterface
         return $data;
     }
 
-    public function search($query = null, $limit = null, $offset = null)
+    public function search($query = null, $limit = null, $offset = null, $type = null)
     {
         if (empty($query))
         {
@@ -1389,6 +1398,10 @@ class Client extends Model implements ModelInterface
 
         $uri = self::SEARCH_URI . "/?query=" . $uriQuery;
 
+        if (is_string($type) && in_array($type, ['folder', 'file'])) {
+            $uri .= "&type=" . $type;
+        }
+
         if (is_numeric($limit) && is_int($limit))
         {
             $uri .= "&limit=" . $limit;
@@ -1398,6 +1411,8 @@ class Client extends Model implements ModelInterface
         {
             $uri .= "&offset=" . $offset;
         }
+
+        $this->debug("full search uri: " . $uri, [__METHOD__, __LINE__]);
 
         $data = $this->query($uri);
 

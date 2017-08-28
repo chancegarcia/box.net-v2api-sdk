@@ -31,6 +31,8 @@
 
 namespace Box\Exception;
 
+use Box\Http\Response\BoxResponseInterface;
+
 class BoxException extends \Exception
 {
 
@@ -44,6 +46,10 @@ class BoxException extends \Exception
     protected $errorDescription;
     protected $context = array();
     protected $boxCode;
+    /**
+     * @var null|BoxResponseInterface
+     */
+    protected $boxResponse;
 
     public function setError($error = null) {
         $this->error = $error;
@@ -110,5 +116,21 @@ class BoxException extends \Exception
         $this->boxCode = $boxCode;
 
         return $this;
+    }
+
+    /**
+     * @return BoxResponseInterface
+     */
+    public function getBoxResponse()
+    {
+        return $this->boxResponse;
+    }
+
+    /**
+     * @param BoxResponseInterface $boxResponse
+     */
+    public function setBoxResponse(BoxResponseInterface $boxResponse)
+    {
+        $this->boxResponse = $boxResponse;
     }
 }
