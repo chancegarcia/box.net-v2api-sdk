@@ -32,6 +32,8 @@
 namespace Box\Model;
 
 use Box\Exception\BoxException;
+use Box\Http\Response\BoxResponseInterface;
+use Psr\Log\LoggerInterface;
 
 class Model extends BaseModel implements ModelInterface
 {
@@ -88,7 +90,7 @@ class Model extends BaseModel implements ModelInterface
      *
      * @throws \Box\Exception\BoxException
      */
-    public function error($data, $message = null)
+    public function error($data, $message = null, BoxResponseInterface $boxResponse = null)
     {
         $error = $data['error'];
         if (null === $message || !is_string($message))
@@ -99,7 +101,19 @@ class Model extends BaseModel implements ModelInterface
         $exception = new BoxException($message);
         $exception->setError($error);
         $exception->setErrorDescription($data['error_description']);
+
+        if ($boxResponse instanceof BoxResponseInterface) {
+            $exception->setBoxResponse($boxResponse);
+        }
+
         throw $exception;
+    }
+
+    public function debug($message, $context = [])
+    {
+        if ($this->getLogger() instanceof LoggerInterface) {
+            $this->getLogger()->debug($message, $context);
+        }
     }
 
     /**
