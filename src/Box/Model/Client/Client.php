@@ -327,7 +327,7 @@ class Client extends Model implements ModelInterface
         {
             $data['error'] = "unable to decode json data";
             $data['error_description'] = 'try refreshing the token';
-            $this->error($data);
+            $this->error($data, null, $response);
         }
 
         if (is_array($jsonData) && array_key_exists('type', $jsonData) && 'folder' === $jsonData['type'])
@@ -341,7 +341,7 @@ class Client extends Model implements ModelInterface
             {
                 $errorData['error'] = $jsonData['message'];
                 $errorData['error_description'] = $jsonData;
-                $this->error($errorData);
+                $this->error($errorData, null, $response);
                 $folder = null;
             }
             else
@@ -377,7 +377,7 @@ class Client extends Model implements ModelInterface
         {
             $data['error'] = "unable to decode json data";
             $data['error_description'] = 'try refreshing the token';
-            $this->error($data);
+            $this->error($data, null, $response);
         }
 
         $folder = $this->getNewFolder();
@@ -445,7 +445,7 @@ class Client extends Model implements ModelInterface
             $data = array();
             $data['error'] = "unable to decode json data";
             $data['error_description'] = 'try refreshing the token';
-            $this->error($data);
+            $this->error($data, null, $response);
         }
         else
         {
@@ -454,7 +454,7 @@ class Client extends Model implements ModelInterface
                 $data = array();
                 $data['error'] = $jsonData['status'] . "  - " . $jsonData['code'];
                 $data['error_description'] = var_export($jsonData['context_info'], true);
-                $this->error($data);
+                $this->error($data, null, $response);
             }
         }
 
@@ -498,7 +498,7 @@ class Client extends Model implements ModelInterface
             $errorData = array();
             $errorData['error'] = "unable to decode json data";
             $errorData['error_description'] = $data;
-            $this->error($errorData);
+            $this->error($errorData, null, $response);
         }
         else
         {
@@ -507,7 +507,7 @@ class Client extends Model implements ModelInterface
                 $errorData = array();
                 $errorData['error'] = $data['status'] . "  - " . $data['code'];
                 $errorData['error_description'] = var_export($data['context_info'], true);
-                $this->error($errorData);
+                $this->error($errorData, null, $response);
             }
         }
 
@@ -544,13 +544,13 @@ class Client extends Model implements ModelInterface
         {
             $data['error'] = "sdk_json_decode";
             $data['error_description'] = "unable to decode or recursion level too deep";
-            $this->error($data);
+            $this->error($data, null, $response);
         }
         else
         {
             if (array_key_exists('error', $data))
             {
-                $this->error($data);
+                $this->error($data, null, $response);
             }
             else
             {
@@ -559,7 +559,7 @@ class Client extends Model implements ModelInterface
                     $data['error'] = "sdk_unknown";
                     $ditto = $data;
                     $data['error_description'] = $ditto;
-                    $this->error($data);
+                    $this->error($data, null, $response);
                 }
             }
         }
@@ -694,13 +694,13 @@ class Client extends Model implements ModelInterface
         {
             $data['error'] = "sdk_json_decode";
             $data['error_description'] = "unable to decode or recursion level too deep";
-            $this->error($data);
+            $this->error($data, null, $response);
         }
         else
         {
             if (array_key_exists('error', $data))
             {
-                $this->error($data);
+                $this->error($data, null, $response);
             }
             else
             {
@@ -919,13 +919,13 @@ class Client extends Model implements ModelInterface
         {
             $data['error'] = "sdk_json_decode";
             $data['error_description'] = "unable to decode or recursion level too deep";
-            $this->error($data);
+            $this->error($data, null, $response);
         }
         else
         {
             if (array_key_exists('error', $data))
             {
-                $this->error($data);
+                $this->error($data, null, $response);
             }
         }
 
