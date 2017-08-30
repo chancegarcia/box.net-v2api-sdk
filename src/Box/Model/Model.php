@@ -102,8 +102,16 @@ class Model extends BaseModel implements ModelInterface
         $exception->setError($error);
         $exception->setErrorDescription($data['error_description']);
 
+        $context = [];
         if ($boxResponse instanceof BoxResponseInterface) {
             $exception->setBoxResponse($boxResponse);
+            $context = [$boxResponse->getContent(), $boxResponse->getStatusCode()];
+        }
+
+        if ($this->getLogger() instanceof LoggerInterface) {
+            $loggerMessage = $error . "\n" . $exception->getTraceAsString() . "\n";
+
+            $this->getLogger()->error($loggerMessage, $context);
         }
 
         throw $exception;
