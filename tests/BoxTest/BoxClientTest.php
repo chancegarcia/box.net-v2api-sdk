@@ -30,6 +30,8 @@ class BoxClientTest extends TestCase
     {
         parent::setUp();
 
+        // $mock = $this->getMockBuilder(Connection::class)->setMethods(['initCurl', 'initCurlOpts'])->getMock();
+
         $this->client = new Client();
         $this->client->setClientId('foobar');
         $this->client->setClientSecret('kittens');

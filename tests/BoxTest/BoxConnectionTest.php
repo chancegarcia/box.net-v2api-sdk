@@ -58,11 +58,13 @@ class BoxConnectionTest extends TestCase
 
     public function testInitCurlReturnsResource()
     {
-        // $mock = $this->getMockBuilder(Connection::class)->setMethods(['initCurl', 'initCurlOpts'])->getMock();
-        // $mock->expects($this->once())->method('initCurlOpts');
-        // $mock->initCurl();
-
         $this->assertInternalType('resource', $this->connection->initCurl());
+    }
+
+    public function testInitAdditionalCurlOptsReturnsResource()
+    {
+        $ch = $this->connection->initCurl();
+        $this->assertInternalType('resource', $this->connection->initAdditionalCurlOpts($ch));
     }
 
     // test query
@@ -71,28 +73,28 @@ class BoxConnectionTest extends TestCase
     // test query calls init additional curl opts
     // test query calls get curl data
 
-    public function testPost()
-    {
-
-    }
-
-    public function testBuildQuery()
-    {
-
-    }
-
-    public function testPostFile()
-    {
-
-    }
-
-    public function testGetMimeType()
-    {
-
-    }
-
-    public function testCreateCurlFile()
-    {
-
-    }
+    // public function testPost()
+    // {
+    //
+    // }
+    //
+    // public function testBuildQuery()
+    // {
+    //
+    // }
+    //
+    // public function testPostFile()
+    // {
+    //
+    // }
+    //
+    // public function testGetMimeType()
+    // {
+    //
+    // }
+    //
+    // public function testCreateCurlFile()
+    // {
+    //
+    // }
 }
