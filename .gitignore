@@ -1,2 +1,5 @@
 # Created by .ignore support plugin (hsz.mobi)
 /vendor/
+*_todo.md
+todo.md
+tmp.php
