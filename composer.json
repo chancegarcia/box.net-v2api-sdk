@@ -17,7 +17,7 @@
     },
     "require": {
         "php": ">=5.6.10",
-        "symfony/http-foundation": "~2.8.0",
+        "symfony/http-foundation": "^2.8.0|^3.4",
         "psr/log": "^1.0"
     },
     "authors": [
