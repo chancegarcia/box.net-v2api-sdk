@@ -18,8 +18,7 @@
     "require": {
         "php": ">=5.6.10",
         "symfony/http-foundation": "^2.8|^3.4",
-        "psr/log": "^1.0",
-        "roave/security-advisories": "dev-master"
+        "psr/log": "^1.0"
     },
     "authors": [
         {
@@ -28,8 +27,6 @@
         }
     ],
     "require-dev": {
-      "roave/security-advisories": "dev-master"
-      ,
       "phpunit/phpunit": "^6.1",
         "fzaninotto/faker": "^1.6"
     }
