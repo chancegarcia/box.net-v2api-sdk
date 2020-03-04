@@ -4,9 +4,9 @@
     "description": "PHP SDK to interact with the box.com API",
     "keywords": [
         "box.com",
-        "API",
+        "box.com API",
         "PHP",
-        "SDK",
+        "box.com SDK",
         "box.com API v2"
     ],
     "homepage": "https://github.com/chancegarcia/box.net-v2api-sdk",
@@ -16,10 +16,9 @@
         }
     },
     "require": {
-        "php": ">=5.6.10",
-        "symfony/http-foundation": "~2.8.0",
-        "psr/log": "^1.0",
-        "roave/security-advisories": "dev-master"
+        "php": ">=7.1",
+        "symfony/http-foundation": "^2.8|^3.4|^4.4",
+        "psr/log": "^1.0"
     },
     "authors": [
         {
@@ -28,7 +27,6 @@
         }
     ],
     "require-dev": {
-        "phpunit/phpunit": "^6.1",
-        "fzaninotto/faker": "^1.6"
+        "phpunit/phpunit": "^7.5"
     }
 }
