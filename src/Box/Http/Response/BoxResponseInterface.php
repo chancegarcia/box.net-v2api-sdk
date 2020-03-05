@@ -62,7 +62,7 @@ interface BoxResponseInterface
      *
      * @return ResponseInterface
      */
-    public function setProtocolVersion($version);
+    public function setProtocolVersion(string $version);
 
     // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
     /**
