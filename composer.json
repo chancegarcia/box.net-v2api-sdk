@@ -17,7 +17,7 @@
     },
     "require": {
         "php": ">=7.1",
-        "symfony/http-foundation": "^2.8|^3.4|^4.4",
+        "symfony/http-foundation": "^2.8|^3.4|^4.4|^5",
         "psr/log": "^1.0"
     },
     "authors": [
