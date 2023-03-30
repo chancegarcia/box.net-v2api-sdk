@@ -71,7 +71,7 @@ interface ModelInterface extends BaseModelInterface
      */
     public function validateClass($class, $classType);
 
-    public function buildQuery($params, $numericPrefix = null);
+    public function buildQuery($params, $numericPrefix = '');
 
     public function getNewClass($className = null, $classConstructorOptions = null);
 }

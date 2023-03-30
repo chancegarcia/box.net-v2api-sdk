@@ -161,25 +161,15 @@ class Model extends BaseModel implements ModelInterface
         return true;
     }
 
-    public function buildQuery($params, $numericPrefix = null)
+    /**
+     * @param $params
+     * @param $numericPrefix
+     *
+     * @return string
+     */
+    public function buildQuery($params, $numericPrefix = '')
     {
-
-        if (version_compare(PHP_VERSION, '5.4.0', '>='))
-        {
-            $query = http_build_query($params, $numericPrefix, '&', PHP_QUERY_RFC3986);
-        }
-        else
-        {
-            $pleaseUpgradeTo54 = array();
-            foreach ($params as $k => $v)
-            {
-                $pleaseUpgradeTo54[ $k ] = urlencode($v);
-            }
-            $query = http_build_query($pleaseUpgradeTo54, $numericPrefix, '&');
-            @trigger_error('upgrade to at least php 5.4.0; this will be deprecated in the future', E_USER_DEPRECATED);
-        }
-
-        return $query;
+        return http_build_query($params, $numericPrefix, '&', PHP_QUERY_RFC3986);
     }
 
     public function getNewClass($className = null, $classConstructorOptions = null)
