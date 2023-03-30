@@ -16,8 +16,8 @@
         }
     },
     "require": {
-        "php": ">=7.1",
-        "symfony/http-foundation": "^2.8|^3.4|^4.4",
+        "php": ">=8.2",
+        "symfony/http-foundation": "^2.8|^3.4|^4.4|^5.4",
         "psr/log": "^1.0"
     },
     "authors": [
@@ -27,6 +27,8 @@
         }
     ],
     "require-dev": {
+        "roave/security-advisories": "dev-latest"
+        ,
         "phpunit/phpunit": "^7.5"
     }
 }
