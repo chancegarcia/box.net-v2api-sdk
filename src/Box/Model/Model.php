@@ -161,7 +161,13 @@ class Model extends BaseModel implements ModelInterface
         return true;
     }
 
-    public function buildQuery($params, $numericPrefix = null)
+    /**
+     * @param $params
+     * @param $numericPrefix
+     *
+     * @return string
+     */
+    public function buildQuery($params, $numericPrefix = '')
     {
 
         if (version_compare(PHP_VERSION, '5.4.0', '>='))
