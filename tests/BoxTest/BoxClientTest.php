@@ -26,7 +26,7 @@ class BoxClientTest extends TestCase
      */
     protected $clientWithToken;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

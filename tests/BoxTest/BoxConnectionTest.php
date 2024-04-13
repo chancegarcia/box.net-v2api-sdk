@@ -42,14 +42,14 @@ class BoxConnectionTest extends TestCase
      */
     protected $connection;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->connection = new Connection();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
