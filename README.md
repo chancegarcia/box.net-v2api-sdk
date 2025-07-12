@@ -5,7 +5,7 @@ Requires at least 5.6.10
 
 php sdk for use with box.net v2 api (http://developers.box.com/)
 
-Copyright (C) 2013-2016  Chance Garcia
+Copyright (C) 2013-2025  Chance Garcia
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,82 @@ Copyright (C) 2013-2016  Chance Garcia
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 
-tasks:
+# usage
+
+## setup
+```php
+use Box\Model\Client\Client;
+$boxClient = new Client();
+$boxClient->setClientId($boxClientId);
+$boxClient->setClientSecret($boxClientSecret);
+```
+
+## auth uri
+```php
+// see setup
+$client->setAuthorizationCode($code);
+$authUri = $client->buildAuthQuery();
+$authUri .= '&state=' . $state;
+```
+
+## handle auth callback
+```php
+// see setup
+$state = $request->get('state');
+$code = $request->get('code');
+try {
+    $token = $client->getAccessToken();
+    // store the token somehow
+} catch (\Box\Exception\Exception $e) {
+    switch ($e->getError()) {
+        case "invalid_grant":
+            // do something to get another access code?
+            $msg = 'invalid grant, try resending user to the auth uri (start of link process)';
+            $logger->error($msg);
+            break;
+        case "invalid_request":
+            // no break
+        case "unauthorized_client":
+            // no break
+        case "invalid_client":
+            // no break
+        case "redirect_uri_mismatch":
+            // no break
+        case "insecure_redirect_uri":
+            // no break
+        case "invalid_redirect_uri":
+            // no break
+        default:
+            break;
+    }
+
+    // bubble up exception
+    throw $e;
+}
+```
+
+## refresh token
+```php
+use Box\Model\Client\Client;
+use Box\Model\Connection\Token\Token;
+$boxClient = new Client();
+$boxClient->setClientId($boxClientId);
+$boxClient->setClientSecret($boxClientSecret);
+
+$oToken = new Token();
+$oToken->setAccessToken($accessToken);
+$oToken->setRefreshToken($refreshToken);
+
+$client->setToken($oToken);
+$token = $client->refreshToken();
+```
+## upload file
+```php
+use Box\Model\Client\Client;
+
+$uploadResponse = $client->uploadFileToBox($uploadFilePath);
+```
+# tasks
 - [x] v0.4.0
   - [x] refactor `Connection::getCurlData` to return an HTTP Response object (use symfony/http-foundation)
     - [x] method to turn curl header string into header array to set in Response object
